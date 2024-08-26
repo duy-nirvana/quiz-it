@@ -8,10 +8,11 @@ import '@mantine/core/styles.css';
 function App() {
     return (
         <div className="App">
-            <Suspense fallback="Loading..." />
-            <MantineProvider>
-                <AppRouting />
-            </MantineProvider>
+            <Suspense fallback={<div>Loading...</div>}>
+                <MantineProvider>
+                    <AppRouting />
+                </MantineProvider>
+            </Suspense>
         </div>
     );
 }
