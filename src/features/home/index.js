@@ -1,4 +1,4 @@
-import { Button, Input } from '@mantine/core';
+import { Button, Center, Input } from '@mantine/core';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -26,16 +26,22 @@ function Home(props) {
                 <p className="text-8xl text-white font-black text-center">
                     QUIZ IT
                 </p>
-                <div className="w-6 min-w-fit text-center gap-4 flex flex-col bg-indigo-800 p-6 rounded-xl">
-                    <p className="text-white text-xl font-semibold">
-                        ENTER YOUR PIN
-                    </p>
-                    <div className="flex">
-                        <Input placeholder="Enter your pin" size="lg" />
-                        <Button variant="filled" size="lg" color="orange">
-                            GO
-                        </Button>
-                    </div>
+                <div className="w-6 min-w-fit text-center gap-2 flex flex-col bg-indigo-800 p-6 rounded-xl">
+                    <Input
+                        placeholder="Game PIN"
+                        size="lg"
+                        classNames={{
+                            input: '!text-center',
+                        }}
+                    />
+                    <Button
+                        variant="filled"
+                        size="lg"
+                        color="orange"
+                        className="min-w-full"
+                    >
+                        GO
+                    </Button>
                 </div>
             </div>
         </>

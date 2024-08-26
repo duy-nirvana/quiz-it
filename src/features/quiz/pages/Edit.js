@@ -6,19 +6,19 @@ function Edit(props) {
     const navigate = useNavigate();
 
     return (
-        <div className="h-screen bg-indigo-950 p-4 flex flex-col gap-4">
+        <div className="h-screen bg-indigo-950 py-4 flex flex-col gap-4">
             <Button
                 className="self-start"
                 onClick={() => navigate('/')}
             >{`<- back`}</Button>
-            <div className="grid grid-cols-8 grow gap-4">
-                <div className="bg-slate-400 h-full rounded-lg col-span-1">
+            <div className="flex gap-2 h-full">
+                <div className="bg-slate-400 h-full rounded-lg min-w-52">
                     COL 1
                 </div>
-                <div className="bg-slate-400 h-full rounded-lg col-span-5">
+                <div className="bg-slate-400 h-full rounded-lg flex-auto">
                     COL 2
                 </div>
-                <div className="bg-slate-400 h-full rounded-lg col-span-2">
+                <div className="bg-slate-400 h-full rounded-lg min-w-96">
                     COL 3
                 </div>
             </div>
