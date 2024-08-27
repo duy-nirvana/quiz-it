@@ -1,0 +1,20 @@
+.SlidePreviewWrapper {
+    :global {
+        .answer-item {
+            @apply border border-slate-300 h-1.5 relative;
+
+            &.selected {
+                &::after {
+                    content: '';
+                    @apply bg-green-600 absolute w-2 h-2 right-0.5 rounded-full translate-y-[-50%] top-1/2;
+                }
+            }
+        }
+
+        .icon {
+            &[data-disabled] {
+                @apply bg-transparent;
+            }
+        }
+    }
+}
