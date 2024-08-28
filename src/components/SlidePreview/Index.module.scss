@@ -1,5 +1,13 @@
 .SlidePreviewWrapper {
     :global {
+        .slide {
+            @apply cursor-pointer hover:bg-slate-400 hover:duration-100 flex gap-1;
+
+            &-active {
+                @apply bg-red-200 hover:bg-red-200;
+            }
+        }
+
         .answer-item {
             @apply border border-slate-300 h-1.5 relative;
 

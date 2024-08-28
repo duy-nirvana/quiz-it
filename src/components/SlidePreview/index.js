@@ -4,10 +4,22 @@ import styles from './Index.module.scss';
 import { ActionIcon, Tooltip } from '@mantine/core';
 import clsx from 'clsx';
 
-function SlidePreview({ title = 'Quiz', className, question }) {
+function SlidePreview({
+    title = 'Quiz',
+    className,
+    question,
+    index,
+    isActive,
+    setActive,
+}) {
     return (
-        <div className={clsx(styles.SlidePreviewWrapper, className)}>
-            <div className="flex gap-1">
+        <div
+            className={clsx(styles.SlidePreviewWrapper)}
+            onClick={() => setActive(index)}
+        >
+            <div
+                className={clsx('slide', isActive && 'slide-active', className)}
+            >
                 <div className="self-end flex flex-col">
                     <Tooltip
                         label="Duplicate"

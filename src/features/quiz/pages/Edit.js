@@ -1,11 +1,12 @@
 import { Button } from '@mantine/core';
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SlidePreview from '../../../components/SlidePreview';
 import { IconChevronLeft, IconPlus } from '@tabler/icons-react';
 
 function Edit(props) {
     const navigate = useNavigate();
+    const [activeQuestionIndex, setActiveQuestionIndex] = useState(0);
 
     return (
         <div className="h-screen min-h-0 bg-indigo-950 py-4 flex flex-col gap-4 ">
@@ -18,12 +19,17 @@ function Edit(props) {
                 </Button>
             </div>
             <div className="flex gap-2 flex-1 overflow-auto">
-                <div className="bg-slate-300 rounded-lg min-w-52 p-2 pb-0 flex flex-col">
+                <div className="bg-slate-300 rounded-lg min-w-52 flex flex-col overflow-hidden">
                     <div className="overflow-y-auto">
-                        {Array(4)
+                        {Array(6)
                             .fill(null)
-                            .map((item) => (
-                                <SlidePreview className={'mb-4 last:mb-0'} />
+                            .map((item, index) => (
+                                <SlidePreview
+                                    className={'p-2'}
+                                    index={index}
+                                    isActive={activeQuestionIndex === index}
+                                    setActive={setActiveQuestionIndex}
+                                />
                             ))}
                     </div>
                     <div className="text-center bg-slate-300 py-4 ">
