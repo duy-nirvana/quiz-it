@@ -1,4 +1,4 @@
-import { Button } from '@mantine/core';
+import { ActionIcon, Badge, Button } from '@mantine/core';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SlidePreview from '../../../components/SlidePreview';
@@ -9,14 +9,17 @@ function Edit(props) {
     const [activeQuestionIndex, setActiveQuestionIndex] = useState(0);
 
     return (
-        <div className="h-screen min-h-0 bg-indigo-950 py-4 flex flex-col gap-4 ">
+        <div className="h-screen min-h-0 bg-indigo-950 p-2 flex flex-col gap-4 ">
             <div className="self-start ">
-                <Button
+                <Badge
+                    radius="sm"
+                    variant="gradient"
+                    gradient={{ from: 'cyan', to: 'violet', deg: 130 }}
+                    className="h-fit px-2 py-1 cursor-pointer"
                     onClick={() => navigate('/')}
-                    leftSection={<IconChevronLeft size={14} />}
                 >
-                    Back
-                </Button>
+                    <p className="font-bold text-2xl">QUIZ IT</p>
+                </Badge>
             </div>
             <div className="flex gap-2 flex-1 overflow-auto">
                 <div className="bg-slate-300 rounded-lg min-w-52 flex flex-col overflow-hidden">
@@ -29,6 +32,7 @@ function Edit(props) {
                                     index={index}
                                     isActive={activeQuestionIndex === index}
                                     setActive={setActiveQuestionIndex}
+                                    error
                                 />
                             ))}
                     </div>
