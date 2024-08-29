@@ -1,20 +1,20 @@
 .SlidePreviewWrapper {
     :global {
-        .slide {
-            @apply cursor-pointer hover:bg-slate-400 hover:duration-100 flex gap-1;
+        .slide-container {
+            @apply cursor-pointer hover:duration-100 flex gap-1;
 
             &-active {
-                @apply bg-red-200 hover:bg-red-200;
+                @apply bg-sky-100 hover:bg-sky-100;
             }
-        }
 
-        .answer-item {
-            @apply border border-slate-300 h-1.5 relative;
+            .answer-item {
+                @apply border border-slate-300 h-1.5 relative;
 
-            &.selected {
-                &::after {
-                    content: '';
-                    @apply bg-green-600 absolute w-2 h-2 right-0.5 rounded-full translate-y-[-50%] top-1/2;
+                &.selected {
+                    &::after {
+                        content: '';
+                        @apply bg-green-600 absolute w-2 h-2 right-0.5 rounded-full translate-y-[-50%] top-1/2;
+                    }
                 }
             }
         }

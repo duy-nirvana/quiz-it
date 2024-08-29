@@ -25,7 +25,7 @@ function Edit(props) {
                             .fill(null)
                             .map((item, index) => (
                                 <SlidePreview
-                                    className={'p-2'}
+                                    className={'p-2 pr-4'}
                                     index={index}
                                     isActive={activeQuestionIndex === index}
                                     setActive={setActiveQuestionIndex}
