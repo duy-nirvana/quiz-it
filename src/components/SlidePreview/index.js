@@ -7,7 +7,7 @@ import {
 import React from 'react';
 import styles from './Index.module.scss';
 import { ActionIcon, Tooltip } from '@mantine/core';
-import clsx from 'clsx';
+import { twMerge } from 'tailwind-merge';
 
 function SlidePreview({
     title = 'Quiz',
@@ -20,9 +20,9 @@ function SlidePreview({
     error,
 }) {
     return (
-        <div className={clsx(styles.SlidePreviewWrapper)}>
+        <div className={twMerge(styles.SlidePreviewWrapper)}>
             <div
-                className={clsx(
+                className={twMerge(
                     'slide-container group',
                     isActive && 'slide-container-active',
                     className
@@ -30,7 +30,7 @@ function SlidePreview({
                 onClick={() => setActive(index)}
             >
                 <div
-                    className={clsx(
+                    className={twMerge(
                         'self-end flex flex-col opacity-0 group-hover:opacity-100',
                         isActive && 'opacity-100'
                     )}
@@ -77,7 +77,7 @@ function SlidePreview({
                 <div className="grow">
                     <p className="text-sm font-semibold">{title}</p>
                     <div
-                        className={clsx(
+                        className={twMerge(
                             'bg-white p-2 w-full rounded-lg flex flex-col items-center border gap-2 border-slate-400 ',
                             !isActive &&
                                 'group-hover:outline group-hover:outline-1 outline-slate-600',
