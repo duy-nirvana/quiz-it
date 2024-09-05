@@ -17,6 +17,7 @@ import {
     IconSquareRotatedFilled,
     IconCircleFilled,
     IconSquareFilled,
+    IconTrash,
 } from '@tabler/icons-react';
 import { twMerge } from 'tailwind-merge';
 
@@ -102,7 +103,7 @@ function Edit(props) {
                     <div className="flex justify-center">
                         <div className="w-1/2 h-80 bg-white rounded-lg flex justify-center">
                             <img
-                                src="https://miro.medium.com/v2/resize:fit:1400/1*rIkmavUeqyRySwlQdA9kKg.jpeg"
+                                src="https://placehold.co/600x400/EEE/31343C"
                                 className="object-fit h-full"
                             />
                         </div>
@@ -176,14 +177,52 @@ function Edit(props) {
                 </div>
 
                 {/* COL 3 */}
-                <div className="bg-slate-400 h-full rounded-lg min-w-96 px-3 py-4">
-                    <Select
-                        label={<p>Question type</p>}
-                        placeholder="Pick value"
-                        data={['React', 'Angular', 'Vue', 'Svelte']}
-                        size='lg'
-                    />
-                </div>
+                <div className="bg-slate-300 h-full rounded-lg min-w-96 px-3 py-4 flex flex-col gap-2 flex-1 justify-between">
+                    <div className="flex flex-col gap-y-4 grow overflow-y-auto">
+                        <Select
+                            label={<p>Question type</p>}
+                            placeholder="Pick value"
+                            data={['Quiz', 'True or False']}
+                            size="lg"
+                        />
+                        <Select
+                            label={<p>Time limit</p>}
+                            placeholder="Pick value"
+                            data={['5s', '10s', '15s', '20s']}
+                            size="lg"
+                        />
+                        <Select
+                            label={<p>Point</p>}
+                            placeholder="Pick value"
+                            data={['Standard', 'Double point', 'No point']}
+                            size="lg"
+                        />
+                        <Select
+                            label={<p>Answers options</p>}
+                            placeholder="Pick value"
+                            data={['Single select', 'Multi select']}
+                            size="lg"
+                        />
+                    </div>
+                    <div className="justify-center flex gap-3 bg-slate-300 py-4">
+                        <Button
+                            size="md"
+                            variant="light"
+                            color="red"
+                            leftSection={<IconTrash className="w-4 h-4" />}
+                        >
+                            Delete
+                        </Button>
+                        <Button
+                            size="md"
+                            leftSection={
+                                <IconPlus className="w-4 h-4 min-w-4" />
+                            }
+                        >
+                            Duplicate
+                        </Button>
+                    </div>
+                </div>F
             </div>
         </div>
     );

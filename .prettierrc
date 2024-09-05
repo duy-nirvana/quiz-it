@@ -1,5 +1,11 @@
 {
     "trailingComma": "es5",
     "tabWidth": 4,
-    "singleQuote": true
+    "singleQuote": true,
+    "tailwindConfig": "./tailwind.config.js",
+    "tailwindPreserveWhitespace": true,
+    "tailwindPreserveDuplicates": true,
+    "plugins": [
+        "prettier-plugin-tailwindcss"
+      ]
 }
