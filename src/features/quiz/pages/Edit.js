@@ -26,17 +26,17 @@ function Edit(props) {
     const [activeQuestionIndex, setActiveQuestionIndex] = useState(0);
 
     return (
-        <div className="h-screen min-h-0 bg-indigo-950 p-2 flex flex-col gap-4 ">
-            <div className="flex  justify-between">
+        <div className="flex h-screen min-h-0 flex-col gap-4 bg-indigo-950 p-2">
+            <div className="flex justify-between">
                 <div className="flex items-center gap-4">
                     <Badge
                         radius="sm"
                         variant="gradient"
                         gradient={{ from: 'cyan', to: 'violet', deg: 130 }}
-                        className="h-fit px-3 py-2 cursor-pointer text-2xl"
+                        className="h-fit cursor-pointer px-3 py-2 text-2xl"
                         onClick={() => navigate('/')}
                     >
-                        <p className="font-bold ">QUIZ IT</p>
+                        <p className="font-bold">QUIZ IT</p>
                     </Badge>
 
                     <Input
@@ -48,7 +48,7 @@ function Edit(props) {
                 <div className="flex gap-4">
                     <Button
                         size="md"
-                        leftSection={<IconEye className="w-5 h-5" />}
+                        leftSection={<IconEye className="h-5 w-5" />}
                         color="cyan"
                     >
                         Preview
@@ -62,9 +62,9 @@ function Edit(props) {
                     </div>
                 </div>
             </div>
-            <div className="flex gap-2 flex-1 overflow-auto">
+            <div className="flex flex-1 gap-2 overflow-auto">
                 {/* COL 1 */}
-                <div className="bg-slate-300 rounded-lg min-w-52 flex flex-col overflow-hidden">
+                <div className="flex min-w-52 flex-col overflow-hidden rounded-lg bg-slate-300">
                     <div className="overflow-y-auto">
                         {Array(6)
                             .fill(null)
@@ -78,20 +78,19 @@ function Edit(props) {
                                 />
                             ))}
                     </div>
-                    <div className="text-center bg-slate-300 py-4 ">
+                    <div className="bg-slate-300 py-4 text-center">
                         <Button
                             size="md"
                             leftSection={
-                                <IconPlus className="w-4 h-4 min-w-4" />
+                                <IconPlus className="h-4 w-4 min-w-4" />
                             }
                         >
                             Add question
                         </Button>
                     </div>
                 </div>
-
                 {/* COL 2 */}
-                <div className="bg-slate-400 h-full rounded-lg flex-auto py-10 px-6 flex flex-col gap-16 justify-between overflow-y-scroll">
+                <div className="flex h-full flex-auto flex-col justify-between gap-16 overflow-y-scroll rounded-lg bg-slate-400 px-6 py-10">
                     <Input
                         placeholder="Your question"
                         size="lg"
@@ -101,7 +100,7 @@ function Edit(props) {
                         }}
                     />
                     <div className="flex justify-center">
-                        <div className="w-1/2 h-80 bg-white rounded-lg flex justify-center">
+                        <div className="flex h-80 w-1/2 justify-center rounded-lg bg-white">
                             <img
                                 src="https://placehold.co/600x400/EEE/31343C"
                                 className="object-fit h-full"
@@ -109,13 +108,13 @@ function Edit(props) {
                         </div>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
-                        <div className="bg-red-500 flex items-center gap-4 pl-4 rounded-lg overflow-hidden">
-                            <IconTriangleFilled className="text-white w-8 h-8" />
+                        <div className="flex items-center gap-4 overflow-hidden rounded-lg bg-red-500 pl-4">
+                            <IconTriangleFilled className="h-8 w-8 text-white" />
                             <Input
                                 placeholder="Add answer"
                                 size="xl"
                                 variant="unstyled"
-                                className="font-semibold grow "
+                                className="grow font-semibold"
                                 classNames={{
                                     wrapper: 'border-none ',
                                     input: twMerge(
@@ -125,13 +124,13 @@ function Edit(props) {
                                 }}
                             />
                         </div>
-                        <div className="bg-sky-600 flex items-center gap-4 pl-4 rounded-lg overflow-hidden">
-                            <IconSquareRotatedFilled className="text-white w-8 h-8" />
+                        <div className="flex items-center gap-4 overflow-hidden rounded-lg bg-sky-600 pl-4">
+                            <IconSquareRotatedFilled className="h-8 w-8 text-white" />
                             <Input
                                 placeholder="Add answer"
                                 size="xl"
                                 variant="unstyled"
-                                className="font-semibold grow "
+                                className="grow font-semibold"
                                 classNames={{
                                     wrapper: 'border-none ',
                                     input: twMerge(
@@ -141,13 +140,13 @@ function Edit(props) {
                                 }}
                             />
                         </div>
-                        <div className="bg-yellow-600 flex items-center gap-4 pl-4 rounded-lg overflow-hidden">
-                            <IconCircleFilled className="text-white w-8 h-8" />
+                        <div className="flex items-center gap-4 overflow-hidden rounded-lg bg-yellow-600 pl-4">
+                            <IconCircleFilled className="h-8 w-8 text-white" />
                             <Input
                                 placeholder="Add answer"
                                 size="xl"
                                 variant="unstyled"
-                                className="font-semibold grow "
+                                className="grow font-semibold"
                                 classNames={{
                                     wrapper: 'border-none ',
                                     input: twMerge(
@@ -157,13 +156,13 @@ function Edit(props) {
                                 }}
                             />
                         </div>
-                        <div className="bg-green-700 flex items-center gap-4 pl-4 rounded-lg overflow-hidden">
-                            <IconSquareFilled className="text-white w-8 h-8" />
+                        <div className="flex items-center gap-4 overflow-hidden rounded-lg bg-green-700 pl-4">
+                            <IconSquareFilled className="h-8 w-8 text-white" />
                             <Input
                                 placeholder="Add answer"
                                 size="xl"
                                 variant="unstyled"
-                                className="font-semibold grow "
+                                className="grow font-semibold"
                                 classNames={{
                                     wrapper: 'border-none ',
                                     input: twMerge(
@@ -175,10 +174,12 @@ function Edit(props) {
                         </div>
                     </div>
                 </div>
-
                 {/* COL 3 */}
-                <div className="bg-slate-300 h-full rounded-lg min-w-96 px-3 py-4 flex flex-col gap-2 flex-1 justify-between">
-                    <div className="flex flex-col gap-y-4 grow overflow-y-auto">
+                <div className="relative flex h-full min-w-96 flex-1 flex-col justify-between gap-2 rounded-lg bg-slate-300 px-3 py-4">
+                    <div className="absolute left-0 top-1/2 translate-x-[-100%] rounded-l-md cursor-pointer bg-slate-300 px-1 py-2">
+                        <IconChevronLeft />
+                    </div>
+                    <div className="flex grow flex-col gap-y-4 overflow-y-auto">
                         <Select
                             label={<p>Question type</p>}
                             placeholder="Pick value"
@@ -204,25 +205,25 @@ function Edit(props) {
                             size="lg"
                         />
                     </div>
-                    <div className="justify-center flex gap-3 bg-slate-300 py-4">
+                    <div className="flex justify-center gap-3 bg-slate-300 py-4">
                         <Button
                             size="md"
                             variant="light"
                             color="red"
-                            leftSection={<IconTrash className="w-4 h-4" />}
+                            leftSection={<IconTrash className="h-4 w-4" />}
                         >
                             Delete
                         </Button>
                         <Button
                             size="md"
                             leftSection={
-                                <IconPlus className="w-4 h-4 min-w-4" />
+                                <IconPlus className="h-4 w-4 min-w-4" />
                             }
                         >
                             Duplicate
                         </Button>
                     </div>
-                </div>F
+                </div>
             </div>
         </div>
     );
