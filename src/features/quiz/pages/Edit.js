@@ -18,6 +18,7 @@ import {
     IconCircleFilled,
     IconSquareFilled,
     IconTrash,
+    IconChevronRight,
 } from '@tabler/icons-react';
 import { twMerge } from 'tailwind-merge';
 
@@ -176,8 +177,9 @@ function Edit(props) {
                 </div>
                 {/* COL 3 */}
                 <div className="relative flex h-full min-w-96 flex-1 flex-col justify-between gap-2 rounded-lg bg-slate-300 px-3 py-4">
-                    <div className="absolute left-0 top-1/2 translate-x-[-100%] rounded-l-md cursor-pointer bg-slate-300 px-1 py-2">
-                        <IconChevronLeft />
+                    <div className="absolute left-0 top-1/2 translate-x-[-100%] rounded-l-md cursor-pointer bg-slate-300 px-1 py-2 opacity-70 hover:opacity-100">
+                        {/* <IconChevronLeft /> */}
+                        <IconChevronRight />
                     </div>
                     <div className="flex grow flex-col gap-y-4 overflow-y-auto">
                         <Select
