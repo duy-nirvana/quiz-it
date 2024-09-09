@@ -25,6 +25,7 @@ import { twMerge } from 'tailwind-merge';
 function Edit(props) {
     const navigate = useNavigate();
     const [activeQuestionIndex, setActiveQuestionIndex] = useState(0);
+    const [collapsed, setCollapsed] = useState(false);
 
     return (
         <div className="flex h-screen min-h-0 flex-col gap-4 bg-indigo-950 p-2">
@@ -63,9 +64,9 @@ function Edit(props) {
                     </div>
                 </div>
             </div>
-            <div className="flex flex-1 gap-2 overflow-auto">
+            <div className="relative flex flex-1 gap-2 overflow-auto overflow-x-hidden">
                 {/* COL 1 */}
-                <div className="flex min-w-52 flex-col overflow-hidden rounded-lg bg-slate-300">
+                <div className="flex min-w-52 flex-col overflow-hidden rounded-lg bg-slate-300 transition-all">
                     <div className="overflow-y-auto">
                         {Array(6)
                             .fill(null)
@@ -91,7 +92,16 @@ function Edit(props) {
                     </div>
                 </div>
                 {/* COL 2 */}
-                <div className="flex h-full flex-auto flex-col justify-between gap-16 overflow-y-scroll rounded-lg bg-slate-400 px-6 py-10">
+                <div
+                    className={twMerge(
+                        'flex h-full flex-grow flex-col justify-between gap-16 overflow-y-scroll rounded-lg bg-slate-400 px-6 py-10 transition-all'
+                    )}
+                    style={
+                        {
+                            // flexGrow: !collapsed ? 1 : 1,
+                        }
+                    }
+                >
                     <Input
                         placeholder="Your question"
                         size="lg"
@@ -176,10 +186,18 @@ function Edit(props) {
                     </div>
                 </div>
                 {/* COL 3 */}
-                <div className="relative flex h-full min-w-96 flex-1 flex-col justify-between gap-2 rounded-lg bg-slate-300 px-3 py-4">
-                    <div className="absolute left-0 top-1/2 translate-x-[-100%] rounded-l-md cursor-pointer bg-slate-300 px-1 py-2 opacity-70 hover:opacity-100">
-                        {/* <IconChevronLeft /> */}
-                        <IconChevronRight />
+                <div
+                    className={twMerge(
+                        'relative flex h-full min-w-96 flex-col justify-between gap-2 rounded-lg bg-slate-300 px-3 py-4 transition-all',
+                        collapsed &&
+                            'absolute right-0 translate-x-full transition-all'
+                    )}
+                >
+                    <div
+                        className="absolute left-0 top-1/2 translate-x-[-100%] translate-y-[-50%] cursor-pointer rounded-l-md bg-slate-300 px-1 py-2 opacity-70 hover:opacity-100"
+                        onClick={() => setCollapsed(!collapsed)}
+                    >
+                        {collapsed ? <IconChevronLeft /> : <IconChevronRight />}
                     </div>
                     <div className="flex grow flex-col gap-y-4 overflow-y-auto">
                         <Select
