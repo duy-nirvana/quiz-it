@@ -21,230 +21,243 @@ import {
     IconChevronRight,
 } from '@tabler/icons-react';
 import { twMerge } from 'tailwind-merge';
+import QuizPreview from '../../../components/QuizPreview';
 
 function Edit(props) {
     const navigate = useNavigate();
     const [activeQuestionIndex, setActiveQuestionIndex] = useState(0);
     const [collapsed, setCollapsed] = useState(false);
+    const [openPreview, setOpenPreview] = useState(false);
 
     return (
-        <div className="flex h-screen min-h-0 flex-col gap-4 bg-indigo-950 p-2">
-            <div className="flex justify-between">
-                <div className="flex items-center gap-4">
-                    <Badge
-                        radius="sm"
-                        variant="gradient"
-                        gradient={{ from: 'cyan', to: 'violet', deg: 130 }}
-                        className="h-fit cursor-pointer px-3 py-2 text-2xl"
-                        onClick={() => navigate('/')}
-                    >
-                        <p className="font-bold">QUIZ IT</p>
-                    </Badge>
+        <div className="relative bg-indigo-950 h-screen min-h-0">
+            <div className="flex h-full flex-col gap-4 p-2">
+                <div className="flex justify-between">
+                    <div className="flex items-center gap-4">
+                        <Badge
+                            radius="sm"
+                            variant="gradient"
+                            gradient={{ from: 'cyan', to: 'violet', deg: 130 }}
+                            className="h-fit cursor-pointer px-3 py-2 text-2xl"
+                            onClick={() => navigate('/')}
+                        >
+                            <p className="font-bold">QUIZ IT</p>
+                        </Badge>
 
-                    <Input
-                        size="md"
-                        placeholder="Enter title"
-                        className="w-96 font-bold"
-                    />
-                </div>
-                <div className="flex gap-4">
-                    <Button
-                        size="md"
-                        leftSection={<IconEye className="h-5 w-5" />}
-                        color="cyan"
-                    >
-                        Preview
-                    </Button>
-                    <Divider orientation="vertical" color="gray" size="sm" />
-                    <div className="flex gap-2">
-                        <Button size="md" variant="default">
-                            Exit
-                        </Button>
-                        <Button size="md">Save</Button>
+                        <Input
+                            size="md"
+                            placeholder="Enter title"
+                            className="w-96 font-bold"
+                        />
                     </div>
-                </div>
-            </div>
-            <div className="relative flex flex-1 gap-2 overflow-auto overflow-x-hidden">
-                {/* COL 1 */}
-                <div className="flex min-w-52 flex-col overflow-hidden rounded-lg bg-slate-300 transition-all">
-                    <div className="overflow-y-auto">
-                        {Array(6)
-                            .fill(null)
-                            .map((item, index) => (
-                                <SlidePreview
-                                    className={'p-2 pr-4'}
-                                    index={index}
-                                    isActive={activeQuestionIndex === index}
-                                    setActive={setActiveQuestionIndex}
-                                    error
-                                />
-                            ))}
-                    </div>
-                    <div className="bg-slate-300 py-4 text-center">
+                    <div className="flex gap-4">
                         <Button
                             size="md"
-                            leftSection={
-                                <IconPlus className="h-4 w-4 min-w-4" />
-                            }
+                            leftSection={<IconEye className="h-5 w-5" />}
+                            color="cyan"
+                            onClick={() => setOpenPreview(true)}
                         >
-                            Add question
+                            Preview
                         </Button>
-                    </div>
-                </div>
-                {/* COL 2 */}
-                <div
-                    className={twMerge(
-                        'flex h-full flex-grow flex-col justify-between gap-16 overflow-y-scroll rounded-lg bg-slate-400 px-6 py-10 transition-all'
-                    )}
-                    style={
-                        {
-                            // flexGrow: !collapsed ? 1 : 1,
-                        }
-                    }
-                >
-                    <Input
-                        placeholder="Your question"
-                        size="lg"
-                        className="font-semibold"
-                        classNames={{
-                            input: 'h-16 text-center',
-                        }}
-                    />
-                    <div className="flex justify-center">
-                        <div className="flex h-80 w-1/2 justify-center rounded-lg bg-white">
-                            <img
-                                src="https://placehold.co/600x400/EEE/31343C"
-                                className="object-fit h-full"
-                            />
-                        </div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="flex items-center gap-4 overflow-hidden rounded-lg bg-red-500 pl-4">
-                            <IconTriangleFilled className="h-8 w-8 text-white" />
-                            <Input
-                                placeholder="Add answer"
-                                size="xl"
-                                variant="unstyled"
-                                className="grow font-semibold"
-                                classNames={{
-                                    wrapper: 'border-none ',
-                                    input: twMerge(
-                                        'h-28 text-black rounded-none',
-                                        true && 'text-white'
-                                    ),
-                                }}
-                            />
-                        </div>
-                        <div className="flex items-center gap-4 overflow-hidden rounded-lg bg-sky-600 pl-4">
-                            <IconSquareRotatedFilled className="h-8 w-8 text-white" />
-                            <Input
-                                placeholder="Add answer"
-                                size="xl"
-                                variant="unstyled"
-                                className="grow font-semibold"
-                                classNames={{
-                                    wrapper: 'border-none ',
-                                    input: twMerge(
-                                        'h-28 text-black rounded-none',
-                                        true && 'text-white'
-                                    ),
-                                }}
-                            />
-                        </div>
-                        <div className="flex items-center gap-4 overflow-hidden rounded-lg bg-yellow-600 pl-4">
-                            <IconCircleFilled className="h-8 w-8 text-white" />
-                            <Input
-                                placeholder="Add answer"
-                                size="xl"
-                                variant="unstyled"
-                                className="grow font-semibold"
-                                classNames={{
-                                    wrapper: 'border-none ',
-                                    input: twMerge(
-                                        'h-28 text-black rounded-none',
-                                        true && 'text-white'
-                                    ),
-                                }}
-                            />
-                        </div>
-                        <div className="flex items-center gap-4 overflow-hidden rounded-lg bg-green-700 pl-4">
-                            <IconSquareFilled className="h-8 w-8 text-white" />
-                            <Input
-                                placeholder="Add answer"
-                                size="xl"
-                                variant="unstyled"
-                                className="grow font-semibold"
-                                classNames={{
-                                    wrapper: 'border-none ',
-                                    input: twMerge(
-                                        'h-28 text-black rounded-none',
-                                        true && 'text-white'
-                                    ),
-                                }}
-                            />
+                        <Divider
+                            orientation="vertical"
+                            color="gray"
+                            size="sm"
+                        />
+                        <div className="flex gap-2">
+                            <Button size="md" variant="default">
+                                Exit
+                            </Button>
+                            <Button size="md">Save</Button>
                         </div>
                     </div>
                 </div>
-                {/* COL 3 */}
-                <div
-                    className={twMerge(
-                        'relative flex h-full min-w-96 flex-col justify-between gap-2 rounded-lg bg-slate-300 px-3 py-4 transition-all',
-                        collapsed &&
-                            'absolute right-0 translate-x-full transition-all'
-                    )}
-                >
+                <div className="relative flex flex-1 gap-2 overflow-x-hidden">
+                    {/* COL 1 */}
+                    <div className="flex min-w-52 flex-col overflow-hidden rounded-lg bg-slate-300 transition-all">
+                        <div className="overflow-y-auto">
+                            {Array(6)
+                                .fill(null)
+                                .map((item, index) => (
+                                    <SlidePreview
+                                        className={'p-2 pr-4'}
+                                        index={index}
+                                        isActive={activeQuestionIndex === index}
+                                        setActive={setActiveQuestionIndex}
+                                        error
+                                    />
+                                ))}
+                        </div>
+                        <div className="bg-slate-300 py-4 text-center">
+                            <Button
+                                size="md"
+                                leftSection={
+                                    <IconPlus className="h-4 w-4 min-w-4" />
+                                }
+                            >
+                                Add question
+                            </Button>
+                        </div>
+                    </div>
+                    {/* COL 2 */}
                     <div
-                        className="absolute left-0 top-1/2 translate-x-[-100%] translate-y-[-50%] cursor-pointer rounded-l-md bg-slate-300 px-1 py-2 opacity-70 hover:opacity-100"
-                        onClick={() => setCollapsed(!collapsed)}
+                        className={twMerge(
+                            'flex h-full grow flex-col justify-between gap-16 overflow-y-scroll rounded-lg bg-slate-400 px-6 py-10 transition-all duration-500'
+                        )}
                     >
-                        {collapsed ? <IconChevronLeft /> : <IconChevronRight />}
+                        <Input
+                            placeholder="Your question"
+                            size="lg"
+                            className="font-semibold"
+                            classNames={{
+                                input: 'h-16 text-center',
+                            }}
+                        />
+                        <div className="flex justify-center">
+                            <div className="flex h-80 w-1/2 justify-center rounded-lg bg-white">
+                                <img
+                                    src="https://placehold.co/600x400/EEE/31343C"
+                                    className="object-fit h-full"
+                                />
+                            </div>
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="flex items-center gap-4 overflow-hidden rounded-lg bg-red-500 pl-4">
+                                <IconTriangleFilled className="h-8 w-8 text-white" />
+                                <Input
+                                    placeholder="Add answer"
+                                    size="xl"
+                                    variant="unstyled"
+                                    className="grow font-semibold"
+                                    classNames={{
+                                        wrapper: 'border-none ',
+                                        input: twMerge(
+                                            'h-28 text-black rounded-none',
+                                            true && 'text-white'
+                                        ),
+                                    }}
+                                />
+                            </div>
+                            <div className="flex items-center gap-4 overflow-hidden rounded-lg bg-sky-600 pl-4">
+                                <IconSquareRotatedFilled className="h-8 w-8 text-white" />
+                                <Input
+                                    placeholder="Add answer"
+                                    size="xl"
+                                    variant="unstyled"
+                                    className="grow font-semibold"
+                                    classNames={{
+                                        wrapper: 'border-none ',
+                                        input: twMerge(
+                                            'h-28 text-black rounded-none',
+                                            true && 'text-white'
+                                        ),
+                                    }}
+                                />
+                            </div>
+                            <div className="flex items-center gap-4 overflow-hidden rounded-lg bg-yellow-600 pl-4">
+                                <IconCircleFilled className="h-8 w-8 text-white" />
+                                <Input
+                                    placeholder="Add answer"
+                                    size="xl"
+                                    variant="unstyled"
+                                    className="grow font-semibold"
+                                    classNames={{
+                                        wrapper: 'border-none ',
+                                        input: twMerge(
+                                            'h-28 text-black rounded-none',
+                                            true && 'text-white'
+                                        ),
+                                    }}
+                                />
+                            </div>
+                            <div className="flex items-center gap-4 overflow-hidden rounded-lg bg-green-700 pl-4">
+                                <IconSquareFilled className="h-8 w-8 text-white" />
+                                <Input
+                                    placeholder="Add answer"
+                                    size="xl"
+                                    variant="unstyled"
+                                    className="grow font-semibold"
+                                    classNames={{
+                                        wrapper: 'border-none ',
+                                        input: twMerge(
+                                            'h-28 text-black rounded-none',
+                                            true && 'text-white'
+                                        ),
+                                    }}
+                                />
+                            </div>
+                        </div>
                     </div>
-                    <div className="flex grow flex-col gap-y-4 overflow-y-auto">
-                        <Select
-                            label={<p>Question type</p>}
-                            placeholder="Pick value"
-                            data={['Quiz', 'True or False']}
-                            size="lg"
-                        />
-                        <Select
-                            label={<p>Time limit</p>}
-                            placeholder="Pick value"
-                            data={['5s', '10s', '15s', '20s']}
-                            size="lg"
-                        />
-                        <Select
-                            label={<p>Point</p>}
-                            placeholder="Pick value"
-                            data={['Standard', 'Double point', 'No point']}
-                            size="lg"
-                        />
-                        <Select
-                            label={<p>Answers options</p>}
-                            placeholder="Pick value"
-                            data={['Single select', 'Multi select']}
-                            size="lg"
-                        />
-                    </div>
-                    <div className="flex justify-center gap-3 bg-slate-300 py-4">
-                        <Button
-                            size="md"
-                            variant="light"
-                            color="red"
-                            leftSection={<IconTrash className="h-4 w-4" />}
+                    {/* COL 3 */}
+                    <div
+                        className={twMerge(
+                            'relative flex h-full basis-96 flex-col justify-between gap-2 rounded-lg bg-slate-300 px-3 py-4 transition-all duration-300',
+                            collapsed &&
+                                'absolute right-0 translate-x-full transition-all'
+                        )}
+                    >
+                        <div
+                            className="absolute left-0 top-1/2 -translate-x-full -translate-y-1/2 cursor-pointer rounded-l-md bg-slate-300 px-1 py-2 opacity-70 hover:opacity-100"
+                            onClick={() => setCollapsed(!collapsed)}
                         >
-                            Delete
-                        </Button>
-                        <Button
-                            size="md"
-                            leftSection={
-                                <IconPlus className="h-4 w-4 min-w-4" />
+                            {collapsed ? (
+                                <IconChevronLeft />
+                            ) : (
+                                <IconChevronRight />
+                            )}
+                        </div>
+                        <div className="flex grow flex-col gap-y-4 overflow-y-auto">
+                            <Select
+                                label={<p>Question type</p>}
+                                placeholder="Pick value"
+                                data={['Quiz', 'True or False']}
+                                size="lg"
+                            />
+                            <Select
+                                label={<p>Time limit</p>}
+                                placeholder="Pick value"
+                                data={['5s', '10s', '15s', '20s']}
+                                size="lg"
+                            />
+                            <Select
+                                label={<p>Point</p>}
+                                placeholder="Pick value"
+                                data={['Standard', 'Double point', 'No point']}
+                                size="lg"
+                            />
+                            <Select
+                                label={<p>Answers options</p>}
+                                placeholder="Pick value"
+                                data={['Single select', 'Multi select']}
+                                size="lg"
+                            />
+                        </div>
+                        <div
+                            className={
+                                'flex justify-center gap-3 bg-slate-300 py-4'
                             }
                         >
-                            Duplicate
-                        </Button>
+                            <Button
+                                size="md"
+                                variant="light"
+                                color="red"
+                                leftSection={<IconTrash className="h-4 w-4" />}
+                            >
+                                Delete
+                            </Button>
+                            <Button
+                                size="md"
+                                leftSection={
+                                    <IconPlus className="h-4 w-4 min-w-4" />
+                                }
+                            >
+                                Duplicate
+                            </Button>
+                        </div>
                     </div>
                 </div>
             </div>
+            <QuizPreview open={openPreview} onClose={() => setOpenPreview(false)} />
         </div>
     );
 }

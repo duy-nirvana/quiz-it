@@ -8,6 +8,7 @@ import '@mantine/core/styles.css';
 const theme = createTheme({
     fontFamily: 'Lexend, sans-serif',
     fontFamilyMonospace: 'Lexend, Courier, monospace',
+    fontSmoothing: true,
     headings: { fontFamily: 'Lexend, Greycliff CF, sans-serif' },
 });
 
