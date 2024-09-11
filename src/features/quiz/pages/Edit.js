@@ -30,7 +30,7 @@ function Edit(props) {
     const [openPreview, setOpenPreview] = useState(false);
 
     return (
-        <div className="relative bg-indigo-950 h-screen min-h-0">
+        <div className="relative h-screen min-h-0 bg-indigo-950">
             <div className="flex h-full flex-col gap-4 p-2">
                 <div className="flex justify-between">
                     <div className="flex items-center gap-4">
@@ -257,7 +257,11 @@ function Edit(props) {
                     </div>
                 </div>
             </div>
-            <QuizPreview open={openPreview} onClose={() => setOpenPreview(false)} />
+            <QuizPreview
+                open={openPreview}
+                onClose={() => setOpenPreview(false)}
+                className="p-2"
+            />
         </div>
     );
 }
