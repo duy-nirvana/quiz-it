@@ -30,7 +30,7 @@ function Edit(props) {
     const [openPreview, setOpenPreview] = useState(false);
 
     return (
-        <div className="relative h-screen min-h-0 bg-indigo-950">
+        <div className="relative h-screen min-h-0 overflow-hidden bg-indigo-950">
             <div className="flex h-full flex-col gap-4 p-2">
                 <div className="flex justify-between">
                     <div className="flex items-center gap-4">
@@ -72,7 +72,7 @@ function Edit(props) {
                         </div>
                     </div>
                 </div>
-                <div className="relative flex flex-1 gap-2 overflow-x-hidden">
+                <div className="flex w-full flex-1 flex-nowrap gap-2 overflow-x-hidden">
                     {/* COL 1 */}
                     <div className="flex min-w-52 flex-col overflow-hidden rounded-lg bg-slate-300 transition-all">
                         <div className="overflow-y-auto">
@@ -102,7 +102,9 @@ function Edit(props) {
                     {/* COL 2 */}
                     <div
                         className={twMerge(
-                            'flex h-full grow flex-col justify-between gap-16 overflow-y-scroll rounded-lg bg-slate-400 px-6 py-10 transition-all duration-500'
+                            'flex h-full flex-grow flex-col justify-between gap-16 overflow-y-scroll rounded-lg bg-slate-400 px-6 py-10 transition-all duration-300',
+                            collapsed &
+                                'w-full flex-1 transition-all duration-300'
                         )}
                     >
                         <Input
@@ -178,7 +180,7 @@ function Edit(props) {
                                     variant="unstyled"
                                     className="grow font-semibold"
                                     classNames={{
-                                        wrapper: 'border-none ',
+                                        wrapper: 'border-none',
                                         input: twMerge(
                                             'h-28 text-black rounded-none',
                                             true && 'text-white'
@@ -193,11 +195,14 @@ function Edit(props) {
                         className={twMerge(
                             'relative flex h-full basis-96 flex-col justify-between gap-2 rounded-lg bg-slate-300 px-3 py-4 transition-all duration-300',
                             collapsed &&
-                                'absolute right-0 translate-x-full transition-all'
+                                'absolute right-0 translate-x-full transition-all duration-300'
                         )}
                     >
                         <div
-                            className="absolute left-0 top-1/2 -translate-x-full -translate-y-1/2 cursor-pointer rounded-l-md bg-slate-300 px-1 py-2 opacity-70 hover:opacity-100"
+                            className={twMerge(
+                                'absolute left-0 top-1/2 -translate-x-full -translate-y-1/2 cursor-pointer rounded-l-md bg-slate-300 px-1 py-2 opacity-70 hover:opacity-100',
+                                collapsed && 'top-[calc(50%-42px+4px)]'
+                            )}
                             onClick={() => setCollapsed(!collapsed)}
                         >
                             {collapsed ? (
@@ -260,7 +265,6 @@ function Edit(props) {
             <QuizPreview
                 open={openPreview}
                 onClose={() => setOpenPreview(false)}
-                className="p-2"
             />
         </div>
     );
