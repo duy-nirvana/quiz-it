@@ -22,7 +22,27 @@ function QuizPreview({ open, onClose, children, className }) {
                         className
                     )}
                 >
-                    <div className="flex h-full w-full items-end">
+                    <div className="flex h-full w-full flex-1 flex-col justify-between">
+                        <Input
+                            placeholder="Your question"
+                            size="lg"
+                            className="font-semibold"
+                            classNames={{
+                                input: 'h-16 text-center',
+                            }}
+                        />
+                        <div>
+                            <div className="flex justify-between">
+                                <p>LEFT</p>
+                                <div className="flex h-80 w-1/2 justify-center rounded-lg bg-white">
+                                    <img
+                                        src="https://placehold.co/600x400/EEE/31343C"
+                                        className="object-fit h-full"
+                                    />
+                                </div>
+                                <p>right</p>
+                            </div>
+                        </div>
                         <div className="grid w-full grid-cols-2 gap-4">
                             <div className="flex items-center gap-4 overflow-hidden rounded-lg bg-red-500 pl-4">
                                 <IconTriangleFilled className="h-8 w-8 text-white" />
