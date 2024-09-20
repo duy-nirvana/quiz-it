@@ -7,7 +7,7 @@ function Home(props) {
 
     return (
         <>
-            <header className="fixed top-0 px-4 py-6 bg-transparent w-full">
+            <header className="fixed top-0 w-full bg-transparent px-4 py-6">
                 <div className="flex justify-end">
                     <Button
                         variant="filled"
@@ -17,16 +17,21 @@ function Home(props) {
                     >
                         Create
                     </Button>
-                    <Button variant="subtle" color="white" size="md">
+                    <Button
+                        variant="subtle"
+                        color="white"
+                        size="md"
+                        onClick={() => navigate('/auth/login')}
+                    >
                         Login
                     </Button>
                 </div>
             </header>
-            <div className="h-screen bg-indigo-950 flex flex-col justify-center items-center gap-6">
-                <p className="text-8xl text-white font-black text-center">
+            <div className="flex h-screen flex-col items-center justify-center gap-6 bg-indigo-950">
+                <p className="text-center text-8xl font-black text-white">
                     QUIZ IT
                 </p>
-                <div className="w-6 min-w-fit text-center gap-2 flex flex-col bg-indigo-800 p-6 rounded-xl">
+                <div className="flex w-6 min-w-fit flex-col gap-2 rounded-xl bg-indigo-800 p-6 text-center">
                     <Input
                         placeholder="Game PIN"
                         size="lg"

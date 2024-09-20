@@ -4,6 +4,7 @@ import {
     IconChevronLeft,
     IconChevronRight,
     IconCircleFilled,
+    IconHourglass,
     IconSquareFilled,
     IconSquareRotatedFilled,
     IconTriangleFilled,
@@ -23,24 +24,41 @@ function QuizPreview({ open, onClose, children, className }) {
                     )}
                 >
                     <div className="flex h-full w-full flex-1 flex-col justify-between">
-                        <Input
-                            placeholder="Your question"
-                            size="lg"
-                            className="font-semibold"
-                            classNames={{
-                                input: 'h-16 text-center',
-                            }}
-                        />
+                        <div className="flex justify-center">
+                            <Input
+                                placeholder="Your question"
+                                size="lg"
+                                className="w-3/4 font-semibold"
+                                classNames={{
+                                    input: 'h-16 text-center',
+                                }}
+                            />
+                        </div>
                         <div>
-                            <div className="flex justify-between">
-                                <p>LEFT</p>
+                            <div className="flex h-full items-center justify-around">
+                                <div className="flex h-32 w-32 flex-col items-center justify-center rounded-full bg-slate-400/50 p-20">
+                                    <p className="text-6xl font-bold text-white">
+                                        120
+                                    </p>
+                                </div>
                                 <div className="flex h-80 w-1/2 justify-center rounded-lg bg-white">
                                     <img
                                         src="https://placehold.co/600x400/EEE/31343C"
                                         className="object-fit h-full"
                                     />
                                 </div>
-                                <p>right</p>
+                                <div>
+                                    <div className="mb-2 flex h-32 w-32 flex-col items-center justify-center rounded-full bg-slate-400/50 p-20">
+                                        <p className="text-6xl font-bold text-white">
+                                            10
+                                        </p>
+                                    </div>
+                                    <div className="flex flex-col items-center justify-center rounded-full bg-slate-400/50 px-6 py-2">
+                                        <p className="text-lg font-bold text-white">
+                                            ANSWERS
+                                        </p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div className="grid w-full grid-cols-2 gap-4">
