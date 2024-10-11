@@ -1,4 +1,9 @@
-import { Button, Center, Input } from '@mantine/core';
+import { Button, Center, Input, Menu } from '@mantine/core';
+import {
+    IconChevronDown,
+    IconLogout2,
+    IconUserCircle,
+} from '@tabler/icons-react';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -8,7 +13,7 @@ function Home(props) {
     return (
         <>
             <header className="fixed top-0 w-full bg-transparent px-4 py-6">
-                <div className="flex justify-end">
+                <div className="flex items-center justify-end gap-2">
                     <Button
                         variant="filled"
                         color="teal"
@@ -17,14 +22,48 @@ function Home(props) {
                     >
                         Create
                     </Button>
-                    <Button
-                        variant="subtle"
-                        color="white"
-                        size="md"
-                        onClick={() => navigate('/auth/login')}
-                    >
-                        Login
-                    </Button>
+                    {!true ? (
+                        <Button
+                            variant="subtle"
+                            color="white"
+                            size="md"
+                            onClick={() => navigate('/auth/login')}
+                        >
+                            Login
+                        </Button>
+                    ) : (
+                        <Menu shadow="md" width={200} position="bottom-end">
+                            <Menu.Target>
+                                <Button
+                                    variant="subtle"
+                                    color="white"
+                                    size="md"
+                                    rightSection={
+                                        <IconChevronDown className="h-4 w-4" />
+                                    }
+                                >
+                                    Hi, Dê Núi
+                                </Button>
+                            </Menu.Target>
+                            <Menu.Dropdown>
+                                <Menu.Item
+                                    leftSection={
+                                        <IconUserCircle className="h-5 w-5" />
+                                    }
+                                >
+                                    My profile
+                                </Menu.Item>
+                                <Menu.Divider />
+                                <Menu.Item
+                                    leftSection={
+                                        <IconLogout2 className="h-5 w-5" />
+                                    }
+                                >
+                                    Log out
+                                </Menu.Item>
+                            </Menu.Dropdown>
+                        </Menu>
+                    )}
                 </div>
             </header>
             <div className="flex h-screen flex-col items-center justify-center gap-6 bg-indigo-950">
