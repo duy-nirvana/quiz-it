@@ -50,6 +50,7 @@ function Home(props) {
                                     leftSection={
                                         <IconUserCircle className="h-5 w-5" />
                                     }
+                                    onClick={() => navigate('/profile')}
                                 >
                                     My profile
                                 </Menu.Item>
