@@ -11,8 +11,8 @@ function Home(props) {
     const navigate = useNavigate();
 
     return (
-        <>
-            <header className="fixed top-0 w-full bg-transparent px-4 py-6">
+        <div className="flex flex-grow flex-col justify-center">
+            {/* <header className="w-full bg-transparent px-4 py-6">
                 <div className="flex items-center justify-end gap-2">
                     <Button
                         variant="filled"
@@ -66,8 +66,8 @@ function Home(props) {
                         </Menu>
                     )}
                 </div>
-            </header>
-            <div className="flex h-screen flex-col items-center justify-center gap-6 bg-indigo-950">
+            </header> */}
+            <div className="flex flex-col items-center justify-center gap-6">
                 <p className="text-center text-8xl font-black text-white">
                     QUIZ IT
                 </p>
@@ -89,7 +89,7 @@ function Home(props) {
                     </Button>
                 </div>
             </div>
-        </>
+        </div>
     );
 }
 

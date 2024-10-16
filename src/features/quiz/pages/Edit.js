@@ -132,7 +132,7 @@ function Edit(props) {
                                     variant="unstyled"
                                     className="grow font-semibold"
                                     classNames={{
-                                        wrapper: 'border-none ',
+                                        wrapper: 'border-none',
                                         input: twMerge(
                                             'h-28 text-black rounded-none',
                                             true && 'text-white'

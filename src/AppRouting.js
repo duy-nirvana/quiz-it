@@ -12,10 +12,10 @@ function AppRouting(props) {
         <Routes>
             <Route path="/" element={<MainLayout />}>
                 <Route path="/" element={<Home />} />
-                <Route path="/quiz/*" element={<QuizFeature />} />
-                <Route path="/auth/*" element={<Auth />} />
-                <Route path="/profile/*" element={<ProfileFeature />} />
+                <Route path="profile/*" element={<ProfileFeature />} />
             </Route>
+            <Route path="auth/*" element={<Auth />} />
+            <Route path="quiz/*" element={<QuizFeature />} />
         </Routes>
     );
 }
