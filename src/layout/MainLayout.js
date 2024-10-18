@@ -6,6 +6,7 @@ import {
     Group,
     Menu,
     UnstyledButton,
+    rem,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import {
@@ -28,8 +29,9 @@ function MainLayout({ children }) {
                 breakpoint: 'sm',
                 collapsed: { desktop: true, mobile: !opened },
             }}
+            padding="md"
         >
-            <AppShell.Header className="border-none bg-indigo-950">
+            <AppShell.Header className="bg-indigo-950" withBorder={false}>
                 <Group h="100%" p="md">
                     <Burger
                         opened={opened}
