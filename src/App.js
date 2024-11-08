@@ -4,6 +4,7 @@ import { Suspense } from 'react';
 import AppRouting from './AppRouting';
 import { MantineProvider, createTheme } from '@mantine/core';
 import '@mantine/core/styles.css';
+import { Notifications } from '@mantine/notifications';
 
 const theme = createTheme({
     fontFamily: 'Lexend, sans-serif',
@@ -14,13 +15,18 @@ const theme = createTheme({
 
 function App() {
     return (
-        <div className="App">
-            <Suspense fallback={<div>Loading...</div>}>
-                <MantineProvider theme={theme}>
+        <MantineProvider theme={theme}>
+            <Notifications />
+            <div className="App">
+                <Suspense
+                    fallback={
+                        <div className="h-screen place-content-center bg-transparent"></div>
+                    }
+                >
                     <AppRouting />
-                </MantineProvider>
-            </Suspense>
-        </div>
+                </Suspense>
+            </div>
+        </MantineProvider>
     );
 }
 

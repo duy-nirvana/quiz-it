@@ -14,7 +14,7 @@ export function setupAxios(axios) {
     axios.interceptors.request.use(
         (config) => {
             // Modify request config (e.g., add auth token to headers)
-            const token = localStorage.getItem('authToken'); // Example: getting token from localStorage
+            const token = localStorage.getItem('access_token'); // Example: getting token from localStorage
             if (token) {
                 config.headers.Authorization = `Bearer ${token}`;
             }
