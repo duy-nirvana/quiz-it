@@ -7,7 +7,11 @@
 //     },
 // });
 
-export function setupAxios(axios) {
+import { notifications, showNotification } from '@mantine/notifications';
+import { showToast } from 'helpers';
+import { clearAuthData } from 'store/auth/authSlice';
+
+export function setupAxios(axios, store) {
     axios.defaults.baseURL = process.env.REACT_APP_API_URL;
     axios.defaults.headers = { 'Content-Type': 'application/json' };
 
@@ -26,9 +30,15 @@ export function setupAxios(axios) {
     axios.interceptors.response.use(
         (response) => response.data,
         (error) => {
-            // Handle response errors globally
-            if (error.response && error.response.status === 401) {
+            const response = error.response;
+            switch (response.status) {
                 // Handle unauthorized errors, for example, by redirecting to login
+                case 401:
+                    store.dispatch(clearAuthData());
+                    window.location.href = '/auth/login';
+                    break;
+                default:
+                    break;
             }
             return Promise.reject(error);
         }

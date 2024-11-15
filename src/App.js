@@ -1,10 +1,15 @@
-import logo from './logo.svg';
-import './App.css';
-import { Suspense } from 'react';
-import AppRouting from './AppRouting';
 import { MantineProvider, createTheme } from '@mantine/core';
 import '@mantine/core/styles.css';
-import { Notifications } from '@mantine/notifications';
+import {
+    Notifications,
+    notifications,
+    showNotification,
+} from '@mantine/notifications';
+import { Suspense } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
+import './App.css';
+import AppRouting from './AppRouting';
+import { showToast } from 'helpers';
 
 const theme = createTheme({
     fontFamily: 'Lexend, sans-serif',
@@ -14,19 +19,44 @@ const theme = createTheme({
 });
 
 function App() {
-    return (
-        <MantineProvider theme={theme}>
-            <Notifications />
-            <div className="App">
-                <Suspense
-                    fallback={
-                        <div className="h-screen place-content-center bg-transparent"></div>
-                    }
-                >
-                    <AppRouting />
-                </Suspense>
+    function ErrorFallback({ error, resetErrorBoundary }) {
+        // Display error as a toast notification
+        // showNotification({
+        //     title: 'An error occurred',
+        //     message: error.message,
+        //     color: 'red',
+        // });
+
+        return (
+            <div role="alert">
+                <p>Something went wrong:</p>
+                <pre>{error.message}</pre>
+                <Button onClick={resetErrorBoundary}>Try again</Button>
             </div>
-        </MantineProvider>
+        );
+    }
+
+    return (
+        <ErrorBoundary
+            FallbackComponent={ErrorFallback}
+            onError={(error) => {
+                // Log or perform additional actions on error
+                console.error(error);
+            }}
+        >
+            <MantineProvider theme={theme}>
+                <Notifications />
+                <div className="App">
+                    <Suspense
+                        fallback={
+                            <div className="h-screen place-content-center bg-transparent"></div>
+                        }
+                    >
+                        <AppRouting />
+                    </Suspense>
+                </div>
+            </MantineProvider>
+        </ErrorBoundary>
     );
 }
 

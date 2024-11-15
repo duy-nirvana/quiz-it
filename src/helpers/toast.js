@@ -11,6 +11,7 @@ export const showToast = ({ type, title, message, ...props }) => {
         color: COLOR_TYPE[type],
         title,
         message,
+        autoClose: 3000,
         ...props,
     });
 };

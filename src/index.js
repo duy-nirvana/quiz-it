@@ -13,7 +13,7 @@ import { store } from './store';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
-setupAxios(axios);
+setupAxios(axios, store);
 
 root.render(
     <Provider store={store}>

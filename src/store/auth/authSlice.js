@@ -1,13 +1,19 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { fetchLogin } from './authThunk';
+import { deleteCookie, getCookie, setCookie } from 'utils';
 
 const authSlice = createSlice({
     name: 'auth',
     initialState: {
         loadingLogin: 'idle',
-        access_token: localStorage.getItem('access_token') || null,
+        access_token: getCookie('access_token') || null,
     },
-    reducers: {},
+    reducers: {
+        clearAuthData: (state) => {
+            state.access_token = null;
+            deleteCookie('access_token');
+        },
+    },
     extraReducers: (builder) => {
         builder
             .addCase(fetchLogin.pending, (state, action) => {
@@ -18,7 +24,7 @@ const authSlice = createSlice({
                 state.loadingLogin = 'idle';
                 state.access_token = access_token;
 
-                localStorage.setItem('access_token', access_token);
+                setCookie('access_token', access_token, { path: '/' });
             })
             .addCase(fetchLogin.rejected, (state, action) => {
                 state.loadingLogin = 'idle';
@@ -26,6 +32,8 @@ const authSlice = createSlice({
     },
 });
 
-const { action, reducer } = authSlice;
+const { actions, reducer } = authSlice;
+
+export const { clearAuthData } = actions;
 
 export default reducer;

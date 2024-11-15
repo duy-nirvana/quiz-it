@@ -10,10 +10,14 @@ import {
     IconTriangleFilled,
     IconX,
 } from '@tabler/icons-react';
+import AnswertItem from 'components/AnswerItem';
 import React from 'react';
+import { useForm } from 'react-hook-form';
 import { twMerge } from 'tailwind-merge';
 
 function QuizPreview({ open, onClose, children, className }) {
+    const form = useForm({});
+
     return (
         <>
             {open && (
@@ -62,70 +66,34 @@ function QuizPreview({ open, onClose, children, className }) {
                             </div>
                         </div>
                         <div className="grid w-full grid-cols-2 gap-4">
-                            <div className="flex items-center gap-4 overflow-hidden rounded-lg bg-red-500 pl-4">
-                                <IconTriangleFilled className="h-8 w-8 text-white" />
-                                <Input
-                                    placeholder="Add answer"
-                                    size="xl"
-                                    variant="unstyled"
-                                    className="grow font-semibold"
-                                    classNames={{
-                                        wrapper: 'border-none ',
-                                        input: twMerge(
-                                            'h-28 text-black rounded-none',
-                                            true && 'text-white'
-                                        ),
-                                    }}
-                                />
-                            </div>
-                            <div className="flex items-center gap-4 overflow-hidden rounded-lg bg-sky-600 pl-4">
-                                <IconSquareRotatedFilled className="h-8 w-8 text-white" />
-                                <Input
-                                    placeholder="Add answer"
-                                    size="xl"
-                                    variant="unstyled"
-                                    className="grow font-semibold"
-                                    classNames={{
-                                        wrapper: 'border-none ',
-                                        input: twMerge(
-                                            'h-28 text-black rounded-none',
-                                            true && 'text-white'
-                                        ),
-                                    }}
-                                />
-                            </div>
-                            <div className="flex items-center gap-4 overflow-hidden rounded-lg bg-yellow-600 pl-4">
-                                <IconCircleFilled className="h-8 w-8 text-white" />
-                                <Input
-                                    placeholder="Add answer"
-                                    size="xl"
-                                    variant="unstyled"
-                                    className="grow font-semibold"
-                                    classNames={{
-                                        wrapper: 'border-none ',
-                                        input: twMerge(
-                                            'h-28 text-black rounded-none',
-                                            true && 'text-white'
-                                        ),
-                                    }}
-                                />
-                            </div>
-                            <div className="flex items-center gap-4 overflow-hidden rounded-lg bg-green-700 pl-4">
-                                <IconSquareFilled className="h-8 w-8 text-white" />
-                                <Input
-                                    placeholder="Add answer"
-                                    size="xl"
-                                    variant="unstyled"
-                                    className="grow font-semibold"
-                                    classNames={{
-                                        wrapper: 'border-none',
-                                        input: twMerge(
-                                            'h-28 text-black rounded-none',
-                                            true && 'text-white'
-                                        ),
-                                    }}
-                                />
-                            </div>
+                            <AnswertItem
+                                form={form}
+                                name="answer_1"
+                                icon={IconTriangleFilled}
+                                color="bg-red-500"
+                                disabled
+                            />
+                            <AnswertItem
+                                form={form}
+                                name="answer_2"
+                                icon={IconSquareRotatedFilled}
+                                color="bg-sky-600"
+                                disabled
+                            />
+                            <AnswertItem
+                                form={form}
+                                name="answer_3"
+                                icon={IconSquareRotatedFilled}
+                                color="bg-yellow-600"
+                                disabled
+                            />
+                            <AnswertItem
+                                form={form}
+                                name="answer_4"
+                                icon={IconSquareFilled}
+                                color="bg-green-700"
+                                disabled
+                            />
                         </div>
                     </div>
                     <div className="absolute bottom-2 left-1/2 -translate-x-1/2">

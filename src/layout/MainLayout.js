@@ -15,11 +15,22 @@ import {
     IconUserCircle,
 } from '@tabler/icons-react';
 import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Outlet, useNavigate } from 'react-router-dom';
+import { clearAuthData } from 'store/auth/authSlice';
+import { getCookie } from 'utils';
 
 function MainLayout({ children }) {
+    const dispath = useDispatch();
     const navigate = useNavigate();
+    const { auth } = useSelector((state) => state);
     const [opened, { toggle }] = useDisclosure();
+
+    console.log({ auth });
+    const handleLogout = () => {
+        navigate('/');
+        dispath(clearAuthData());
+    };
 
     return (
         <AppShell
@@ -62,7 +73,7 @@ function MainLayout({ children }) {
                             >
                                 Create
                             </Button>
-                            {!true ? (
+                            {!auth.access_token ? (
                                 <Button
                                     variant="subtle"
                                     color="white"
@@ -103,6 +114,7 @@ function MainLayout({ children }) {
                                             leftSection={
                                                 <IconLogout2 className="h-5 w-5" />
                                             }
+                                            onClick={handleLogout}
                                         >
                                             Log out
                                         </Menu.Item>
