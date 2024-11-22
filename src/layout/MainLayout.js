@@ -14,22 +14,30 @@ import {
     IconLogout2,
     IconUserCircle,
 } from '@tabler/icons-react';
-import React from 'react';
+import React, { useEffect, useLayoutEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { clearAuthData } from 'store/auth/authSlice';
+import { clearPersonalData } from 'store/personal/personalSlice';
+import { fetchPersonal } from 'store/personal/personalThunk';
 import { getCookie } from 'utils';
 
 function MainLayout({ children }) {
-    const dispath = useDispatch();
+    const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { auth } = useSelector((state) => state);
+    const { auth, personal } = useSelector((state) => state);
     const [opened, { toggle }] = useDisclosure();
 
-    console.log({ auth });
+    useEffect(() => {
+        if (auth.access_token && !personal.profile) {
+            dispatch(fetchPersonal());
+        }
+    }, []);
+
     const handleLogout = () => {
         navigate('/');
-        dispath(clearAuthData());
+        dispatch(clearAuthData());
+        dispatch(clearPersonalData());
     };
 
     return (
@@ -97,7 +105,7 @@ function MainLayout({ children }) {
                                                 <IconChevronDown className="h-4 w-4" />
                                             }
                                         >
-                                            Hi, Dê Núi
+                                            Hi, {personal.profile?.username}
                                         </Button>
                                     </Menu.Target>
                                     <Menu.Dropdown>

@@ -11,13 +11,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchLogin } from 'store/auth/authThunk';
 import { notifications } from '@mantine/notifications';
 import { showToast } from 'helpers';
+import { fetchPersonal } from 'store/personal/personalThunk';
 
 function Login(props) {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const auth = useSelector((state) => state.auth);
-
-    console.log({ auth });
 
     const form = useForm({
         resolver: yupResolver(

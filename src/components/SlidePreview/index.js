@@ -10,9 +10,10 @@ import { ActionIcon, Tooltip } from '@mantine/core';
 import { twMerge } from 'tailwind-merge';
 
 function SlidePreview({
+    form,
     title = 'Quiz',
     className,
-    question,
+    questions,
     index,
     isActive,
     setActive = () => {},
@@ -31,7 +32,7 @@ function SlidePreview({
             >
                 <div
                     className={twMerge(
-                        'self-end flex flex-col opacity-0 group-hover:opacity-100',
+                        'flex flex-col self-end opacity-0 group-hover:opacity-100',
                         isActive && 'opacity-100'
                     )}
                 >
@@ -47,11 +48,11 @@ function SlidePreview({
                             aria-label="copy-icon"
                             radius="xl"
                             color="blue"
-                            className="mb-1 icon"
+                            className="icon mb-1"
                             onClick={(e) => e.stopPropagation()}
                             disabled={disabled}
                         >
-                            <IconCopy className="w-4 h-4" />
+                            <IconCopy className="h-4 w-4" />
                         </ActionIcon>
                     </Tooltip>
                     <Tooltip
@@ -66,36 +67,39 @@ function SlidePreview({
                             aria-label="delete-icon"
                             radius="xl"
                             color="red"
-                            className="mb-1 icon"
+                            className="icon mb-1"
                             onClick={(e) => e.stopPropagation()}
-                            disabled={disabled}
+                            disabled={disabled || questions.length <= 1}
                         >
-                            <IconTrash className="w-4 h-4" />
+                            <IconTrash className="h-4 w-4" />
                         </ActionIcon>
                     </Tooltip>
                 </div>
-                <div className="grow">
+                <div className="w-44">
                     <p className="text-sm font-semibold">{title}</p>
                     <div
                         className={twMerge(
-                            'bg-white p-2 w-full rounded-lg flex flex-col items-center border gap-2 border-slate-400 ',
+                            'flex flex-shrink flex-col items-center gap-2 truncate rounded-lg border border-slate-400 bg-white p-2',
                             !isActive &&
-                                'group-hover:outline group-hover:outline-1 outline-slate-600',
+                                'outline-slate-600 group-hover:outline group-hover:outline-1',
                             isActive &&
-                                'outline outline-1 outline-sky-500 border-sky-500',
+                                'border-sky-500 outline outline-1 outline-sky-500',
                             error && 'relative'
                         )}
                     >
-                        <p className="text-sm">Question??</p>
-                        <div className="flex items-center justify-center relative w-full">
-                            <div className="border-slate-200 rounded-full w-6 h-6 min-w-6 flex justify-center items-center font-semibold border-2 absolute left-0">
+                        <p className="truncate text-sm">
+                            {form.getValues(`questions.${index}.text`) ??
+                                'Question'}
+                        </p>
+                        <div className="relative flex w-full items-center justify-center">
+                            <div className="absolute left-0 flex h-6 w-6 min-w-6 items-center justify-center rounded-full border-2 border-slate-200 font-semibold">
                                 <p className="text-xs text-slate-400">10</p>
                             </div>
                             <div className="border border-dashed px-4 py-2">
-                                <IconPhoto className="w-4 h-4 min-w-4" />
+                                <IconPhoto className="h-4 w-4 min-w-4" />
                             </div>
                         </div>
-                        <div className="grid grid-cols-2 w-full gap-1 grow">
+                        <div className="grid w-full grow grid-cols-2 gap-1">
                             <div className="answer-item selected"></div>
                             <div className="answer-item"></div>
                             <div className="answer-item"></div>
@@ -109,7 +113,7 @@ function SlidePreview({
                                 offset={2}
                                 className="!bg-red-600"
                             >
-                                <div className="w-6 h-6 absolute right-0 translate-x-1/2 top-1/2 translate-y-[-50%] bg-white rounded-full">
+                                <div className="absolute right-0 top-1/2 h-6 w-6 translate-x-1/2 translate-y-[-50%] rounded-full bg-white">
                                     <IconAlertCircleFilled className="text-red-600" />
                                 </div>
                             </Tooltip>

@@ -1,2 +1,2 @@
-export * from './topicApi';
+export * from './quizApi';
 export * from './authApi';

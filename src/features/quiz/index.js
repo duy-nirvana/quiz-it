@@ -7,6 +7,7 @@ function QuizFeature(props) {
     return (
         <Routes>
             <Route index element={<Edit />} />
+            <Route path="/:id" element={<Edit />} />
             <Route path="*" element={<>Error</>} />
         </Routes>
     );

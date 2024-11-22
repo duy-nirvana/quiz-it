@@ -1,11 +1,12 @@
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
 
+const MainLayout = React.lazy(() => import('./layout/MainLayout'));
+
 const Auth = React.lazy(() => import('./features/auth'));
 const Home = React.lazy(() => import('./features/home'));
 const QuizFeature = React.lazy(() => import('./features/quiz'));
 const ProfileFeature = React.lazy(() => import('./features/profile'));
-const MainLayout = React.lazy(() => import('./layout/MainLayout'));
 
 function AppRouting(props) {
     return (

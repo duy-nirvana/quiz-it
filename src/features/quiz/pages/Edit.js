@@ -1,36 +1,74 @@
-import {
-    ActionIcon,
-    Badge,
-    Button,
-    Divider,
-    Input,
-    Select,
-} from '@mantine/core';
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import SlidePreview from '../../../components/SlidePreview';
+import { Badge, Button, Divider, Input, Select } from '@mantine/core';
 import {
     IconChevronLeft,
-    IconPlus,
-    IconEye,
-    IconTriangleFilled,
-    IconSquareRotatedFilled,
-    IconCircleFilled,
-    IconSquareFilled,
-    IconTrash,
     IconChevronRight,
+    IconEye,
+    IconPlus,
+    IconSquareFilled,
+    IconSquareRotatedFilled,
+    IconTrash,
+    IconTriangleFilled,
 } from '@tabler/icons-react';
+import AnswertItem from 'components/AnswerItem';
+import { useEffect, useState } from 'react';
+import { useFieldArray, useForm } from 'react-hook-form';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { twMerge } from 'tailwind-merge';
 import QuizPreview from '../../../components/QuizPreview';
-import AnswertItem from 'components/AnswerItem';
-import { useForm } from 'react-hook-form';
+import SlidePreview from '../../../components/SlidePreview';
+import InputField from 'components/form-controls/InputField';
+import { quizApi } from 'api';
 
 function Edit(props) {
     const navigate = useNavigate();
+    const location = useLocation();
+    const params = useParams();
+    const { id } = params;
     const [activeQuestionIndex, setActiveQuestionIndex] = useState(0);
     const [collapsed, setCollapsed] = useState(false);
     const [openPreview, setOpenPreview] = useState(false);
-    const form = useForm({});
+
+    const form = useForm({
+        defaultValues: {
+            title: '',
+            description: '',
+            is_private: false,
+            questions: [
+                {
+                    text: 'What is 1 + 1 = ?',
+                },
+            ],
+            play_count: 0,
+        },
+    });
+
+    const { fields, append } = useFieldArray({
+        control: form.control,
+        name: 'questions',
+        keyName: '_id',
+    });
+
+    // const answerFields = useFieldArray({
+    //     control: form.control,
+    //     name: 'answers',
+    // });
+
+    useEffect(() => {
+        if (id) {
+            const getDetailQuiz = async () => {
+                const { data, success } = await quizApi.getDetail(id);
+
+                if (success) {
+                    form.reset(data);
+                }
+            };
+
+            getDetailQuiz();
+        }
+    }, [id]);
+
+    console.log('VALUES: ', form.watch());
+    console.log({ activeQuestionIndex });
 
     return (
         <div className="relative h-screen min-h-0 overflow-hidden bg-indigo-950">
@@ -47,7 +85,9 @@ function Edit(props) {
                             <p className="font-bold">QUIZ IT</p>
                         </Badge>
 
-                        <Input
+                        <InputField
+                            form={form}
+                            name="title"
                             size="md"
                             placeholder="Enter title"
                             className="w-96 font-bold"
@@ -79,17 +119,30 @@ function Edit(props) {
                     {/* COL 1 */}
                     <div className="flex min-w-52 flex-col overflow-hidden rounded-lg bg-slate-300 transition-all">
                         <div className="overflow-y-auto">
-                            {Array(6)
+                            {fields.map((question, index, questions) => (
+                                <SlidePreview
+                                    key={question._id}
+                                    form={form}
+                                    className={'p-2 pr-4'}
+                                    index={index}
+                                    isActive={activeQuestionIndex === index}
+                                    setActive={setActiveQuestionIndex}
+                                    questions={questions}
+                                    // error
+                                />
+                            ))}
+                            {/* {Array(6)
                                 .fill(null)
                                 .map((item, index) => (
                                     <SlidePreview
+                                        form={form}
                                         className={'p-2 pr-4'}
                                         index={index}
                                         isActive={activeQuestionIndex === index}
                                         setActive={setActiveQuestionIndex}
                                         error
                                     />
-                                ))}
+                                ))} */}
                         </div>
                         <div className="bg-slate-300 py-4 text-center">
                             <Button
@@ -97,6 +150,7 @@ function Edit(props) {
                                 leftSection={
                                     <IconPlus className="h-4 w-4 min-w-4" />
                                 }
+                                onClick={() => append({})}
                             >
                                 Add question
                             </Button>
@@ -110,48 +164,58 @@ function Edit(props) {
                                 'w-full flex-1 transition-all duration-300'
                         )}
                     >
-                        <Input
-                            placeholder="Your question"
-                            size="lg"
-                            className="font-semibold"
-                            classNames={{
-                                input: 'h-16 text-center',
-                            }}
-                        />
-                        <div className="flex justify-center">
-                            <div className="flex h-80 w-1/2 justify-center rounded-lg bg-white">
-                                <img
-                                    src="https://placehold.co/600x400/EEE/31343C"
-                                    className="object-fit h-full"
-                                />
-                            </div>
-                        </div>
-                        <div className="grid grid-cols-2 gap-4">
-                            <AnswertItem
-                                form={form}
-                                name="answer_1"
-                                icon={IconTriangleFilled}
-                                color="bg-red-500"
-                            />
-                            <AnswertItem
-                                form={form}
-                                name="answer_2"
-                                icon={IconSquareRotatedFilled}
-                                color="bg-sky-600"
-                            />
-                            <AnswertItem
-                                form={form}
-                                name="answer_3"
-                                icon={IconSquareRotatedFilled}
-                                color="bg-yellow-600"
-                            />
-                            <AnswertItem
-                                form={form}
-                                name="answer_4"
-                                icon={IconSquareFilled}
-                                color="bg-green-700"
-                            />
-                        </div>
+                        {fields.map((question, index, questions) => {
+                            if (index === activeQuestionIndex) {
+                                return (
+                                    <>
+                                        <InputField
+                                            form={form}
+                                            name={`questions.${index}.text`}
+                                            placeholder="Your question"
+                                            size="lg"
+                                            className="font-semibold"
+                                            classNames={{
+                                                input: 'h-16 text-center',
+                                            }}
+                                        />
+                                        <div className="flex justify-center">
+                                            <div className="flex h-80 w-1/2 justify-center rounded-lg bg-white">
+                                                <img
+                                                    src="https://placehold.co/600x400/EEE/31343C"
+                                                    className="object-fit h-full"
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <AnswertItem
+                                                form={form}
+                                                name={`questions.${index}.answers.0.text`}
+                                                icon={IconTriangleFilled}
+                                                color="bg-red-500"
+                                            />
+                                            <AnswertItem
+                                                form={form}
+                                                name={`questions.${index}.answers.1.text`}
+                                                icon={IconSquareRotatedFilled}
+                                                color="bg-sky-600"
+                                            />
+                                            <AnswertItem
+                                                form={form}
+                                                name={`questions.${index}.answers.2.text`}
+                                                icon={IconSquareRotatedFilled}
+                                                color="bg-yellow-600"
+                                            />
+                                            <AnswertItem
+                                                form={form}
+                                                name={`questions.${index}.answers.3.text`}
+                                                icon={IconSquareFilled}
+                                                color="bg-green-700"
+                                            />
+                                        </div>
+                                    </>
+                                );
+                            }
+                        })}
                     </div>
                     {/* COL 3 */}
                     <div

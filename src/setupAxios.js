@@ -10,6 +10,7 @@
 import { notifications, showNotification } from '@mantine/notifications';
 import { showToast } from 'helpers';
 import { clearAuthData } from 'store/auth/authSlice';
+import { getCookie } from 'utils';
 
 export function setupAxios(axios, store) {
     axios.defaults.baseURL = process.env.REACT_APP_API_URL;
@@ -18,7 +19,7 @@ export function setupAxios(axios, store) {
     axios.interceptors.request.use(
         (config) => {
             // Modify request config (e.g., add auth token to headers)
-            const token = localStorage.getItem('access_token'); // Example: getting token from localStorage
+            const token = getCookie('access_token'); // Example: getting token from localStorage
             if (token) {
                 config.headers.Authorization = `Bearer ${token}`;
             }

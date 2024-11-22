@@ -1,7 +1,7 @@
 import React from 'react';
 import InputField from 'components/form-controls/InputField';
 import { twMerge } from 'tailwind-merge';
-import './AnswerItem.scss';
+import styles from './AnswerItem.module.scss';
 
 function AnswertItem({
     form,
@@ -17,7 +17,8 @@ function AnswertItem({
         <div
             className={twMerge(
                 'flex items-center gap-4 overflow-hidden rounded-lg pl-4',
-                color
+                color,
+                styles.AnswerItemWrapper
             )}
         >
             <Icon

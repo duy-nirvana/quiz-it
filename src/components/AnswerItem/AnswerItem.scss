@@ -1,8 +1,0 @@
-.mantine-Input-input {
-    &[data-disabled] {
-        @apply cursor-default bg-inherit opacity-100;
-    }
-    &::placeholder {
-        @apply text-white opacity-50;
-    }
-}
