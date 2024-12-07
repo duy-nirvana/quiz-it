@@ -67,9 +67,6 @@ function Edit(props) {
         }
     }, [id]);
 
-    console.log('VALUES: ', form.watch());
-    console.log({ activeQuestionIndex });
-
     return (
         <div className="relative h-screen min-h-0 overflow-hidden bg-indigo-950">
             <div className="flex h-full flex-col gap-4 p-2">
@@ -115,10 +112,16 @@ function Edit(props) {
                         </div>
                     </div>
                 </div>
-                <div className="flex w-full flex-1 flex-nowrap gap-2 overflow-x-hidden">
+
+                <div
+                    className={twMerge(
+                        'group grid h-screen grid-cols-[max(250px)_3fr_1fr] gap-2 overflow-x-hidden transition-all duration-300',
+                        collapsed && 'grid-cols-[max(250px)_5fr]'
+                    )}
+                >
                     {/* COL 1 */}
-                    <div className="flex min-w-52 flex-col overflow-hidden rounded-lg bg-slate-300 transition-all">
-                        <div className="overflow-y-auto">
+                    <div className="flex flex-col overflow-hidden rounded-lg bg-slate-300">
+                        <div className="w-full overflow-y-auto">
                             {fields.map((question, index, questions) => (
                                 <SlidePreview
                                     key={question._id}
@@ -159,9 +162,7 @@ function Edit(props) {
                     {/* COL 2 */}
                     <div
                         className={twMerge(
-                            'flex h-full flex-grow flex-col justify-between gap-16 overflow-y-scroll rounded-lg bg-slate-400 px-6 py-10 transition-all duration-300',
-                            collapsed &
-                                'w-full flex-1 transition-all duration-300'
+                            'flex h-full flex-grow flex-col justify-between gap-16 overflow-y-scroll rounded-lg bg-slate-400 px-6 py-10'
                         )}
                     >
                         {fields.map((question, index, questions) => {
@@ -219,16 +220,17 @@ function Edit(props) {
                     </div>
                     {/* COL 3 */}
                     <div
+                        id="col-3"
                         className={twMerge(
-                            'relative flex h-full basis-96 flex-col justify-between gap-2 rounded-lg bg-slate-300 px-3 py-4 transition-all duration-300',
-                            collapsed &&
-                                'absolute right-0 translate-x-full transition-all duration-300'
+                            'relative flex h-full flex-col justify-between gap-2 rounded-lg bg-slate-300 px-3 py-4 transition-all',
+                            collapsed && 'absolute right-0 translate-x-full'
                         )}
                     >
                         <div
                             className={twMerge(
-                                'absolute left-0 top-1/2 -translate-x-full -translate-y-1/2 cursor-pointer rounded-l-md bg-slate-300 px-1 py-2 opacity-70 hover:opacity-100',
-                                collapsed && 'top-[calc(50%-42px+4px)]'
+                                'absolute left-0 top-1/2 -translate-x-full -translate-y-full cursor-pointer rounded-l-md bg-slate-300 px-1 py-2 opacity-70 hover:opacity-100',
+                                collapsed &&
+                                    `absolute top-[calc(50%)] -translate-y-[75px]`
                             )}
                             onClick={() => setCollapsed(!collapsed)}
                         >

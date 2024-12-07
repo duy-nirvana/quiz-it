@@ -75,7 +75,7 @@ function SlidePreview({
                         </ActionIcon>
                     </Tooltip>
                 </div>
-                <div className="w-44">
+                <div className="w-full">
                     <p className="text-sm font-semibold">{title}</p>
                     <div
                         className={twMerge(
