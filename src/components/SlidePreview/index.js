@@ -88,7 +88,7 @@ function SlidePreview({
                         )}
                     >
                         <p className="truncate text-sm">
-                            {form.getValues(`questions.${index}.text`) ??
+                            {form.watch(`questions.${index}.text`)?.trim() ||
                                 'Question'}
                         </p>
                         <div className="relative flex w-full items-center justify-center">

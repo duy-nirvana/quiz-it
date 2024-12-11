@@ -19,6 +19,24 @@ import SlidePreview from '../../../components/SlidePreview';
 import InputField from 'components/form-controls/InputField';
 import { quizApi } from 'api';
 
+const initialQuestion = {
+    text: 'What is 1 + 1 = ?',
+    answers: [
+        {
+            text: '111',
+        },
+        {
+            text: '222',
+        },
+        {
+            text: '333',
+        },
+        {
+            text: '444',
+        },
+    ],
+};
+
 function Edit(props) {
     const navigate = useNavigate();
     const location = useLocation();
@@ -33,12 +51,7 @@ function Edit(props) {
             title: '',
             description: '',
             is_private: false,
-            questions: [
-                {
-                    text: 'What is 1 + 1 = ?',
-                },
-            ],
-            play_count: 0,
+            questions: [initialQuestion],
         },
     });
 
@@ -47,6 +60,12 @@ function Edit(props) {
         name: 'questions',
         keyName: '_id',
     });
+
+    // const answer = useFieldArray({
+    //     control: form.control,
+    //     name: 'answers',
+    //     keyName: '_id',
+    // });
 
     // const answerFields = useFieldArray({
     //     control: form.control,
@@ -67,10 +86,14 @@ function Edit(props) {
         }
     }, [id]);
 
+    const handleSubmit = async (values) => {
+        console.log({ values });
+    };
+
     return (
         <div className="relative h-screen min-h-0 overflow-hidden bg-indigo-950">
-            <div className="flex h-full flex-col gap-4 p-2">
-                <div className="flex justify-between">
+            <div className="flex h-full flex-col">
+                <div className="flex justify-between p-2">
                     <div className="flex items-center gap-4">
                         <Badge
                             radius="sm"
@@ -108,19 +131,24 @@ function Edit(props) {
                             <Button size="md" variant="default">
                                 Exit
                             </Button>
-                            <Button size="md">Save</Button>
+                            <Button
+                                size="md"
+                                onClick={form.handleSubmit(handleSubmit)}
+                            >
+                                Save
+                            </Button>
                         </div>
                     </div>
                 </div>
 
                 <div
                     className={twMerge(
-                        'group grid h-screen grid-cols-[max(250px)_3fr_1fr] gap-2 overflow-x-hidden transition-all duration-300',
-                        collapsed && 'grid-cols-[max(250px)_5fr]'
+                        'flex h-screen gap-2 overflow-x-hidden px-2 pb-2 transition-all duration-300',
+                        collapsed && 'pr-0'
                     )}
                 >
                     {/* COL 1 */}
-                    <div className="flex flex-col overflow-hidden rounded-lg bg-slate-300">
+                    <div className="flex min-w-56 basis-56 flex-col overflow-hidden rounded-lg bg-slate-300">
                         <div className="w-full overflow-y-auto">
                             {fields.map((question, index, questions) => (
                                 <SlidePreview
@@ -153,7 +181,7 @@ function Edit(props) {
                                 leftSection={
                                     <IconPlus className="h-4 w-4 min-w-4" />
                                 }
-                                onClick={() => append({})}
+                                onClick={() => append(initialQuestion)}
                             >
                                 Add question
                             </Button>
@@ -222,15 +250,13 @@ function Edit(props) {
                     <div
                         id="col-3"
                         className={twMerge(
-                            'relative flex h-full flex-col justify-between gap-2 rounded-lg bg-slate-300 px-3 py-4 transition-all',
-                            collapsed && 'absolute right-0 translate-x-full'
+                            'relative flex h-full w-[25vw] max-w-96 flex-col justify-between gap-2 rounded-lg bg-slate-300 px-3 py-4 transition-all',
+                            collapsed && 'w-0 translate-x-full p-0'
                         )}
                     >
                         <div
                             className={twMerge(
-                                'absolute left-0 top-1/2 -translate-x-full -translate-y-full cursor-pointer rounded-l-md bg-slate-300 px-1 py-2 opacity-70 hover:opacity-100',
-                                collapsed &&
-                                    `absolute top-[calc(50%)] -translate-y-[75px]`
+                                'absolute left-0 top-1/2 -translate-x-full -translate-y-full cursor-pointer rounded-l-md bg-slate-300 px-1 py-2 opacity-70 hover:opacity-100'
                             )}
                             onClick={() => setCollapsed(!collapsed)}
                         >
@@ -267,9 +293,10 @@ function Edit(props) {
                             />
                         </div>
                         <div
-                            className={
-                                'flex justify-center gap-3 bg-slate-300 py-4'
-                            }
+                            className={twMerge(
+                                'flex justify-center gap-3 bg-slate-300 py-4',
+                                collapsed && 'hidden'
+                            )}
                         >
                             <Button
                                 size="md"
