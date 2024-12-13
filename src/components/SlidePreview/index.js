@@ -75,11 +75,11 @@ function SlidePreview({
                         </ActionIcon>
                     </Tooltip>
                 </div>
-                <div className="w-full">
+                <div className="min-w-40 flex-grow">
                     <p className="text-sm font-semibold">{title}</p>
                     <div
                         className={twMerge(
-                            'flex flex-shrink flex-col items-center gap-2 truncate rounded-lg border border-slate-400 bg-white p-2',
+                            'flex max-w-full flex-shrink flex-col items-center gap-2 truncate rounded-lg border border-slate-400 bg-white p-2',
                             !isActive &&
                                 'outline-slate-600 group-hover:outline group-hover:outline-1',
                             isActive &&
@@ -87,13 +87,17 @@ function SlidePreview({
                             error && 'relative'
                         )}
                     >
-                        <p className="truncate text-sm">
+                        <p className="max-w-full truncate text-sm">
                             {form.watch(`questions.${index}.text`)?.trim() ||
                                 'Question'}
                         </p>
                         <div className="relative flex w-full items-center justify-center">
                             <div className="absolute left-0 flex h-6 w-6 min-w-6 items-center justify-center rounded-full border-2 border-slate-200 font-semibold">
-                                <p className="text-xs text-slate-400">10</p>
+                                <p className="text-xs text-slate-400">
+                                    {form.watch(
+                                        `questions.${index}.time_limit`
+                                    )}
+                                </p>
                             </div>
                             <div className="border border-dashed px-4 py-2">
                                 <IconPhoto className="h-4 w-4 min-w-4" />

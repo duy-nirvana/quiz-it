@@ -18,6 +18,7 @@ import QuizPreview from '../../../components/QuizPreview';
 import SlidePreview from '../../../components/SlidePreview';
 import InputField from 'components/form-controls/InputField';
 import { quizApi } from 'api';
+import SelectField from 'components/form-controls/SelectField';
 
 const initialQuestion = {
     text: 'What is 1 + 1 = ?',
@@ -35,6 +36,11 @@ const initialQuestion = {
             text: '444',
         },
     ],
+    type: 'QUIZ',
+    thumbnail: '',
+    time_limit: 5,
+    point_type: 'STANDARD',
+    answer_type: 'SINGLE',
 };
 
 function Edit(props) {
@@ -89,6 +95,8 @@ function Edit(props) {
     const handleSubmit = async (values) => {
         console.log({ values });
     };
+
+    console.log('values: ', form.getValues());
 
     return (
         <div className="relative h-screen min-h-0 overflow-hidden bg-indigo-950">
@@ -266,55 +274,117 @@ function Edit(props) {
                                 <IconChevronRight />
                             )}
                         </div>
-                        <div className="flex grow flex-col gap-y-4 overflow-y-auto">
-                            <Select
-                                label={<p>Question type</p>}
-                                placeholder="Pick value"
-                                data={['Quiz', 'True or False']}
-                                size="lg"
-                            />
-                            <Select
-                                label={<p>Time limit</p>}
-                                placeholder="Pick value"
-                                data={['5s', '10s', '15s', '20s']}
-                                size="lg"
-                            />
-                            <Select
-                                label={<p>Point</p>}
-                                placeholder="Pick value"
-                                data={['Standard', 'Double point', 'No point']}
-                                size="lg"
-                            />
-                            <Select
-                                label={<p>Answers options</p>}
-                                placeholder="Pick value"
-                                data={['Single select', 'Multi select']}
-                                size="lg"
-                            />
-                        </div>
-                        <div
-                            className={twMerge(
-                                'flex justify-center gap-3 bg-slate-300 py-4',
-                                collapsed && 'hidden'
-                            )}
-                        >
-                            <Button
-                                size="md"
-                                variant="light"
-                                color="red"
-                                leftSection={<IconTrash className="h-4 w-4" />}
-                            >
-                                Delete
-                            </Button>
-                            <Button
-                                size="md"
-                                leftSection={
-                                    <IconPlus className="h-4 w-4 min-w-4" />
-                                }
-                            >
-                                Duplicate
-                            </Button>
-                        </div>
+                        {fields.map((question, index, questions) => {
+                            if (index === activeQuestionIndex) {
+                                return (
+                                    <>
+                                        <div className="flex grow flex-col gap-y-4 overflow-y-auto">
+                                            <SelectField
+                                                form={form}
+                                                name={`questions.${index}.type`}
+                                                label={<p>Question type</p>}
+                                                placeholder="Pick value"
+                                                data={[
+                                                    {
+                                                        value: 'QUIZ',
+                                                        label: 'Quiz',
+                                                    },
+                                                    {
+                                                        value: 'TRUE_OR_FALSE',
+                                                        label: 'True or False',
+                                                    },
+                                                ]}
+                                            />
+                                            <SelectField
+                                                form={form}
+                                                name={`questions.${index}.time_limit`}
+                                                label={<p>Time limit</p>}
+                                                placeholder="Pick value"
+                                                data={[
+                                                    {
+                                                        value: '5',
+                                                        label: '5s',
+                                                    },
+                                                    {
+                                                        value: '10',
+                                                        label: '10s',
+                                                    },
+                                                    {
+                                                        value: '15',
+                                                        label: '15s',
+                                                    },
+                                                    {
+                                                        value: '20',
+                                                        label: '20s',
+                                                    },
+                                                ]}
+                                            />
+                                            <SelectField
+                                                form={form}
+                                                name={`questions.${index}.point_type`}
+                                                label={<p>Point</p>}
+                                                placeholder="Pick value"
+                                                data={[
+                                                    {
+                                                        value: 'STANDARD',
+                                                        label: 'Standard',
+                                                    },
+                                                    {
+                                                        value: 'DOUBLE',
+                                                        label: 'Double point',
+                                                    },
+                                                    {
+                                                        value: 'NO',
+                                                        label: 'No point',
+                                                    },
+                                                ]}
+                                            />
+                                            <SelectField
+                                                form={form}
+                                                name={`questions.${index}.answer_type`}
+                                                label={<p>Answers options</p>}
+                                                placeholder="Pick value"
+                                                data={[
+                                                    {
+                                                        value: 'SINGLE',
+                                                        label: 'Single select',
+                                                    },
+                                                    {
+                                                        value: 'MULTI',
+                                                        label: 'Multi select',
+                                                    },
+                                                ]}
+                                            />
+                                        </div>
+                                        <div
+                                            className={twMerge(
+                                                'flex justify-center gap-3 bg-slate-300 py-4',
+                                                collapsed && 'hidden'
+                                            )}
+                                        >
+                                            <Button
+                                                size="md"
+                                                variant="light"
+                                                color="red"
+                                                leftSection={
+                                                    <IconTrash className="h-4 w-4" />
+                                                }
+                                            >
+                                                Delete
+                                            </Button>
+                                            <Button
+                                                size="md"
+                                                leftSection={
+                                                    <IconPlus className="h-4 w-4 min-w-4" />
+                                                }
+                                            >
+                                                Duplicate
+                                            </Button>
+                                        </div>
+                                    </>
+                                );
+                            }
+                        })}
                     </div>
                 </div>
             </div>

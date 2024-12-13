@@ -2,6 +2,8 @@ import React from 'react';
 import InputField from 'components/form-controls/InputField';
 import { twMerge } from 'tailwind-merge';
 import styles from './AnswerItem.module.scss';
+import { Radio } from '@mantine/core';
+import CheckboxField from 'components/form-controls/CheckboxField';
 
 function AnswertItem({
     form,
@@ -16,7 +18,7 @@ function AnswertItem({
     return (
         <div
             className={twMerge(
-                'flex items-center gap-4 overflow-hidden rounded-lg pl-4',
+                'flex items-center gap-4 overflow-hidden rounded-lg px-4',
                 color,
                 styles.AnswerItemWrapper
             )}
@@ -42,6 +44,21 @@ function AnswertItem({
                     input: 'h-28 text-black rounded-none text-white',
                 }}
                 disabled={disabled}
+            />
+            {/* handle later */}
+            <CheckboxField
+                form={form}
+                name={name}
+                size="lg"
+                radius="xl"
+                color="lime.6"
+                className="hover:cursor-pointer"
+                classNames={{
+                    input: twMerge(
+                        'border-2 !border-white bg-transparent opacity-40 transition-all hover:opacity-100 hover:cursor-pointer',
+                        form.watch(name) === true && 'opacity-100 shadow-md'
+                    ),
+                }}
             />
         </div>
     );
