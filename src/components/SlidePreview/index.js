@@ -104,10 +104,16 @@ function SlidePreview({
                             </div>
                         </div>
                         <div className="grid w-full grow grid-cols-2 gap-1">
-                            <div className="answer-item selected"></div>
-                            <div className="answer-item"></div>
-                            <div className="answer-item"></div>
-                            <div className="answer-item"></div>
+                            {form
+                                .getValues(`questions.${index}.answers`)
+                                .map((answer) => (
+                                    <div
+                                        className={twMerge(
+                                            'answer-item',
+                                            answer.is_correct && 'selected'
+                                        )}
+                                    ></div>
+                                ))}
                         </div>
                         {error && (
                             <Tooltip
