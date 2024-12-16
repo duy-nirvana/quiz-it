@@ -10,7 +10,7 @@ function CheckboxField({ form, name, ...props }) {
             render={({ field, fieldState: { error } }) => (
                 <>
                     <Checkbox
-                        value={field.value}
+                        checked={field.value}
                         onChange={(e) => field.onChange(e)}
                         withErrorStyles={false}
                         {...props}

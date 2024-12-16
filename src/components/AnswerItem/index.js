@@ -14,6 +14,10 @@ function AnswertItem({
     classNames,
 }) {
     const Icon = icon;
+    const content = name.toString() + '.text';
+    const isCorrect = name.toString() + '.is_correct';
+
+    console.log(form.watch(isCorrect));
 
     return (
         <div
@@ -26,12 +30,12 @@ function AnswertItem({
             <Icon
                 className={twMerge(
                     'h-8 w-8 text-white transition-all',
-                    !form.watch(name) && 'opacity-50'
+                    !form.watch(content) && 'opacity-50'
                 )}
             />
             <InputField
                 form={form}
-                name={name}
+                name={content}
                 placeholder="Add answer"
                 size="xl"
                 variant="unstyled"
@@ -45,10 +49,9 @@ function AnswertItem({
                 }}
                 disabled={disabled}
             />
-            {/* handle later */}
             <CheckboxField
                 form={form}
-                name={name}
+                name={isCorrect}
                 size="lg"
                 radius="xl"
                 color="lime.6"
@@ -56,7 +59,7 @@ function AnswertItem({
                 classNames={{
                     input: twMerge(
                         'border-2 !border-white bg-transparent opacity-40 transition-all hover:opacity-100 hover:cursor-pointer',
-                        form.watch(name) === true && 'opacity-100 shadow-md'
+                        form.watch(isCorrect) && 'opacity-100 shadow-md'
                     ),
                 }}
             />

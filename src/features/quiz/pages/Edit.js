@@ -96,7 +96,7 @@ function Edit(props) {
         console.log({ values });
     };
 
-    console.log('values: ', form.getValues());
+    console.log('values: ', form.watch());
 
     return (
         <div className="relative h-screen min-h-0 overflow-hidden bg-indigo-950">
@@ -226,25 +226,25 @@ function Edit(props) {
                                         <div className="grid grid-cols-2 gap-4">
                                             <AnswertItem
                                                 form={form}
-                                                name={`questions.${index}.answers.0.text`}
+                                                name={`questions.${index}.answers.0`}
                                                 icon={IconTriangleFilled}
                                                 color="bg-red-500"
                                             />
                                             <AnswertItem
                                                 form={form}
-                                                name={`questions.${index}.answers.1.text`}
+                                                name={`questions.${index}.answers.1`}
                                                 icon={IconSquareRotatedFilled}
                                                 color="bg-sky-600"
                                             />
                                             <AnswertItem
                                                 form={form}
-                                                name={`questions.${index}.answers.2.text`}
+                                                name={`questions.${index}.answers.2`}
                                                 icon={IconSquareRotatedFilled}
                                                 color="bg-yellow-600"
                                             />
                                             <AnswertItem
                                                 form={form}
-                                                name={`questions.${index}.answers.3.text`}
+                                                name={`questions.${index}.answers.3`}
                                                 icon={IconSquareFilled}
                                                 color="bg-green-700"
                                             />
