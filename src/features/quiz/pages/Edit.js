@@ -14,11 +14,11 @@ import { useEffect, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { twMerge } from 'tailwind-merge';
-import QuizPreview from '../../../components/QuizPreview';
-import SlidePreview from '../../../components/SlidePreview';
 import InputField from 'components/form-controls/InputField';
 import { quizApi } from 'api';
 import SelectField from 'components/form-controls/SelectField';
+import SlidePreview from 'components/SlidePreview';
+import QuizPreview from 'components/QuizPreview';
 
 const initialQuestion = {
     text: 'What is 1 + 1 = ?',
