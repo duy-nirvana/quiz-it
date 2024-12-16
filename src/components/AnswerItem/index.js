@@ -14,8 +14,8 @@ function AnswertItem({
     classNames,
 }) {
     const Icon = icon;
-    const content = name.toString() + '.text';
-    const isCorrect = name.toString() + '.is_correct';
+    const content = `${name}.text`;
+    const isCorrect = `${name}.is_correct`;
 
     console.log(form.watch(isCorrect));
 
