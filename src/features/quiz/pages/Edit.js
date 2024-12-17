@@ -10,7 +10,7 @@ import {
     IconTriangleFilled,
 } from '@tabler/icons-react';
 import AnswertItem from 'components/AnswerItem';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { twMerge } from 'tailwind-merge';
@@ -51,6 +51,13 @@ function Edit(props) {
     const [activeQuestionIndex, setActiveQuestionIndex] = useState(0);
     const [collapsed, setCollapsed] = useState(false);
     const [openPreview, setOpenPreview] = useState(false);
+
+    const uploadRef = useRef();
+    const [file, setFile] = useState();
+
+    console.log({ file });
+    const fileURL = file ? URL.createObjectURL(file) : '';
+    console.log({ fileURL });
 
     const form = useForm({
         defaultValues: {
@@ -216,11 +223,52 @@ function Edit(props) {
                                             }}
                                         />
                                         <div className="flex justify-center">
-                                            <div className="flex h-80 w-1/2 justify-center rounded-lg bg-white">
-                                                <img
-                                                    src="https://placehold.co/600x400/EEE/31343C"
-                                                    className="object-fit h-full"
-                                                />
+                                            <div
+                                                className="group relative flex h-80 w-1/2 justify-center overflow-hidden rounded-lg bg-white"
+                                                onClick={() =>
+                                                    uploadRef.current.click()
+                                                }
+                                            >
+                                                <div>
+                                                    <img
+                                                        // src="https://placehold.co/600x400/EEE/31343C"
+                                                        src={
+                                                            file
+                                                                ? URL.createObjectURL(
+                                                                      file
+                                                                  )
+                                                                : 'https://placehold.co/600x400/EEE/31343C'
+                                                        }
+                                                        className="object-fit h-full"
+                                                    />
+                                                    <div className="absolute bottom-0 left-0 right-0 top-0 flex cursor-pointer items-center justify-center opacity-0 transition-all group-hover:bg-gray-500/40 group-hover:opacity-100">
+                                                        <p
+                                                            className="text-xl font-bold text-white"
+                                                            style={{
+                                                                textShadow:
+                                                                    '1px 1px 2px black',
+                                                            }}
+                                                        >
+                                                            Upload image
+                                                        </p>
+                                                    </div>
+                                                    <input
+                                                        type="file"
+                                                        ref={uploadRef}
+                                                        onChange={(e) => {
+                                                            if (
+                                                                e.target
+                                                                    .files[0]
+                                                            ) {
+                                                                setFile(
+                                                                    e?.target
+                                                                        ?.files[0]
+                                                                );
+                                                            }
+                                                        }}
+                                                        className="hidden"
+                                                    />
+                                                </div>
                                             </div>
                                         </div>
                                         <div className="grid grid-cols-2 gap-4">
