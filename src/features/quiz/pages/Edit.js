@@ -19,28 +19,49 @@ import { quizApi } from 'api';
 import SelectField from 'components/form-controls/SelectField';
 import SlidePreview from 'components/SlidePreview';
 import QuizPreview from 'components/QuizPreview';
+import { useSelector } from 'react-redux';
 
 const initialQuestion = {
     text: 'What is 1 + 1 = ?',
     answers: [
         {
-            text: '111',
+            text: '1',
+            is_correct: false,
         },
         {
-            text: '222',
+            text: '2',
+            is_correct: false,
         },
         {
-            text: '333',
+            text: '3',
+            is_correct: false,
         },
         {
-            text: '444',
+            text: '4',
+            is_correct: false,
         },
     ],
     type: 'QUIZ',
-    thumbnail: '',
+    thumbnail: 'https://i.imgur.com/kCRd5j4.jpeg',
     time_limit: 5,
     point_type: 'STANDARD',
     answer_type: 'SINGLE',
+};
+
+const getImageURL = (form, index) => {
+    let url = 'https://placehold.co/600x400/EEE/31343C';
+
+    if (form.getValues(`questions.${index}.thumbnail`)) {
+        url = form.getValues(`questions.${index}.thumbnail`);
+    }
+
+    if (form.getValues(`questions.${index}.temp_image`)) {
+        url = URL.createObjectURL(
+            form.getValues(`questions.${index}.temp_image`)
+        );
+    }
+
+    return url;
 };
 
 function Edit(props) {
@@ -51,6 +72,7 @@ function Edit(props) {
     const [activeQuestionIndex, setActiveQuestionIndex] = useState(0);
     const [collapsed, setCollapsed] = useState(false);
     const [openPreview, setOpenPreview] = useState(false);
+    const { profile } = useSelector((state) => state.personal);
 
     const uploadRef = useRef();
     const [file, setFile] = useState();
@@ -101,6 +123,13 @@ function Edit(props) {
 
     const handleSubmit = async (values) => {
         console.log({ values });
+
+        const submitValues = {
+            ...values,
+            created_by: profile._id,
+        };
+
+        await quizApi.create(submitValues);
     };
 
     console.log('values: ', form.watch());
@@ -224,7 +253,7 @@ function Edit(props) {
                                         />
                                         <div className="flex justify-center">
                                             <div
-                                                className="group relative flex h-80 w-1/2 justify-center overflow-hidden rounded-lg bg-white"
+                                                className="group relative flex h-80 w-fit min-w-[500px] max-w-screen-md justify-center overflow-hidden rounded-lg bg-white"
                                                 onClick={() =>
                                                     uploadRef.current.click()
                                                 }
@@ -232,13 +261,10 @@ function Edit(props) {
                                                 <div>
                                                     <img
                                                         // src="https://placehold.co/600x400/EEE/31343C"
-                                                        src={
-                                                            file
-                                                                ? URL.createObjectURL(
-                                                                      file
-                                                                  )
-                                                                : 'https://placehold.co/600x400/EEE/31343C'
-                                                        }
+                                                        src={getImageURL(
+                                                            form,
+                                                            index
+                                                        )}
                                                         className="object-fit h-full"
                                                     />
                                                     <div className="absolute bottom-0 left-0 right-0 top-0 flex cursor-pointer items-center justify-center opacity-0 transition-all group-hover:bg-gray-500/40 group-hover:opacity-100">
@@ -260,9 +286,10 @@ function Edit(props) {
                                                                 e.target
                                                                     .files[0]
                                                             ) {
-                                                                setFile(
-                                                                    e?.target
-                                                                        ?.files[0]
+                                                                form.setValue(
+                                                                    `questions.${index}.temp_image`,
+                                                                    e.target
+                                                                        .files[0]
                                                                 );
                                                             }
                                                         }}
