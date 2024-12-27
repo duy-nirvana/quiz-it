@@ -17,8 +17,6 @@ function AnswertItem({
     const content = `${name}.text`;
     const isCorrect = `${name}.is_correct`;
 
-    console.log(form.watch(isCorrect));
-
     return (
         <div
             className={twMerge(

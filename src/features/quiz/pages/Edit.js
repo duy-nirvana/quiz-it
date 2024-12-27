@@ -55,7 +55,6 @@ function Edit(props) {
     const uploadRef = useRef();
     const [file, setFile] = useState();
 
-    console.log({ file });
     const fileURL = file ? URL.createObjectURL(file) : '';
     console.log({ fileURL });
 
@@ -68,7 +67,7 @@ function Edit(props) {
         },
     });
 
-    const { fields, append } = useFieldArray({
+    const { fields, append, update } = useFieldArray({
         control: form.control,
         name: 'questions',
         keyName: '_id',
@@ -99,11 +98,28 @@ function Edit(props) {
         }
     }, [id]);
 
+    const getImageURL = (question) => {
+        let url = 'https://placehold.co/600x400/EEE/31343C';
+
+        if (question.thumbnail) {
+            url = question.thumbnail;
+        }
+
+        console.log({ question });
+        if (question.tempImage) {
+            url = URL.createObjectURL(question.tempImage);
+        }
+
+        return url;
+    };
+
     const handleSubmit = async (values) => {
+        console.log({ file });
         console.log({ values });
     };
 
-    console.log('values: ', form.watch());
+    console.log('WATCH FORM: ', form.watch());
+    console.log({ fields });
 
     return (
         <div className="relative h-screen min-h-0 overflow-hidden bg-indigo-950">
@@ -224,21 +240,16 @@ function Edit(props) {
                                         />
                                         <div className="flex justify-center">
                                             <div
-                                                className="group relative flex h-80 w-1/2 justify-center overflow-hidden rounded-lg bg-white"
+                                                className="group relative flex max-h-80 min-h-72 w-1/2 justify-center overflow-hidden rounded-lg bg-white"
                                                 onClick={() =>
                                                     uploadRef.current.click()
                                                 }
                                             >
                                                 <div>
                                                     <img
-                                                        // src="https://placehold.co/600x400/EEE/31343C"
-                                                        src={
-                                                            file
-                                                                ? URL.createObjectURL(
-                                                                      file
-                                                                  )
-                                                                : 'https://placehold.co/600x400/EEE/31343C'
-                                                        }
+                                                        src={getImageURL(
+                                                            question
+                                                        )}
                                                         className="object-fit h-full"
                                                     />
                                                     <div className="absolute bottom-0 left-0 right-0 top-0 flex cursor-pointer items-center justify-center opacity-0 transition-all group-hover:bg-gray-500/40 group-hover:opacity-100">
@@ -260,10 +271,12 @@ function Edit(props) {
                                                                 e.target
                                                                     .files[0]
                                                             ) {
-                                                                setFile(
-                                                                    e?.target
-                                                                        ?.files[0]
-                                                                );
+                                                                update(index, {
+                                                                    ...question,
+                                                                    tempImage:
+                                                                        e.target
+                                                                            .files[0],
+                                                                });
                                                             }
                                                         }}
                                                         className="hidden"
@@ -306,8 +319,8 @@ function Edit(props) {
                     <div
                         id="col-3"
                         className={twMerge(
-                            'relative flex h-full w-[25vw] max-w-96 flex-col justify-between gap-2 rounded-lg bg-slate-300 px-3 py-4 transition-all',
-                            collapsed && 'w-0 translate-x-full p-0'
+                            'relative flex h-full w-[25vw] min-w-96 max-w-96 flex-col justify-between gap-2 rounded-lg bg-slate-300 px-3 py-4 transition-all',
+                            collapsed && 'w-0 min-w-0 translate-x-full p-0'
                         )}
                     >
                         <div
