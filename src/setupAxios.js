@@ -18,6 +18,11 @@ export function setupAxios(axios, store) {
 
     axios.interceptors.request.use(
         (config) => {
+            if (config.baseURL === process.env.REACT_APP_IMGUR_API_URL) {
+                config.headers.Authorization = `Client-ID ${process.env.REACT_APP_IMGUR_CLIENT_ID}`;
+                return config;
+            }
+
             // Modify request config (e.g., add auth token to headers)
             const token = getCookie('access_token'); // Example: getting token from localStorage
             if (token) {

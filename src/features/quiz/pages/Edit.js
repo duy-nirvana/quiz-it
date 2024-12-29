@@ -20,6 +20,8 @@ import SelectField from 'components/form-controls/SelectField';
 import SlidePreview from 'components/SlidePreview';
 import QuizPreview from 'components/QuizPreview';
 import { useSelector } from 'react-redux';
+import axios from 'axios';
+import { imgurApi } from 'api/imgurApi';
 
 const initialQuestion = {
     text: 'What is 1 + 1 = ?',
@@ -42,7 +44,6 @@ const initialQuestion = {
         },
     ],
     type: 'QUIZ',
-    thumbnail: 'https://i.imgur.com/kCRd5j4.jpeg',
     time_limit: 5,
     point_type: 'STANDARD',
     answer_type: 'SINGLE',
@@ -135,15 +136,49 @@ function Edit(props) {
         return url;
     };
 
+    console.log('AAAAAADFSADAS: ', process.env.REACT_APP_IMGUR_API_URL);
+
     const handleSubmit = async (values) => {
         console.log({ file });
         console.log({ values });
+        const promiseFiles = [];
+
+        values.questions.forEach((question, index) => {
+            if (question.thumbnail) return;
+
+            const formData = new FormData();
+            const file = question.tempImage;
+            formData.append('image', file);
+            formData.append('type', 'image');
+            formData.append('title', `title-${index}`);
+            formData.append('description', `description-${index}`);
+
+            promiseFiles.push(imgurApi.upload(formData));
+        });
+
+        const imageUploadedList =  await Promise.all(promiseFiles);
+
+        const newQuestions = values.questions.map((question, index) => {
+            delete question._id;
+            delete question.tempImage;
+            delete question.thumbnail;
+
+            const questionImg = imageUploadedList.find(image => image.data.title.split('-')[1] == index);
+            debugger
+            return {
+                ...question,
+                thumbnail: questionImg.data.link
+            }
+        });
+
+        values.questions = newQuestions;
 
         const submitValues = {
             ...values,
             created_by: profile._id,
         };
 
+        debugger
         await quizApi.create(submitValues);
     };
 
