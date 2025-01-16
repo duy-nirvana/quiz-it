@@ -1,19 +1,19 @@
 .SlidePreviewWrapper {
     :global {
         .slide-container {
-            @apply cursor-pointer hover:duration-100 flex gap-1;
+            @apply flex cursor-pointer gap-1 hover:duration-100;
 
             &-active {
                 @apply bg-sky-100 hover:bg-sky-100;
             }
 
             .answer-item {
-                @apply border border-slate-300 h-1.5 relative;
+                @apply relative h-1.5 border border-slate-300;
 
                 &.selected {
                     &::after {
                         content: '';
-                        @apply bg-green-600 absolute w-2 h-2 right-0.5 rounded-full translate-y-[-50%] top-1/2;
+                        @apply absolute right-0.5 top-1/2 h-2 w-2 translate-y-[-50%] rounded-full bg-green-600;
                     }
                 }
             }

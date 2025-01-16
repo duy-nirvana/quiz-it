@@ -17,7 +17,7 @@ function List(props) {
     const { profile } = useSelector((state) => state.personal);
 
     useEffect(() => {
-        if (profile) {
+        if (profile && !quizzes.length) {
             const getQuizzes = async () => {
                 const { data, success } = await quizApi.getAll({
                     created_by: profile._id,
@@ -46,10 +46,15 @@ function List(props) {
                             key={quiz.id}
                             className="flex h-32 min-h-32 gap-1 rounded bg-white px-3 py-2"
                         >
-                            <div className="relative w-44">
+                            <div className="relative w-44 flex-shrink-0">
                                 <img
-                                    src="https://placehold.co/300x200/EEE/31343C"
-                                    className="object-fit h-full w-full min-w-28"
+                                    src={
+                                        quiz.questions.find(
+                                            (ques) => ques.thumbnail
+                                        )?.thumbnail ||
+                                        'https://placehold.co/300x200/EEE/31343C'
+                                    }
+                                    className="h-full w-full object-cover object-top"
                                 />
                                 <Badge
                                     className="absolute bottom-2 right-3 border border-slate-400"

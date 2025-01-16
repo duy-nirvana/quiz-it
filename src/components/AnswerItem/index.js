@@ -43,7 +43,7 @@ function AnswertItem({
                 )}
                 classNames={{
                     wrapper: 'border-none',
-                    input: 'h-28 text-black rounded-none text-white',
+                    input: 'h-28 text-black rounded-none text-white disabled:text-white',
                 }}
                 disabled={disabled}
             />
@@ -53,11 +53,15 @@ function AnswertItem({
                 size="lg"
                 radius="xl"
                 color="lime.6"
-                className="hover:cursor-pointer"
+                className={twMerge(
+                    'hover:cursor-pointer',
+                    disabled && 'hover:cursor-default'
+                )}
                 classNames={{
                     input: twMerge(
-                        'border-2 !border-white bg-transparent opacity-40 transition-all hover:opacity-100 hover:cursor-pointer',
-                        form.watch(isCorrect) && 'opacity-100 shadow-md'
+                        'border-2 !border-white bg-transparent opacity-40 transition-all hover:opacity-100 hover:cursor-pointer  disabled:cursor-auto',
+                        form.watch(isCorrect) && 'opacity-100 shadow-md',
+                        disabled && 'pointer-events-none'
                     ),
                 }}
             />

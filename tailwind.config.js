@@ -2,10 +2,14 @@
 module.exports = {
     content: ['./src/**/*.{js,jsx,ts,tsx}'],
     corePlugins: {
-        preflight: true
+        preflight: true,
     },
     theme: {
-        extend: {},
+        extend: {
+            colors: {
+                'lime-6': 'var(--checkbox-color)',
+            },
+        },
     },
     plugins: [],
-}
+};

@@ -19,9 +19,10 @@ import { quizApi } from 'api';
 import SelectField from 'components/form-controls/SelectField';
 import SlidePreview from 'components/SlidePreview';
 import QuizPreview from 'components/QuizPreview';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import { imgurApi } from 'api/imgurApi';
+import { fetchPersonal } from 'store/personal/personalThunk';
 
 const initialQuestion = {
     text: 'What is 1 + 1 = ?',
@@ -69,6 +70,7 @@ function Edit(props) {
     const navigate = useNavigate();
     const location = useLocation();
     const params = useParams();
+    const dispatch = useDispatch();
     const { id } = params;
     const [activeQuestionIndex, setActiveQuestionIndex] = useState(0);
     const [collapsed, setCollapsed] = useState(false);
@@ -76,10 +78,6 @@ function Edit(props) {
     const { profile } = useSelector((state) => state.personal);
 
     const uploadRef = useRef();
-    const [file, setFile] = useState();
-
-    const fileURL = file ? URL.createObjectURL(file) : '';
-    console.log({ fileURL });
 
     const form = useForm({
         defaultValues: {
@@ -90,7 +88,7 @@ function Edit(props) {
         },
     });
 
-    const { fields, append, update } = useFieldArray({
+    const { fields, append, update, replace } = useFieldArray({
         control: form.control,
         name: 'questions',
         keyName: '_id',
@@ -108,18 +106,22 @@ function Edit(props) {
     // });
 
     useEffect(() => {
+        dispatch(fetchPersonal());
+    }, []);
+
+    useEffect(() => {
         if (id) {
-            const getDetailQuiz = async () => {
-                const { data, success } = await quizApi.getDetail(id);
-
-                if (success) {
-                    form.reset(data);
-                }
-            };
-
             getDetailQuiz();
         }
     }, [id]);
+
+    const getDetailQuiz = async () => {
+        const { data, success } = await quizApi.getDetail(id);
+
+        if (success) {
+            form.reset(data);
+        }
+    };
 
     const getImageURL = (question) => {
         let url = 'https://placehold.co/600x400/EEE/31343C';
@@ -135,8 +137,6 @@ function Edit(props) {
 
         return url;
     };
-
-    console.log('AAAAAADFSADAS: ', process.env.REACT_APP_IMGUR_API_URL);
 
     const handleSubmit = async (values) => {
         console.log({ file });
@@ -156,19 +156,21 @@ function Edit(props) {
             promiseFiles.push(imgurApi.upload(formData));
         });
 
-        const imageUploadedList =  await Promise.all(promiseFiles);
+        const imageUploadedList = await Promise.all(promiseFiles);
 
         const newQuestions = values.questions.map((question, index) => {
             delete question._id;
             delete question.tempImage;
             delete question.thumbnail;
 
-            const questionImg = imageUploadedList.find(image => image.data.title.split('-')[1] == index);
-            debugger
+            const questionImg = imageUploadedList.find(
+                (image) => image.data.title.split('-')[1] == index
+            );
             return {
                 ...question,
-                thumbnail: questionImg.data.link
-            }
+                thumbnail: questionImg.data.link,
+                time_limit: Number(question.time_limit),
+            };
         });
 
         values.questions = newQuestions;
@@ -178,12 +180,9 @@ function Edit(props) {
             created_by: profile._id,
         };
 
-        debugger
+        debugger;
         await quizApi.create(submitValues);
     };
-
-    console.log('WATCH FORM: ', form.watch());
-    console.log({ fields });
 
     return (
         <div className="relative h-screen min-h-0 overflow-hidden bg-indigo-950">
@@ -336,7 +335,9 @@ function Edit(props) {
                                                                     .files[0]
                                                             ) {
                                                                 update(index, {
-                                                                    ...question,
+                                                                    ...form.getValues(
+                                                                        `questions.${index}`
+                                                                    ),
                                                                     tempImage:
                                                                         e.target
                                                                             .files[0],
@@ -514,6 +515,8 @@ function Edit(props) {
                 </div>
             </div>
             <QuizPreview
+                form={form}
+                quizList={fields}
                 open={openPreview}
                 onClose={() => setOpenPreview(false)}
             />

@@ -29,3 +29,11 @@
         }
     }
 }
+
+// Action Icon
+.mantine-ActionIcon-root {
+    &:disabled,
+    &[data-disabled] {
+        @apply cursor-default border-none bg-transparent opacity-80;
+    }
+}
