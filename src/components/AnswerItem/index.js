@@ -27,7 +27,7 @@ function AnswertItem({
         >
             <Icon
                 className={twMerge(
-                    'h-8 w-8 text-white transition-all',
+                    'h-8 w-8 min-w-8 text-white transition-all',
                     !form.watch(content) && 'opacity-50'
                 )}
             />

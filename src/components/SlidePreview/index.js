@@ -4,25 +4,29 @@ import {
     IconPhoto,
     IconAlertCircleFilled,
 } from '@tabler/icons-react';
-import React from 'react';
+import React, { forwardRef } from 'react';
 import styles from './Index.module.scss';
 import { ActionIcon, Tooltip } from '@mantine/core';
 import { twMerge } from 'tailwind-merge';
 
-function SlidePreview({
-    form,
-    title = 'Quiz',
-    className,
-    questions,
-    index,
-    isActive,
-    setActive = () => {},
-    disabled,
-    error,
-    onDuplicate,
-}) {
+function SlidePreview(
+    {
+        form,
+        title = 'Quiz',
+        className,
+        questions,
+        index,
+        isActive,
+        setActive = () => {},
+        disabled,
+        error,
+        onDuplicate,
+        onDelete,
+    },
+    ref
+) {
     return (
-        <div className={twMerge(styles.SlidePreviewWrapper)}>
+        <div ref={ref} className={twMerge(styles.SlidePreviewWrapper)}>
             <div
                 className={twMerge(
                     'slide-container group',
@@ -72,7 +76,10 @@ function SlidePreview({
                             radius="xl"
                             color="red"
                             className="icon mb-1"
-                            onClick={(e) => e.stopPropagation()}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                onDelete(index);
+                            }}
                             disabled={disabled || questions.length <= 1}
                         >
                             <IconTrash className="h-4 w-4" />
@@ -81,43 +88,45 @@ function SlidePreview({
                 </div>
                 <div className="min-w-40 flex-grow">
                     <p className="text-sm font-semibold">{title}</p>
-                    <div
-                        className={twMerge(
-                            'flex max-w-full flex-shrink flex-col items-center gap-2 truncate rounded-lg border border-slate-400 bg-white p-2',
-                            !isActive &&
-                                'outline-slate-600 group-hover:outline group-hover:outline-1',
-                            isActive &&
-                                'border-sky-500 outline outline-1 outline-sky-500',
-                            error && 'relative'
-                        )}
-                    >
-                        <p className="max-w-full truncate text-sm">
-                            {form.watch(`questions.${index}.text`)?.trim() ||
-                                'Question'}
-                        </p>
-                        <div className="relative flex w-full items-center justify-center">
-                            <div className="absolute left-0 flex h-6 w-6 min-w-6 items-center justify-center rounded-full border-2 border-slate-200 font-semibold">
-                                <p className="text-xs text-slate-400">
-                                    {form.watch(
-                                        `questions.${index}.time_limit`
-                                    )}
-                                </p>
-                            </div>
-                            <div className="border border-dashed px-4 py-2">
-                                <IconPhoto className="h-4 w-4 min-w-4" />
-                            </div>
-                        </div>
-                        <div className="grid w-full grow grid-cols-2 gap-1">
-                            {form
-                                .getValues(`questions.${index}.answers`)
-                                .map((answer) => (
-                                    <div
-                                        className={twMerge(
-                                            'answer-item',
-                                            answer.is_correct && 'selected'
+                    <div className="relative">
+                        <div
+                            className={twMerge(
+                                'flex max-w-full flex-shrink flex-col items-center gap-2 truncate rounded-lg border border-slate-400 bg-white p-2',
+                                !isActive &&
+                                    'outline-slate-600 group-hover:outline group-hover:outline-1',
+                                isActive &&
+                                    'border-sky-500 outline outline-1 outline-sky-500'
+                            )}
+                        >
+                            <p className="max-w-full truncate text-sm">
+                                {form
+                                    .watch(`questions.${index}.text`)
+                                    ?.trim() || 'Question'}
+                            </p>
+                            <div className="relative flex w-full items-center justify-center">
+                                <div className="absolute left-0 flex h-6 w-6 min-w-6 items-center justify-center rounded-full border-2 border-slate-200 font-semibold">
+                                    <p className="text-xs text-slate-400">
+                                        {form.watch(
+                                            `questions.${index}.time_limit`
                                         )}
-                                    ></div>
-                                ))}
+                                    </p>
+                                </div>
+                                <div className="border border-dashed px-4 py-2">
+                                    <IconPhoto className="h-4 w-4 min-w-4" />
+                                </div>
+                            </div>
+                            <div className="grid w-full grow grid-cols-2 gap-1">
+                                {form
+                                    .getValues(`questions.${index}.answers`)
+                                    .map((answer) => (
+                                        <div
+                                            className={twMerge(
+                                                'answer-item',
+                                                answer.is_correct && 'selected'
+                                            )}
+                                        ></div>
+                                    ))}
+                            </div>
                         </div>
                         {error && (
                             <Tooltip
@@ -139,4 +148,4 @@ function SlidePreview({
     );
 }
 
-export default SlidePreview;
+export default forwardRef(SlidePreview);

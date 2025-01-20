@@ -2,7 +2,7 @@ import { Input } from '@mantine/core';
 import React from 'react';
 import { Controller } from 'react-hook-form';
 
-function InputField({ form, name, ...props }) {
+function InputField({ form, name, showErrorText = true, ...props }) {
     return (
         <Controller
             control={form.control}
@@ -16,7 +16,7 @@ function InputField({ form, name, ...props }) {
                         // withErrorStyles={false}
                         {...props}
                     />
-                    {error && (
+                    {error && showErrorText && (
                         <Input.Error>
                             {error.message ?? 'Field is invalid'}
                         </Input.Error>

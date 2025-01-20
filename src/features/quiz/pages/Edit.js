@@ -25,6 +25,8 @@ import { imgurApi } from 'api/imgurApi';
 import { fetchPersonal } from 'store/personal/personalThunk';
 import { showToast } from 'helpers';
 import { formatQuestions, formatQuiz } from 'helpers/quiz';
+import { quizSchema } from '../schemas';
+import { yupResolver } from '@hookform/resolvers/yup';
 
 const initialQuestion = {
     text: '',
@@ -80,6 +82,7 @@ function Edit(props) {
     const { profile } = useSelector((state) => state.personal);
     const [initialValues, setInitialValues] = useState(null);
 
+    const itemRefs = useRef([]);
     const uploadRef = useRef();
 
     const form = useForm({
@@ -89,9 +92,10 @@ function Edit(props) {
             is_private: false,
             questions: [initialQuestion],
         },
+        resolver: yupResolver(quizSchema),
     });
 
-    const { fields, append, update, replace, insert } = useFieldArray({
+    const { fields, append, update, remove, insert } = useFieldArray({
         control: form.control,
         name: 'questions',
         keyName: '_id',
@@ -117,6 +121,17 @@ function Edit(props) {
             getDetailQuiz();
         }
     }, [id]);
+
+    useEffect(() => {
+        if (
+            activeQuestionIndex !== null &&
+            itemRefs.current[activeQuestionIndex]
+        ) {
+            itemRefs.current[activeQuestionIndex].scrollIntoView({
+                block: 'start',
+            });
+        }
+    }, [activeQuestionIndex]);
 
     const getDetailQuiz = async () => {
         try {
@@ -150,6 +165,12 @@ function Edit(props) {
         delete currentQuestion._id;
 
         insert(index + 1, currentQuestion);
+        setActiveQuestionIndex(index + 1);
+    };
+
+    const handleDelete = (index) => {
+        remove(index);
+        setActiveQuestionIndex(index > 0 ? index - 1 : index);
     };
 
     const handleSubmit = async (values) => {
@@ -249,6 +270,7 @@ function Edit(props) {
                             size="md"
                             placeholder="Enter title"
                             className="w-96 font-bold"
+                            showErrorText={false}
                         />
                     </div>
                     <div className="flex gap-4">
@@ -298,21 +320,11 @@ function Edit(props) {
                                     setActive={setActiveQuestionIndex}
                                     questions={questions}
                                     onDuplicate={handleDuplicate}
-                                    // error
+                                    onDelete={handleDelete}
+                                    ref={(el) => (itemRefs.current[index] = el)} // Assign ref for each item
+                                    error
                                 />
                             ))}
-                            {/* {Array(6)
-                                .fill(null)
-                                .map((item, index) => (
-                                    <SlidePreview
-                                        form={form}
-                                        className={'p-2 pr-4'}
-                                        index={index}
-                                        isActive={activeQuestionIndex === index}
-                                        setActive={setActiveQuestionIndex}
-                                        error
-                                    />
-                                ))} */}
                         </div>
                         <div className="bg-slate-300 py-4 text-center">
                             <Button
@@ -320,7 +332,10 @@ function Edit(props) {
                                 leftSection={
                                     <IconPlus className="h-4 w-4 min-w-4" />
                                 }
-                                onClick={() => append(initialQuestion)}
+                                onClick={() => {
+                                    append(initialQuestion);
+                                    setActiveQuestionIndex(fields.length);
+                                }}
                             >
                                 Add question
                             </Button>
@@ -345,6 +360,7 @@ function Edit(props) {
                                             classNames={{
                                                 input: 'h-16 text-center',
                                             }}
+                                            showErrorText={false}
                                         />
                                         <div className="flex justify-center">
                                             <div
@@ -540,6 +556,10 @@ function Edit(props) {
                                                 leftSection={
                                                     <IconTrash className="h-4 w-4" />
                                                 }
+                                                onClick={() =>
+                                                    handleDelete(index)
+                                                }
+                                                disabled={fields.length === 1}
                                             >
                                                 Delete
                                             </Button>
@@ -547,6 +567,9 @@ function Edit(props) {
                                                 size="md"
                                                 leftSection={
                                                     <IconPlus className="h-4 w-4 min-w-4" />
+                                                }
+                                                onClick={() =>
+                                                    handleDuplicate(index)
                                                 }
                                             >
                                                 Duplicate
