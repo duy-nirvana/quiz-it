@@ -19,6 +19,7 @@ function SlidePreview({
     setActive = () => {},
     disabled,
     error,
+    onDuplicate,
 }) {
     return (
         <div className={twMerge(styles.SlidePreviewWrapper)}>
@@ -49,7 +50,10 @@ function SlidePreview({
                             radius="xl"
                             color="blue"
                             className="icon mb-1"
-                            onClick={(e) => e.stopPropagation()}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                onDuplicate(index);
+                            }}
                             disabled={disabled}
                         >
                             <IconCopy className="h-4 w-4" />

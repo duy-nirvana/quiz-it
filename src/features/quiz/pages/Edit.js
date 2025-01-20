@@ -23,6 +23,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import { imgurApi } from 'api/imgurApi';
 import { fetchPersonal } from 'store/personal/personalThunk';
+import { showToast } from 'helpers';
+import { formatQuestions, formatQuiz } from 'helpers/quiz';
 
 const initialQuestion = {
     text: '',
@@ -76,6 +78,7 @@ function Edit(props) {
     const [collapsed, setCollapsed] = useState(false);
     const [openPreview, setOpenPreview] = useState(false);
     const { profile } = useSelector((state) => state.personal);
+    const [initialValues, setInitialValues] = useState(null);
 
     const uploadRef = useRef();
 
@@ -88,7 +91,7 @@ function Edit(props) {
         },
     });
 
-    const { fields, append, update, replace } = useFieldArray({
+    const { fields, append, update, replace, insert } = useFieldArray({
         control: form.control,
         name: 'questions',
         keyName: '_id',
@@ -116,10 +119,15 @@ function Edit(props) {
     }, [id]);
 
     const getDetailQuiz = async () => {
-        const { data, success } = await quizApi.getDetail(id);
+        try {
+            const { data, success } = await quizApi.getDetail(id);
 
-        if (success) {
-            form.reset(data);
+            if (success) {
+                form.reset(data);
+                setInitialValues(data);
+            }
+        } catch (error) {
+            showToast({ message: 'Fail to get detail quiz!', type: 'error' });
         }
     };
 
@@ -130,7 +138,6 @@ function Edit(props) {
             url = question.thumbnail;
         }
 
-        console.log({ question });
         if (question.tempImage) {
             url = URL.createObjectURL(question.tempImage);
         }
@@ -138,50 +145,87 @@ function Edit(props) {
         return url;
     };
 
+    const handleDuplicate = (index) => {
+        const currentQuestion = { ...form.getValues(`questions.${index}`) };
+        delete currentQuestion._id;
+
+        insert(index + 1, currentQuestion);
+    };
+
     const handleSubmit = async (values) => {
-        console.log({ file });
-        console.log({ values });
-        const promiseFiles = [];
+        try {
+            console.log({ values });
+            console.log({ initialValues });
+            const formatValues = formatQuiz(values);
+            console.log({ formatValues });
+            debugger;
+            const promiseFiles = [];
+            let newQuestions = [];
 
-        values.questions.forEach((question, index) => {
-            if (question.thumbnail) return;
+            values.questions.forEach((question, index) => {
+                if (question.thumbnail) return;
 
-            const formData = new FormData();
-            const file = question.tempImage;
-            formData.append('image', file);
-            formData.append('type', 'image');
-            formData.append('title', `title-${index}`);
-            formData.append('description', `description-${index}`);
+                const formData = new FormData();
+                const file = question.tempImage;
+                formData.append('image', file);
+                formData.append('type', 'image');
+                formData.append('title', `title-${index}`);
+                formData.append('description', `description-${index}`);
 
-            promiseFiles.push(imgurApi.upload(formData));
-        });
+                promiseFiles.push(imgurApi.upload(formData));
+            });
 
-        const imageUploadedList = await Promise.all(promiseFiles);
+            const imageUploadedList = await Promise.all(promiseFiles);
 
-        const newQuestions = values.questions.map((question, index) => {
-            delete question._id;
-            delete question.tempImage;
-            delete question.thumbnail;
+            // const newQuestions = values.questions.map((question, index) => {
+            //     delete question._id;
+            //     delete question.tempImage;
+            //     delete question.thumbnail;
 
-            const questionImg = imageUploadedList.find(
-                (image) => image.data.title.split('-')[1] == index
-            );
-            return {
-                ...question,
-                thumbnail: questionImg.data.link,
-                time_limit: Number(question.time_limit),
+            //     const questionImg = imageUploadedList.find(
+            //         (image) => image.data.title.split('-')[1] == index
+            //     );
+            //     return {
+            //         ...question,
+            //         thumbnail: questionImg.data.link,
+            //         time_limit: Number(question.time_limit),
+            //     };
+            // });
+            if (imageUploadedList.length) {
+                newQuestions = formatQuestions(
+                    values.questions,
+                    imageUploadedList
+                );
+                values.questions = newQuestions;
+            }
+
+            const submitValues = {
+                ...formatQuiz(values),
+                created_by: profile._id,
             };
-        });
 
-        values.questions = newQuestions;
-
-        const submitValues = {
-            ...values,
-            created_by: profile._id,
-        };
-
-        debugger;
-        await quizApi.create(submitValues);
+            console.log({ submitValues });
+            debugger;
+            if (initialValues) {
+                await quizApi.update(submitValues);
+                showToast({
+                    type: 'success',
+                    message: 'Update quiz successfully!',
+                });
+            } else {
+                await quizApi.create(submitValues);
+                showToast({
+                    type: 'success',
+                    message: 'Create quiz successfully!',
+                });
+                navigate('/profile');
+            }
+        } catch (error) {
+            showToast({
+                type: 'error',
+                message: `Fail to ${initialValues ? 'update' : 'create'} quiz!`,
+            });
+        }
     };
 
     return (
@@ -253,6 +297,7 @@ function Edit(props) {
                                     isActive={activeQuestionIndex === index}
                                     setActive={setActiveQuestionIndex}
                                     questions={questions}
+                                    onDuplicate={handleDuplicate}
                                     // error
                                 />
                             ))}
@@ -303,17 +348,17 @@ function Edit(props) {
                                         />
                                         <div className="flex justify-center">
                                             <div
-                                                className="group relative flex max-h-80 min-h-72 w-1/2 justify-center overflow-hidden rounded-lg bg-white"
+                                                className="group relative flex max-h-80 min-h-72 w-1/3 justify-center overflow-hidden rounded-lg bg-white"
                                                 onClick={() =>
                                                     uploadRef.current.click()
                                                 }
                                             >
-                                                <div>
+                                                <div className="aspect-">
                                                     <img
                                                         src={getImageURL(
                                                             question
                                                         )}
-                                                        className="object-fit h-full"
+                                                        className="object-fit h-full w-full"
                                                     />
                                                     <div className="absolute bottom-0 left-0 right-0 top-0 flex cursor-pointer items-center justify-center opacity-0 transition-all group-hover:bg-gray-500/40 group-hover:opacity-100">
                                                         <p
