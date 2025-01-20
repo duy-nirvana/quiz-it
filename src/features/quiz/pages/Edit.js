@@ -25,22 +25,22 @@ import { imgurApi } from 'api/imgurApi';
 import { fetchPersonal } from 'store/personal/personalThunk';
 
 const initialQuestion = {
-    text: 'What is 1 + 1 = ?',
+    text: '',
     answers: [
         {
-            text: '1',
+            text: '',
             is_correct: false,
         },
         {
-            text: '2',
+            text: '',
             is_correct: false,
         },
         {
-            text: '3',
+            text: '',
             is_correct: false,
         },
         {
-            text: '4',
+            text: '',
             is_correct: false,
         },
     ],
