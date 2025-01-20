@@ -19,12 +19,15 @@ function SlidePreview(
         isActive,
         setActive = () => {},
         disabled,
-        error,
+        // error,
         onDuplicate,
         onDelete,
     },
     ref
 ) {
+    const error = form.formState.errors?.questions?.[index];
+    const errorText = error?.text?.message || error?.answers?.message;
+
     return (
         <div ref={ref} className={twMerge(styles.SlidePreviewWrapper)}>
             <div
@@ -128,9 +131,9 @@ function SlidePreview(
                                     ))}
                             </div>
                         </div>
-                        {error && (
+                        {errorText && (
                             <Tooltip
-                                label="Something went wrong"
+                                label={errorText}
                                 withArrow
                                 position="right"
                                 offset={2}

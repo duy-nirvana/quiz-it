@@ -12,10 +12,13 @@ function AnswertItem({
     color = 'bg-slate-700',
     disabled,
     classNames,
+    index,
 }) {
     const Icon = icon;
     const content = `${name}.text`;
     const isCorrect = `${name}.is_correct`;
+
+    console.log('ERROR:::', form.formState.errors)
 
     return (
         <div
@@ -64,6 +67,20 @@ function AnswertItem({
                         disabled && 'pointer-events-none'
                     ),
                 }}
+                // onChange={() => {
+                //     const path = `${name.split('.').slice(0, -1).join('.')}`;
+                //     if (
+                //         form
+                //             .watch(`questions.${index}.answers`)
+                //             .some((ans) => ans.is_correct)
+                //     ) {
+                //         form.clearErrors(path);
+                //     } else if (form.formState.isSubmitted) {
+                //         form.setError(path, {
+                //             message: 'At least one answer is chosen',
+                //         });
+                //     }
+                // }}
             />
         </div>
     );

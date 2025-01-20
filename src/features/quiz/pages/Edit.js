@@ -20,7 +20,6 @@ import SelectField from 'components/form-controls/SelectField';
 import SlidePreview from 'components/SlidePreview';
 import QuizPreview from 'components/QuizPreview';
 import { useDispatch, useSelector } from 'react-redux';
-import axios from 'axios';
 import { imgurApi } from 'api/imgurApi';
 import { fetchPersonal } from 'store/personal/personalThunk';
 import { showToast } from 'helpers';
@@ -52,22 +51,6 @@ const initialQuestion = {
     time_limit: 5,
     point_type: 'STANDARD',
     answer_type: 'SINGLE',
-};
-
-const getImageURL = (form, index) => {
-    let url = 'https://placehold.co/600x400/EEE/31343C';
-
-    if (form.getValues(`questions.${index}.thumbnail`)) {
-        url = form.getValues(`questions.${index}.thumbnail`);
-    }
-
-    if (form.getValues(`questions.${index}.temp_image`)) {
-        url = URL.createObjectURL(
-            form.getValues(`questions.${index}.temp_image`)
-        );
-    }
-
-    return url;
 };
 
 function Edit(props) {
@@ -142,6 +125,7 @@ function Edit(props) {
                 setInitialValues(data);
             }
         } catch (error) {
+            console.error(error);
             showToast({ message: 'Fail to get detail quiz!', type: 'error' });
         }
     };
@@ -175,7 +159,6 @@ function Edit(props) {
 
     const handleSubmit = async (values) => {
         try {
-            console.log({ values });
             console.log({ initialValues });
             const formatValues = formatQuiz(values);
             console.log({ formatValues });
@@ -322,7 +305,7 @@ function Edit(props) {
                                     onDuplicate={handleDuplicate}
                                     onDelete={handleDelete}
                                     ref={(el) => (itemRefs.current[index] = el)} // Assign ref for each item
-                                    error
+                                    // error={form.formState.errors.questions[index]}
                                 />
                             ))}
                         </div>
@@ -416,24 +399,28 @@ function Edit(props) {
                                                 name={`questions.${index}.answers.0`}
                                                 icon={IconTriangleFilled}
                                                 color="bg-red-500"
+                                                index={index}
                                             />
                                             <AnswertItem
                                                 form={form}
                                                 name={`questions.${index}.answers.1`}
                                                 icon={IconSquareRotatedFilled}
                                                 color="bg-sky-600"
+                                                index={index}
                                             />
                                             <AnswertItem
                                                 form={form}
                                                 name={`questions.${index}.answers.2`}
                                                 icon={IconSquareRotatedFilled}
                                                 color="bg-yellow-600"
+                                                index={index}
                                             />
                                             <AnswertItem
                                                 form={form}
                                                 name={`questions.${index}.answers.3`}
                                                 icon={IconSquareFilled}
                                                 color="bg-green-700"
+                                                index={index}
                                             />
                                         </div>
                                     </>

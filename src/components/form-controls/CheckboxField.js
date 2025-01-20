@@ -2,7 +2,7 @@ import { Checkbox, Input } from '@mantine/core';
 import React from 'react';
 import { Controller } from 'react-hook-form';
 
-function CheckboxField({ form, name, ...props }) {
+function CheckboxField({ form, name, onChange = () => {}, ...props }) {
     return (
         <Controller
             control={form.control}
@@ -11,7 +11,10 @@ function CheckboxField({ form, name, ...props }) {
                 <>
                     <Checkbox
                         checked={field.value}
-                        onChange={(e) => field.onChange(e)}
+                        onChange={(e) => {
+                            field.onChange(e);
+                            onChange(e);
+                        }}
                         withErrorStyles={false}
                         {...props}
                     />
