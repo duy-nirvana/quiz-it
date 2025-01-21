@@ -28,7 +28,6 @@ const getImageURL = (question) => {
 };
 
 function QuizPreview({ form, quizList, open, onClose, children, className }) {
-    console.log({ quizList });
     const [currentQuizIndex, setCurrentQuizIndex] = useState(0);
     const timeLimit = useMemo(() => {
         return (
@@ -44,11 +43,6 @@ function QuizPreview({ form, quizList, open, onClose, children, className }) {
         setCountdownTimeLimit(timeLimit);
     }, [timeLimit, currentQuizIndex]);
 
-    console.log(
-        'AAAAAAAAAA: ',
-        form.watch(`questions.${currentQuizIndex}.time_limit`)
-    );
-
     useEffect(() => {
         if (!open) return;
         const intervalId = setInterval(() => {
@@ -61,8 +55,6 @@ function QuizPreview({ form, quizList, open, onClose, children, className }) {
 
         return () => clearInterval(intervalId);
     }, [open, countdownTimeLimit]);
-
-    console.log({ timeLimit });
 
     const handleReset = () => {
         setCurrentQuizIndex(0);

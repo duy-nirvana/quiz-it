@@ -19,14 +19,18 @@ function SlidePreview(
         isActive,
         setActive = () => {},
         disabled,
-        // error,
         onDuplicate,
         onDelete,
     },
     ref
 ) {
     const error = form.formState.errors?.questions?.[index];
-    const errorText = error?.text?.message || error?.answers?.message;
+    const errorAnswerText = error?.answers?.find((ans) => ans?.text)?.text
+        ?.message;
+    const errorAnswerChecked = error?.is_answer_seleted?.message;
+
+    const errorText =
+        error?.text?.message || errorAnswerText || errorAnswerChecked;
 
     return (
         <div ref={ref} className={twMerge(styles.SlidePreviewWrapper)}>

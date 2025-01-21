@@ -159,7 +159,6 @@ function Edit(props) {
 
     const handleSubmit = async (values) => {
         try {
-            console.log({ initialValues });
             const formatValues = formatQuiz(values);
             console.log({ formatValues });
             debugger;
@@ -305,7 +304,6 @@ function Edit(props) {
                                     onDuplicate={handleDuplicate}
                                     onDelete={handleDelete}
                                     ref={(el) => (itemRefs.current[index] = el)} // Assign ref for each item
-                                    // error={form.formState.errors.questions[index]}
                                 />
                             ))}
                         </div>

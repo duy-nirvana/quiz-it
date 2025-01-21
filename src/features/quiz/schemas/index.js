@@ -7,52 +7,33 @@ export const quizSchema = yup.object({
             text: yup.string().required('Question is required!'),
             answers: yup.array().of(
                 yup.object().shape({
-                    text: yup
-                        .string()
-                        .test(
-                            'answer_text',
-                            'please fill text ans',
-                            (value, { path, createError }) => {
-                                if (!value) {
-                                    return createError({
-                                        path, // Path to the problematic field
-                                        message: 'please fill text ans',
-                                    });
-                                }
-                                return true;
-                                // return answers.some((answer) => !answer.text);
-                            }
-                        ),
+                    text: yup.string().required('Answer value is required!'),
                     is_correct: yup
                         .boolean()
                         .test(
                             'answer_correct',
-                            'please check at least 1 ans',
+                            'At least one answer is choosen!',
                             (value, { from, path, createError }) => {
                                 const answers = from.find(
                                     ({ value }) => 'answers' in value
                                 )?.value?.answers;
 
-                                console.log({ answers });
+                                const hasOneChecked = answers.some(
+                                    (answer) => answer?.is_correct === true
+                                );
 
-                                if (answers.some((ans) => ans.is_correct)) {
+                                if (hasOneChecked) {
                                     return true;
                                 }
 
                                 return createError({
-                                    path, // Path to the problematic field
-                                    message: 'please check at least 1 ans',
+                                    path: `${path.split('.').at(0)}.is_answer_seleted`,
+                                    message: 'At least one answer is choosen',
                                 });
                             }
                         ),
                 })
             ),
-            // .test(
-            //     'at-least-one-correct',
-            //     'At least one answer is choosen',
-            //     (answers) =>
-            //         answers.some((answer) => answer.is_correct === true)
-            // ),
         })
     ),
 });

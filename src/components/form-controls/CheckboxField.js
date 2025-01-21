@@ -2,7 +2,13 @@ import { Checkbox, Input } from '@mantine/core';
 import React from 'react';
 import { Controller } from 'react-hook-form';
 
-function CheckboxField({ form, name, onChange = () => {}, ...props }) {
+function CheckboxField({
+    form,
+    name,
+    onChange = () => {},
+    showErrorText = true,
+    ...props
+}) {
     return (
         <Controller
             control={form.control}
@@ -18,7 +24,7 @@ function CheckboxField({ form, name, onChange = () => {}, ...props }) {
                         withErrorStyles={false}
                         {...props}
                     />
-                    {error && (
+                    {error && showErrorText && (
                         <Input.Error>
                             {error.message ?? 'Field is invalid'}
                         </Input.Error>
