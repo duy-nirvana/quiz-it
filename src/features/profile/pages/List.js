@@ -10,11 +10,15 @@ import {
 import { quizApi } from 'api';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import HostLiveModal from '../components/HostLiveModal';
+import { useForm } from 'react-hook-form';
 
 function List(props) {
     const navigate = useNavigate();
     const [quizzes, setQuizzes] = useState([]);
     const { profile } = useSelector((state) => state.personal);
+
+    const form = useForm();
 
     useEffect(() => {
         if (profile && !quizzes.length) {

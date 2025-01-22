@@ -96,7 +96,9 @@ function Edit(props) {
     // });
 
     useEffect(() => {
-        dispatch(fetchPersonal());
+        if (!profile) {
+            dispatch(fetchPersonal());
+        }
     }, []);
 
     useEffect(() => {
