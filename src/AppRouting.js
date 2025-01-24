@@ -6,6 +6,7 @@ const MainLayout = React.lazy(() => import('./layout/MainLayout'));
 const Auth = React.lazy(() => import('./features/auth'));
 const Home = React.lazy(() => import('./features/home'));
 const QuizFeature = React.lazy(() => import('./features/quiz'));
+const HostLiveFeature = React.lazy(() => import('./features/host'));
 const ProfileFeature = React.lazy(() => import('./features/profile'));
 
 function AppRouting(props) {
@@ -17,6 +18,7 @@ function AppRouting(props) {
             </Route>
             <Route path="auth/*" element={<Auth />} />
             <Route path="quiz/*" element={<QuizFeature />} />
+            <Route path="host/:id" element={<HostLiveFeature />} />
         </Routes>
     );
 }

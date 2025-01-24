@@ -12,13 +12,15 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import HostLiveModal from '../components/HostLiveModal';
 import { useForm } from 'react-hook-form';
+import { sessionApi } from 'api/sessionApi';
+import { showToast } from 'helpers';
 
 function List(props) {
     const navigate = useNavigate();
     const [quizzes, setQuizzes] = useState([]);
     const { profile } = useSelector((state) => state.personal);
-
-    const form = useForm();
+    const [loading, setLoading] = useState(false);
+    const [currentHostQuiz, setCurrentHostQuiz] = useState();
 
     useEffect(() => {
         if (profile && !quizzes.length) {
@@ -35,6 +37,29 @@ function List(props) {
             getQuizzes();
         }
     }, [profile]);
+
+    const handleHostLive = async (quiz) => {
+        try {
+            setCurrentHostQuiz(quiz.id);
+            setLoading(true);
+
+            // do sth
+            const { data } = await sessionApi.create({
+                quiz_id: quiz.id,
+                host_user: profile._id,
+            });
+            console.log({ data });
+            if (data.host_id) {
+                navigate(`/host/${data.host_id}`, { state: data });
+            }
+        } catch (error) {
+            console.error(error);
+            showToast({ type: 'error', message: 'Fail to host live!' });
+        } finally {
+            setCurrentHostQuiz(null);
+            setLoading(false);
+        }
+    };
 
     return (
         <div className="grid grid-cols-1 lg:grid-cols-4">
@@ -123,6 +148,12 @@ function List(props) {
                                             variant="light"
                                             color="dark"
                                             className="min-w-fit"
+                                            onClick={() => handleHostLive(quiz)}
+                                            loading={
+                                                currentHostQuiz === quiz.id &&
+                                                loading
+                                            }
+                                            disabled={loading}
                                         >
                                             Host live
                                         </Button>

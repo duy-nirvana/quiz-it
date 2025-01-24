@@ -1,0 +1,8 @@
+import axios from 'axios';
+
+const ENDPOINT = 'session';
+
+export const sessionApi = {
+    getDetail: (id) => axios.get(ENDPOINT + '/' + id),
+    create: (payload) => axios.put(ENDPOINT + '/create', payload),
+};

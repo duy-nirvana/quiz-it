@@ -5,7 +5,7 @@ export const fetchPersonal = createAsyncThunk(
     'personal',
     async (payload, thunkAPI) => {
         try {
-            const { data } = await personalApi.personal(payload);
+            const { data } = await personalApi.personal(payload || {});
             return data;
         } catch (error) {
             thunkAPI.rejectWithValue(error);
