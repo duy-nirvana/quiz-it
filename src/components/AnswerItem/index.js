@@ -13,6 +13,8 @@ function AnswertItem({
     disabled,
     classNames,
     index,
+    isPlaying,
+    isPlayer,
 }) {
     const Icon = icon;
     const content = `${name}.text`;
@@ -23,7 +25,9 @@ function AnswertItem({
             className={twMerge(
                 'flex items-center gap-4 overflow-hidden rounded-lg px-4',
                 color,
-                styles.AnswerItemWrapper
+                styles.AnswerItemWrapper,
+                isPlayer &&
+                    'cursor-pointer hover:brightness-[80%] active:brightness-[60%]'
             )}
         >
             <Icon
@@ -44,47 +48,55 @@ function AnswertItem({
                 )}
                 classNames={{
                     wrapper: 'border-none',
-                    input: 'h-28 text-black rounded-none text-white disabled:text-white border-none',
+                    input: twMerge(
+                        'h-28 text-black rounded-none text-white disabled:text-white border-none',
+                        isPlayer && '!cursor-pointer'
+                    ),
                 }}
                 disabled={disabled}
                 showErrorText={false}
             />
-            <CheckboxField
-                form={form}
-                name={isCorrect}
-                size="lg"
-                radius="xl"
-                color="lime.6"
-                className={twMerge(
-                    'hover:cursor-pointer',
-                    disabled && 'hover:cursor-default'
-                )}
-                classNames={{
-                    input: twMerge(
-                        'border-2 !border-white bg-transparent opacity-40 transition-all hover:opacity-100 hover:cursor-pointer  disabled:cursor-auto',
-                        form.watch(isCorrect) && 'opacity-100 shadow-md',
-                        disabled && 'pointer-events-none'
-                    ),
-                }}
-                showErrorText={false}
-                onChange={() => {
-                    const path = `${name.split('.').slice(0, -1).join('.')}`;
-                    if (
-                        form
-                            .watch(`questions.${index}.answers`)
-                            .some((ans) => ans.is_correct)
-                    ) {
-                        // form.clearErrors(path);
-                        form.clearErrors(
-                            `questions.${index}.is_answer_seleted`
-                        );
-                    } else if (form.formState.isSubmitted) {
-                        form.setError(`questions.${index}.is_answer_seleted`, {
-                            message: 'At least one answer is chosen!',
-                        });
-                    }
-                }}
-            />
+            {!isPlaying && (
+                <CheckboxField
+                    form={form}
+                    name={isCorrect}
+                    size="lg"
+                    radius="xl"
+                    color="lime.6"
+                    className={twMerge(
+                        'hover:cursor-pointer',
+                        disabled && 'hover:cursor-default'
+                    )}
+                    classNames={{
+                        input: twMerge(
+                            'border-2 !border-white bg-transparent opacity-40 transition-all hover:opacity-100 hover:cursor-pointer  disabled:cursor-auto',
+                            form.watch(isCorrect) && 'opacity-100 shadow-md',
+                            disabled && 'pointer-events-none'
+                        ),
+                    }}
+                    showErrorText={false}
+                    onChange={() => {
+                        const path = `${name.split('.').slice(0, -1).join('.')}`;
+                        if (
+                            form
+                                .watch(`questions.${index}.answers`)
+                                .some((ans) => ans.is_correct)
+                        ) {
+                            // form.clearErrors(path);
+                            form.clearErrors(
+                                `questions.${index}.is_answer_seleted`
+                            );
+                        } else if (form.formState.isSubmitted) {
+                            form.setError(
+                                `questions.${index}.is_answer_seleted`,
+                                {
+                                    message: 'At least one answer is chosen!',
+                                }
+                            );
+                        }
+                    }}
+                />
+            )}
         </div>
     );
 }

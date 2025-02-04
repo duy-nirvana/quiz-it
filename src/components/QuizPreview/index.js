@@ -27,7 +27,7 @@ const getImageURL = (question) => {
     return url;
 };
 
-function QuizPreview({ form, quizList, open, onClose, children, className }) {
+function QuizPreview({ form, quizList, open, onClose, className, isPlaying }) {
     const [currentQuizIndex, setCurrentQuizIndex] = useState(0);
     const timeLimit = useMemo(() => {
         return (
@@ -113,8 +113,101 @@ function QuizPreview({ form, quizList, open, onClose, children, className }) {
                                                     </div>
                                                     <div className="flex flex-col items-center justify-center rounded-full bg-slate-400/50 px-6 py-2">
                                                         <p className="text-lg font-bold text-white">
-                                                            ANSWERS
+                                                            SUBMITTED
                                                         </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div
+                                                className={twMerge(
+                                                    'absolute bottom-2 left-1/2 -translate-x-1/2',
+                                                    isPlaying &&
+                                                        'relative w-fit'
+                                                )}
+                                            >
+                                                <div className="flex gap-x-2 rounded-md bg-gray-600/50 px-3 py-2 hover:bg-gray-500/90">
+                                                    {!isPlaying && (
+                                                        <>
+                                                            <Button
+                                                                variant="subtle"
+                                                                color="white"
+                                                                rightSection={
+                                                                    <IconX />
+                                                                }
+                                                                onClick={() => {
+                                                                    handleReset();
+                                                                    onClose();
+                                                                }}
+                                                            >
+                                                                Exit preview
+                                                            </Button>
+                                                            <Divider
+                                                                orientation="vertical"
+                                                                color="black"
+                                                                size="sm"
+                                                                className="opacity-30"
+                                                            />
+                                                        </>
+                                                    )}
+                                                    <div className="flex items-center gap-x-2">
+                                                        <ActionIcon
+                                                            variant="subtle"
+                                                            color="white"
+                                                            disabled={
+                                                                currentQuizIndex ===
+                                                                0
+                                                            }
+                                                            onClick={() =>
+                                                                setCurrentQuizIndex(
+                                                                    currentQuizIndex -
+                                                                        1
+                                                                )
+                                                            }
+                                                        >
+                                                            <IconChevronLeft />
+                                                        </ActionIcon>
+                                                        <p className="text-white">
+                                                            {currentQuizIndex +
+                                                                1}{' '}
+                                                            of {quizList.length}
+                                                        </p>
+                                                        <ActionIcon
+                                                            variant="subtle"
+                                                            color="white"
+                                                            disabled={
+                                                                quizList.length -
+                                                                    1 ===
+                                                                currentQuizIndex
+                                                            }
+                                                            onClick={() =>
+                                                                setCurrentQuizIndex(
+                                                                    currentQuizIndex +
+                                                                        1
+                                                                )
+                                                            }
+                                                        >
+                                                            <IconChevronRight />
+                                                        </ActionIcon>
+                                                    </div>
+                                                    <Divider
+                                                        orientation="vertical"
+                                                        color="black"
+                                                        size="sm"
+                                                        className="opacity-30"
+                                                    />
+                                                    <div className="flex items-center">
+                                                        <Tooltip
+                                                            label="Full screen"
+                                                            withArrow
+                                                            position="right"
+                                                        >
+                                                            <ActionIcon
+                                                                variant="subtle"
+                                                                color="white"
+                                                            >
+                                                                <IconArrowsMaximize />
+                                                            </ActionIcon>
+                                                        </Tooltip>
                                                     </div>
                                                 </div>
                                             </div>
@@ -126,6 +219,7 @@ function QuizPreview({ form, quizList, open, onClose, children, className }) {
                                                 icon={IconTriangleFilled}
                                                 color="bg-red-500"
                                                 disabled
+                                                isPlaying={isPlaying}
                                             />
                                             <AnswertItem
                                                 form={form}
@@ -133,6 +227,7 @@ function QuizPreview({ form, quizList, open, onClose, children, className }) {
                                                 icon={IconSquareRotatedFilled}
                                                 color="bg-sky-600"
                                                 disabled
+                                                isPlaying={isPlaying}
                                             />
                                             <AnswertItem
                                                 form={form}
@@ -140,6 +235,7 @@ function QuizPreview({ form, quizList, open, onClose, children, className }) {
                                                 icon={IconSquareRotatedFilled}
                                                 color="bg-yellow-600"
                                                 disabled
+                                                isPlaying={isPlaying}
                                             />
                                             <AnswertItem
                                                 form={form}
@@ -147,83 +243,8 @@ function QuizPreview({ form, quizList, open, onClose, children, className }) {
                                                 icon={IconSquareFilled}
                                                 color="bg-green-700"
                                                 disabled
+                                                isPlaying={isPlaying}
                                             />
-                                        </div>
-                                    </div>
-                                    <div className="absolute bottom-2 left-1/2 -translate-x-1/2">
-                                        <div className="flex gap-x-2 rounded-md bg-gray-600/50 px-3 py-2 hover:bg-gray-500/90">
-                                            <Button
-                                                variant="subtle"
-                                                color="white"
-                                                rightSection={<IconX />}
-                                                onClick={() => {
-                                                    handleReset();
-                                                    onClose();
-                                                }}
-                                            >
-                                                Exit preview
-                                            </Button>
-                                            <Divider
-                                                orientation="vertical"
-                                                color="black"
-                                                size="sm"
-                                                className="opacity-30"
-                                            />
-                                            <div className="flex items-center gap-x-2">
-                                                <ActionIcon
-                                                    variant="subtle"
-                                                    color="white"
-                                                    disabled={
-                                                        currentQuizIndex === 0
-                                                    }
-                                                    onClick={() =>
-                                                        setCurrentQuizIndex(
-                                                            currentQuizIndex - 1
-                                                        )
-                                                    }
-                                                >
-                                                    <IconChevronLeft />
-                                                </ActionIcon>
-                                                <p className="text-white">
-                                                    {currentQuizIndex + 1} of{' '}
-                                                    {quizList.length}
-                                                </p>
-                                                <ActionIcon
-                                                    variant="subtle"
-                                                    color="white"
-                                                    disabled={
-                                                        quizList.length - 1 ===
-                                                        currentQuizIndex
-                                                    }
-                                                    onClick={() =>
-                                                        setCurrentQuizIndex(
-                                                            currentQuizIndex + 1
-                                                        )
-                                                    }
-                                                >
-                                                    <IconChevronRight />
-                                                </ActionIcon>
-                                            </div>
-                                            <Divider
-                                                orientation="vertical"
-                                                color="black"
-                                                size="sm"
-                                                className="opacity-30"
-                                            />
-                                            <div className="flex items-center">
-                                                <Tooltip
-                                                    label="Full screen"
-                                                    withArrow
-                                                    position="right"
-                                                >
-                                                    <ActionIcon
-                                                        variant="subtle"
-                                                        color="white"
-                                                    >
-                                                        <IconArrowsMaximize />
-                                                    </ActionIcon>
-                                                </Tooltip>
-                                            </div>
                                         </div>
                                     </div>
                                 </div>

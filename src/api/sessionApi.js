@@ -4,5 +4,5 @@ const ENDPOINT = 'session';
 
 export const sessionApi = {
     getDetail: (id) => axios.get(ENDPOINT + '/' + id),
-    create: (payload) => axios.put(ENDPOINT + '/create', payload),
+    create: (payload) => axios.post(ENDPOINT + '/create', payload),
 };
