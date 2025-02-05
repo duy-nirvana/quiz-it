@@ -27,8 +27,7 @@ function ParticipantPlaying(props) {
     const { profile } = useSelector((state) => state.personal);
     const { access_token } = useSelector((state) => state.auth);
     const [countdownToStart, setCountdownToStart] = useState(0);
-    // const [isStarted, setIsStarted] = useState(false);
-    const isStarted = useRef();
+    const [isStarted, setIsStarted] = useState(false);
 
     useEffect(() => {
         if (!profile) {
@@ -63,16 +62,13 @@ function ParticipantPlaying(props) {
         });
 
         socket.on('quiz_info', (res) => {
+            console.log({res})
             setSessionInfo(res);
         });
 
         socket.on('session_active', (status) => {
             console.log('game start:!!');
-            isStarted.current = status;
-            setSessionInfo((prev) => ({
-                ...prev,
-                is_active: status,
-            }));
+            setIsStarted(status);
             setCountdownToStart(0);
         });
 
@@ -114,9 +110,10 @@ function ParticipantPlaying(props) {
     };
 
     console.log({ sessionInfo });
+    console.log({ isStarted });
 
     if (sessionInfo) {
-        if (sessionInfo?.is_active || isStarted?.current) {
+        if (sessionInfo?.is_active || isStarted) {
             return <h1>PLAYING 123</h1>;
         }
 
