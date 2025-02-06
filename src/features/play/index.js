@@ -1,8 +1,11 @@
+import { bigSmile } from '@dicebear/collection';
+import { createAvatar } from '@dicebear/core';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Button } from '@mantine/core';
+import { ActionIcon, Button, Tooltip } from '@mantine/core';
+import { IconDice6Filled, IconMoodHappyFilled } from '@tabler/icons-react';
 import InputField from 'components/form-controls/InputField';
 import { showToast } from 'helpers';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useParams } from 'react-router-dom';
@@ -10,12 +13,23 @@ import { socket } from 'socket';
 import { fetchPersonal } from 'store/personal/personalThunk';
 import { twMerge } from 'tailwind-merge';
 import * as yup from 'yup';
+import CustomAvatarModal from './components/CustomAvatarModal';
 
 function ParticipantPlaying(props) {
     const dispatch = useDispatch();
     const location = useLocation();
     const { id: host_id } = useParams();
     const form = useForm({
+        defaultValues: {
+            avatar: {
+                skinColor: ['ffe4c0'],
+                hair: ['shortHair'],
+                hairColor: ['3a1a00'],
+                eyes: ['normal'],
+                mouth: ['openedSmile'],
+                accessories: [],
+            },
+        },
         resolver: yupResolver(
             yup.object({
                 name: yup.string().required(),
@@ -28,6 +42,11 @@ function ParticipantPlaying(props) {
     const { access_token } = useSelector((state) => state.auth);
     const [countdownToStart, setCountdownToStart] = useState(0);
     const [isStarted, setIsStarted] = useState(false);
+    const customAvatarModalRef = useRef();
+
+    useLayoutEffect(() => {
+        getRandomAvatar();
+    }, []);
 
     useEffect(() => {
         if (!profile) {
@@ -38,8 +57,6 @@ function ParticipantPlaying(props) {
             }
         }
     }, []);
-
-    console.log({ profile });
 
     useEffect(() => {
         // Emit the join session event when participant arrives
@@ -62,7 +79,7 @@ function ParticipantPlaying(props) {
         });
 
         socket.on('quiz_info', (res) => {
-            console.log({res})
+            console.log({ res });
             setSessionInfo(res);
         });
 
@@ -96,6 +113,31 @@ function ParticipantPlaying(props) {
         }
     }, [countdownToStart]);
 
+    const getRandomAvatar = () => {
+        const { skinColor, hair, hairColor, eyes, mouth, accessories } =
+            bigSmile.schema.properties;
+
+        const getRandomProperty = (property) => {
+            return [
+                property.default[
+                    Math.floor(Math.random() * property.default.length)
+                ],
+            ];
+        };
+
+        const randomAvatar = {
+            ...form.getValues('avatar'),
+            skinColor: getRandomProperty(skinColor),
+            hair: getRandomProperty(hair),
+            hairColor: getRandomProperty(hairColor),
+            eyes: getRandomProperty(eyes),
+            mouth: getRandomProperty(mouth),
+            accessories: getRandomProperty(accessories),
+        };
+
+        form.setValue('avatar', randomAvatar);
+    };
+
     const handleSubmit = async (values) => {
         const participant = {
             hostId: host_id,
@@ -109,8 +151,22 @@ function ParticipantPlaying(props) {
         socket.emit('join_session', participant);
     };
 
-    console.log({ sessionInfo });
-    console.log({ isStarted });
+    // console.log({ sessionInfo });
+    // console.log({ isStarted });
+    // console.log(
+    //     createAvatar(bigSmile, {
+    //         accessoriesProbability: 100,
+    //         accessories: ['catEars'],
+
+    //         skinColor: ['8c5a2b', '643d19', 'a47539'],
+    //         // hairColor: ['00000'],
+    //         hair: ['mohawk'],
+
+    //         size: 120,
+    //         backgroundColor: ['18181b'],
+    //         radius: 10,
+    //     }).toJson()
+    // );
 
     if (sessionInfo) {
         if (sessionInfo?.is_active || isStarted) {
@@ -165,13 +221,44 @@ function ParticipantPlaying(props) {
                     <p className="text-xl">GAME PIN:</p>
                     <p className="text-4xl font-black">{host_id}</p>
                 </div>
-                <form onSubmit={form.handleSubmit(handleSubmit)}>
+                <form
+                    onSubmit={form.handleSubmit(handleSubmit)}
+                    className="flex flex-col gap-3"
+                >
+                    <div className="flex w-fit items-end gap-2 self-center">
+                        <img
+                            src={createAvatar(bigSmile, {
+                                accessoriesProbability: 100,
+                                size: 120,
+                                backgroundColor: ['18181b'],
+                                radius: 10,
+                                ...form.watch('avatar'),
+                            }).toDataUri()}
+                        />
+                        <div className="flex flex-col">
+                            <Tooltip label="Random avatar" position="right">
+                                <ActionIcon
+                                    variant="subtle"
+                                    color="white"
+                                    onClick={getRandomAvatar}
+                                >
+                                    <IconDice6Filled />
+                                </ActionIcon>
+                            </Tooltip>
+                            <CustomAvatarModal form={form} getRandomAvatar={getRandomAvatar}>
+                                <Tooltip label="Custom avatar" position="right">
+                                    <ActionIcon variant="subtle" color="white">
+                                        <IconMoodHappyFilled />
+                                    </ActionIcon>
+                                </Tooltip>
+                            </CustomAvatarModal>
+                        </div>
+                    </div>
                     <InputField
                         form={form}
                         name="name"
                         placeholder="Enter nickname"
                         size="lg"
-                        className="mb-3"
                         classNames={{
                             input: '!text-center font-bold',
                         }}

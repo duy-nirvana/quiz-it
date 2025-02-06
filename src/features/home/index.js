@@ -7,6 +7,9 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import * as yup from 'yup';
+import { bigSmile } from '@dicebear/collection';
+import * as style from '@dicebear/big-smile';
+import { createAvatar } from '@dicebear/core';
 
 function Home(props) {
     const navigate = useNavigate();
@@ -43,6 +46,15 @@ function Home(props) {
             setLoading(false);
         }
     };
+
+    console.log({ bigSmile });
+    console.log(
+        createAvatar(bigSmile, {
+            skinColor: ['8c5a2b', '643d19', 'a47539'],
+            hairColor: ['00000'],
+            hair: ['mohawk']
+        }).toDataUri()
+    );
 
     return (
         <div className="flex flex-grow flex-col justify-center">
