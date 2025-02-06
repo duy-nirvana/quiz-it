@@ -49,11 +49,6 @@ function CustomAvatarModal({ children, form, getRandomAvatar }) {
                                 <IconDice6Filled />
                             </ActionIcon>
                         </Tooltip>
-                        <Tooltip label="Custom avatar" position="right">
-                            <ActionIcon variant="subtle" color="white">
-                                <IconMoodHappyFilled />
-                            </ActionIcon>
-                        </Tooltip>
                     </div>
                 </div>
             </Modal>
