@@ -1,25 +1,85 @@
 import { bigSmile } from '@dicebear/collection';
 import { createAvatar } from '@dicebear/core';
-import {
-    ActionIcon,
-    Badge,
-    Button,
-    Modal,
-    SegmentedControl,
-    Text,
-    Tooltip,
-} from '@mantine/core';
+import { ActionIcon, Button, Modal, Tooltip } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { IconDice6Filled, IconMoodHappyFilled } from '@tabler/icons-react';
-import InputField from 'components/form-controls/InputField';
-import { twMerge } from 'tailwind-merge';
+import {
+    IconChevronLeft,
+    IconChevronRight,
+    IconDice6Filled,
+} from '@tabler/icons-react';
+import { useEffect, useState } from 'react';
+
+function SelectColor({ form, name, property }) {
+    return (
+        <div className="flex grow flex-wrap justify-around gap-2">
+            {property.map((color, index) => (
+                <div
+                    key={index}
+                    className="h-7 min-w-7 cursor-pointer rounded-full border-2 border-black/80"
+                    style={{
+                        backgroundColor: `#${color}`,
+                    }}
+                    onClick={() => form.setValue(name, [color])}
+                ></div>
+            ))}
+        </div>
+    );
+}
+
+function SelectProperty({ form, name, property }) {
+    const [activeIndex, setActiveIndex] = useState(
+        property.findIndex((value) => value === form.watch(`${name}.0`)) || 0
+    );
+
+    useEffect(() => {
+        setActiveIndex(
+            property.findIndex((value) => value === form.watch(`${name}.0`)) ||
+                0
+        );
+    }, [form.getValues('avatar')]);
+
+    const formatName = (value) => {
+        const result = value.replace(/([A-Z])/g, ' $1').toLowerCase();
+        return result.charAt(0).toUpperCase() + result.slice(1);
+    };
+
+    return (
+        <div className="flex grow justify-around gap-2">
+            <ActionIcon
+                variant="light"
+                color="white"
+                onClick={() => {
+                    const newIndex =
+                        activeIndex > 0 ? activeIndex - 1 : property.length - 1;
+                    setActiveIndex(newIndex);
+                    form.setValue(`${name}`, [property[newIndex]]);
+                }}
+            >
+                <IconChevronLeft />
+            </ActionIcon>
+            <div className="flex flex-1 justify-center">
+                {formatName(property[activeIndex])}
+            </div>
+            <ActionIcon
+                variant="light"
+                color="white"
+                onClick={() => {
+                    const newIndex =
+                        activeIndex < property.length - 1 ? activeIndex + 1 : 0;
+                    setActiveIndex(newIndex);
+                    form.setValue(`${name}`, [property[newIndex]]);
+                }}
+            >
+                <IconChevronRight />
+            </ActionIcon>
+        </div>
+    );
+}
 
 function CustomAvatarModal({ children, form, getRandomAvatar }) {
     const [opened, { open, close }] = useDisclosure(false);
-    const { skinColor } = bigSmile.schema.properties;
-    // console.log('cur values: ', form.getValues('avatar'));
-
-    console.log({ bigSmile });
+    const { skinColor, hair, hairColor, eyes, mouth, accessories } =
+        bigSmile.schema.properties;
 
     return (
         <>
@@ -57,18 +117,65 @@ function CustomAvatarModal({ children, form, getRandomAvatar }) {
                             </Tooltip>
                         </div>
                     </div>
-                    <div className="self-start w-full text-lg font-bold text-white">
-                        <div className="grid grid-cols-4 gap-2">
+                    <div className="w-full self-start text-lg font-bold text-white">
+                        <div className="mb-3 grid grid-cols-2 gap-2 md:grid-cols-4">
                             <p>Skin:</p>
-                            <div className="col-span-3 flex grow justify-evenly gap-2">
-                                {skinColor.default.map((color) => (
-                                    <div
-                                        className="h-7 min-w-7 rounded-full border-2 border-black/80"
-                                        style={{
-                                            backgroundColor: `#${color}`,
-                                        }}
-                                    ></div>
-                                ))}
+                            <div className="col-span-3">
+                                <SelectColor
+                                    form={form}
+                                    name="avatar.skinColor"
+                                    property={skinColor.default}
+                                />
+                            </div>
+                        </div>
+                        <div className="mb-3 grid grid-cols-2 gap-2 md:grid-cols-4">
+                            <p>Hair:</p>
+                            <div className="col-span-3">
+                                <SelectProperty
+                                    form={form}
+                                    name="avatar.hair"
+                                    property={hair.default}
+                                />
+                            </div>
+                        </div>
+                        <div className="mb-3 grid grid-cols-2 gap-2 md:grid-cols-4">
+                            <p>Hair color:</p>
+                            <div className="col-span-3">
+                                <SelectColor
+                                    form={form}
+                                    name="avatar.hairColor"
+                                    property={hairColor.default}
+                                />
+                            </div>
+                        </div>
+                        <div className="mb-3 grid grid-cols-2 gap-2 md:grid-cols-4">
+                            <p>Eye:</p>
+                            <div className="col-span-3">
+                                <SelectProperty
+                                    form={form}
+                                    name="avatar.eyes"
+                                    property={eyes.default}
+                                />
+                            </div>
+                        </div>
+                        <div className="mb-3 grid grid-cols-2 gap-2 md:grid-cols-4">
+                            <p>Mouth:</p>
+                            <div className="col-span-3">
+                                <SelectProperty
+                                    form={form}
+                                    name="avatar.mouth"
+                                    property={mouth.default}
+                                />
+                            </div>
+                        </div>
+                        <div className="mb-3 grid grid-cols-2 gap-2 md:grid-cols-4">
+                            <p>Accessory:</p>
+                            <div className="col-span-3">
+                                <SelectProperty
+                                    form={form}
+                                    name="avatar.accessories"
+                                    property={accessories.default}
+                                />
                             </div>
                         </div>
                     </div>
