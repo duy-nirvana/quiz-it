@@ -14,6 +14,8 @@ import { fetchPersonal } from 'store/personal/personalThunk';
 import { twMerge } from 'tailwind-merge';
 import * as yup from 'yup';
 import CustomAvatarModal from './components/CustomAvatarModal';
+import { getParticipantAvatar } from 'utils/avatar';
+import QuizPreview from 'components/QuizPreview';
 
 function ParticipantPlaying(props) {
     const dispatch = useDispatch();
@@ -42,6 +44,7 @@ function ParticipantPlaying(props) {
     const { access_token } = useSelector((state) => state.auth);
     const [countdownToStart, setCountdownToStart] = useState(0);
     const [isStarted, setIsStarted] = useState(false);
+    // const isStarted = useRef();
     const customAvatarModalRef = useRef();
 
     useLayoutEffect(() => {
@@ -81,11 +84,14 @@ function ParticipantPlaying(props) {
         socket.on('quiz_info', (res) => {
             console.log({ res });
             setSessionInfo(res);
+            // form.setValue('quiz', res?.quiz);
+            form.reset({ ...form.getValues(), ...res?.quiz });
         });
 
         socket.on('session_active', (status) => {
             console.log('game start:!!');
             setIsStarted(status);
+            // isStarted.current = status;
             setCountdownToStart(0);
         });
 
@@ -140,8 +146,10 @@ function ParticipantPlaying(props) {
 
     const handleSubmit = async (values) => {
         const participant = {
+            // ...values,
             hostId: host_id,
             name: values.name,
+            avatar: values.avatar,
         };
 
         if (profile) {
@@ -151,26 +159,24 @@ function ParticipantPlaying(props) {
         socket.emit('join_session', participant);
     };
 
-    // console.log({ sessionInfo });
-    // console.log({ isStarted });
-    // console.log(
-    //     createAvatar(bigSmile, {
-    //         accessoriesProbability: 100,
-    //         accessories: ['catEars'],
-
-    //         skinColor: ['8c5a2b', '643d19', 'a47539'],
-    //         // hairColor: ['00000'],
-    //         hair: ['mohawk'],
-
-    //         size: 120,
-    //         backgroundColor: ['18181b'],
-    //         radius: 10,
-    //     }).toJson()
-    // );
+    console.log({ sessionInfo });
+    console.log({ isStarted });
+    console.log('current');
 
     if (sessionInfo) {
         if (sessionInfo?.is_active || isStarted) {
-            return <h1>PLAYING 123</h1>;
+            return (
+                <div className="relative z-50 h-screen min-h-0 overflow-hidden bg-indigo-950 p-4">
+                    {/* <QuizPreview /> */}
+                    <QuizPreview
+                        form={form}
+                        quizList={sessionInfo?.quiz?.questions}
+                        open
+                        isPlaying
+                        // onClose={() => setOpenPreview(false)}
+                    />
+                </div>
+            );
         }
 
         if (countdownToStart) {
@@ -227,13 +233,9 @@ function ParticipantPlaying(props) {
                 >
                     <div className="flex w-fit items-end gap-2 self-center">
                         <img
-                            src={createAvatar(bigSmile, {
-                                accessoriesProbability: 100,
-                                size: 120,
-                                backgroundColor: ['18181b'],
-                                radius: 10,
+                            src={getParticipantAvatar({
                                 ...form.watch('avatar'),
-                            }).toDataUri()}
+                            })}
                         />
                         <div className="flex flex-col">
                             <Tooltip label="Random avatar" position="right">
@@ -245,7 +247,10 @@ function ParticipantPlaying(props) {
                                     <IconDice6Filled />
                                 </ActionIcon>
                             </Tooltip>
-                            <CustomAvatarModal form={form} getRandomAvatar={getRandomAvatar}>
+                            <CustomAvatarModal
+                                form={form}
+                                getRandomAvatar={getRandomAvatar}
+                            >
                                 <Tooltip label="Custom avatar" position="right">
                                     <ActionIcon variant="subtle" color="white">
                                         <IconMoodHappyFilled />

@@ -1,3 +1,5 @@
+import { bigSmile } from '@dicebear/collection';
+import { createAvatar } from '@dicebear/core';
 import {
     ActionIcon,
     Button,
@@ -23,6 +25,7 @@ import { useLocation, useParams } from 'react-router-dom';
 import { socket } from 'socket';
 import { fetchPersonal } from 'store/personal/personalThunk';
 import { twMerge } from 'tailwind-merge';
+import { getParticipantAvatar } from 'utils/avatar';
 
 function HostInfo({ direction = 'row', sessionInfo, opened }) {
     return (
@@ -276,7 +279,13 @@ function HostLiveFeature(props) {
                     ) : (
                         <>
                             {participants.map((participant) => (
-                                <div className="rounded-md bg-white px-4 py-3">
+                                <div className="flex items-center gap-2 rounded-md bg-white p-1.5">
+                                    <img
+                                        src={getParticipantAvatar({
+                                            size: 70,
+                                            ...participant.avatar,
+                                        })}
+                                    />
                                     <p className="text-xl font-bold">
                                         {participant?.name}
                                     </p>

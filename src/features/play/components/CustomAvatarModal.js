@@ -8,6 +8,7 @@ import {
     IconDice6Filled,
 } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
+import { getParticipantAvatar } from 'utils/avatar';
 
 function SelectColor({ form, name, property }) {
     return (
@@ -97,13 +98,9 @@ function CustomAvatarModal({ children, form, getRandomAvatar }) {
                     </p>
                     <div className="flex items-end justify-center gap-2">
                         <img
-                            src={createAvatar(bigSmile, {
-                                accessoriesProbability: 100,
-                                size: 120,
-                                backgroundColor: ['18181b'],
-                                radius: 10,
+                            src={getParticipantAvatar({
                                 ...form.watch('avatar'),
-                            }).toDataUri()}
+                            })}
                         />
                         <div className="flex flex-col">
                             <Tooltip label="Random avatar" position="right">
