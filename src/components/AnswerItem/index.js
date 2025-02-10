@@ -15,14 +15,12 @@ function AnswertItem({
     index,
     isPlaying,
     isPlayer,
-    isSelected,
+    selectedIndex,
     onSelect = () => {},
 }) {
     const Icon = icon;
     const content = `${name}.text`;
     const isCorrect = `${name}.is_correct`;
-
-    console.log({ isSelected });
 
     return (
         <div
@@ -31,10 +29,23 @@ function AnswertItem({
                 color,
                 styles.AnswerItemWrapper,
                 isPlayer &&
-                    'cursor-pointer hover:brightness-[80%] active:brightness-[60%]'
+                    `relative cursor-pointer hover:brightness-[80%] active:brightness-[60%]`,
+                Number.isInteger(selectedIndex) &&
+                    selectedIndex === index &&
+                    'cursor-default brightness-100 hover:brightness-100 active:brightness-100',
+                Number.isInteger(selectedIndex) &&
+                    selectedIndex !== index &&
+                    'cursor-default brightness-[45%] hover:brightness-[45%] active:brightness-[45%]'
             )}
-            onClick={() => !isSelected && onSelect()}
         >
+            {isPlayer && (
+                <div
+                    className="absolute bottom-0 left-0 right-0 top-0 z-[100]"
+                    onClick={() =>
+                        !Number.isInteger(selectedIndex) && onSelect()
+                    }
+                ></div>
+            )}
             <Icon
                 className={twMerge(
                     'h-8 w-8 min-w-8 text-white transition-all',

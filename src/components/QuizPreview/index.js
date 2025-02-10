@@ -38,7 +38,7 @@ function QuizPreview({
     isPlayer,
 }) {
     const [currentQuizIndex, setCurrentQuizIndex] = useState(0);
-    const [isSelected, setIsSelected] = useState(false);
+    const [selectedIndex, setSelectedIndex] = useState(null);
 
     const timeLimit = useMemo(() => {
         return (
@@ -71,6 +71,8 @@ function QuizPreview({
         setCurrentQuizIndex(0);
         setCountdownTimeLimit(Number(form.getValues(`questions.0.time_limit`)));
     };
+
+    console.log({ selectedIndex });
 
     return (
         <>
@@ -240,57 +242,18 @@ function QuizPreview({
                                                         disabled
                                                         isPlaying={isPlaying}
                                                         isPlayer={isPlayer}
-                                                        isSelected={isSelected}
-                                                        onSelect={() =>
-                                                            setIsSelected(index)
+                                                        selectedIndex={
+                                                            selectedIndex
                                                         }
+                                                        onSelect={() =>
+                                                            setSelectedIndex(
+                                                                answerIndex
+                                                            )
+                                                        }
+                                                        index={answerIndex}
                                                     />
                                                 )
                                             )}
-                                            {/* <AnswertItem
-                                                form={form}
-                                                name={`questions.${currentQuizIndex}.answers.0`}
-                                                icon={IconTriangleFilled}
-                                                color="bg-red-500"
-                                                disabled
-                                                isPlaying={isPlaying}
-                                                isPlayer={isPlayer}
-                                                isSelected={isSelected}
-                                                onSelect={() => setIsSelected(true)}
-                                            />
-                                            <AnswertItem
-                                                form={form}
-                                                name={`questions.${currentQuizIndex}.answers.1`}
-                                                icon={IconSquareRotatedFilled}
-                                                color="bg-sky-600"
-                                                disabled
-                                                isPlaying={isPlaying}
-                                                isPlayer={isPlayer}
-                                                isSelected={isSelected}
-                                                onSelect={() => setIsSelected(true)}
-                                            />
-                                            <AnswertItem
-                                                form={form}
-                                                name={`questions.${currentQuizIndex}.answers.2`}
-                                                icon={IconSquareRotatedFilled}
-                                                color="bg-yellow-600"
-                                                disabled
-                                                isPlaying={isPlaying}
-                                                isPlayer={isPlayer}
-                                                isSelected={isSelected}
-                                                onSelect={() => setIsSelected(true)}
-                                            />
-                                            <AnswertItem
-                                                form={form}
-                                                name={`questions.${currentQuizIndex}.answers.3`}
-                                                icon={IconSquareFilled}
-                                                color="bg-green-700"
-                                                disabled
-                                                isPlaying={isPlaying}
-                                                isPlayer={isPlayer}
-                                                isSelected={isSelected}
-                                                onSelect={() => setIsSelected(true)}
-                                            /> */}
                                         </div>
                                     </div>
                                 </div>
