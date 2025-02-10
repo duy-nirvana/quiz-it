@@ -26,6 +26,7 @@ import { showToast } from 'helpers';
 import { formatQuestions, formatQuiz } from 'helpers/quiz';
 import { quizSchema } from '../schemas';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { ANSWER_ITEMS } from 'utils/answerItem';
 
 const initialQuestion = {
     text: '',
@@ -394,34 +395,20 @@ function Edit(props) {
                                             </div>
                                         </div>
                                         <div className="grid grid-cols-2 gap-4">
-                                            <AnswertItem
-                                                form={form}
-                                                name={`questions.${index}.answers.0`}
-                                                icon={IconTriangleFilled}
-                                                color="bg-red-500"
-                                                index={index}
-                                            />
-                                            <AnswertItem
-                                                form={form}
-                                                name={`questions.${index}.answers.1`}
-                                                icon={IconSquareRotatedFilled}
-                                                color="bg-sky-600"
-                                                index={index}
-                                            />
-                                            <AnswertItem
-                                                form={form}
-                                                name={`questions.${index}.answers.2`}
-                                                icon={IconSquareRotatedFilled}
-                                                color="bg-yellow-600"
-                                                index={index}
-                                            />
-                                            <AnswertItem
-                                                form={form}
-                                                name={`questions.${index}.answers.3`}
-                                                icon={IconSquareFilled}
-                                                color="bg-green-700"
-                                                index={index}
-                                            />
+                                            {ANSWER_ITEMS[
+                                                form.watch(
+                                                    `questions.${index}.type`
+                                                )
+                                            ].map((item, answerIndex) => (
+                                                <AnswertItem
+                                                    key={answerIndex}
+                                                    form={form}
+                                                    name={`questions.${index}.answers.${answerIndex}`}
+                                                    icon={item.icon}
+                                                    color={item.color}
+                                                    index={index}
+                                                />
+                                            ))}
                                         </div>
                                     </>
                                 );

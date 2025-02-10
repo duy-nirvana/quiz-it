@@ -1,3 +1,5 @@
+import { answerItems } from "./answerItem";
+
 export const getCookie = (name) => {
     let matches = document.cookie.match(
         new RegExp(

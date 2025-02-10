@@ -12,6 +12,7 @@ import AnswertItem from 'components/AnswerItem';
 import InputField from 'components/form-controls/InputField';
 import { useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
+import { ANSWER_ITEMS } from 'utils/answerItem';
 
 const getImageURL = (question) => {
     let url = 'https://placehold.co/600x400/EEE/31343C';
@@ -27,8 +28,18 @@ const getImageURL = (question) => {
     return url;
 };
 
-function QuizPreview({ form, quizList, open, onClose, className, isPlaying }) {
+function QuizPreview({
+    form,
+    quizList,
+    open,
+    onClose,
+    className,
+    isPlaying,
+    isPlayer,
+}) {
     const [currentQuizIndex, setCurrentQuizIndex] = useState(0);
+    const [isSelected, setIsSelected] = useState(false);
+
     const timeLimit = useMemo(() => {
         return (
             Number(
@@ -74,7 +85,11 @@ function QuizPreview({ form, quizList, open, onClose, className, isPlaying }) {
                                         className
                                     )}
                                 >
-                                    <div className="flex h-full w-full flex-1 flex-col justify-between">
+                                    <div
+                                        className={twMerge(
+                                            'flex h-full w-full flex-1 flex-col justify-between'
+                                        )}
+                                    >
                                         <div className="flex justify-center">
                                             <InputField
                                                 key={currentQuizIndex}
@@ -88,14 +103,14 @@ function QuizPreview({ form, quizList, open, onClose, className, isPlaying }) {
                                                 disabled
                                             />
                                         </div>
-                                        <div>
+                                        <div className="flex flex-col">
                                             <div className="flex h-full items-center justify-around">
                                                 <div className="flex h-32 w-32 flex-col items-center justify-center rounded-full bg-slate-400/50 p-20">
                                                     <p className="text-6xl font-bold text-white">
                                                         {countdownTimeLimit}
                                                     </p>
                                                 </div>
-                                                <div className="flex h-80 w-1/2 justify-center rounded-lg bg-white">
+                                                <div className="flex h-96 w-1/2 justify-center overflow-hidden rounded-lg bg-white">
                                                     <img
                                                         src={getImageURL(
                                                             quizList[
@@ -122,7 +137,8 @@ function QuizPreview({ form, quizList, open, onClose, className, isPlaying }) {
                                                 className={twMerge(
                                                     'absolute bottom-2 left-1/2 -translate-x-1/2',
                                                     isPlaying &&
-                                                        'relative w-fit'
+                                                        'translate-y static left-0 my-2 translate-x-0 self-center',
+                                                    isPlayer && 'hidden'
                                                 )}
                                             >
                                                 <div className="flex gap-x-2 rounded-md bg-gray-600/50 px-3 py-2 hover:bg-gray-500/90">
@@ -213,13 +229,34 @@ function QuizPreview({ form, quizList, open, onClose, className, isPlaying }) {
                                             </div>
                                         </div>
                                         <div className="grid w-full grid-cols-2 gap-4">
-                                            <AnswertItem
+                                            {ANSWER_ITEMS['QUIZ'].map(
+                                                (item, answerIndex) => (
+                                                    <AnswertItem
+                                                        key={answerIndex}
+                                                        form={form}
+                                                        name={`questions.${currentQuizIndex}.answers.${answerIndex}`}
+                                                        icon={item.icon}
+                                                        color={item.color}
+                                                        disabled
+                                                        isPlaying={isPlaying}
+                                                        isPlayer={isPlayer}
+                                                        isSelected={isSelected}
+                                                        onSelect={() =>
+                                                            setIsSelected(index)
+                                                        }
+                                                    />
+                                                )
+                                            )}
+                                            {/* <AnswertItem
                                                 form={form}
                                                 name={`questions.${currentQuizIndex}.answers.0`}
                                                 icon={IconTriangleFilled}
                                                 color="bg-red-500"
                                                 disabled
                                                 isPlaying={isPlaying}
+                                                isPlayer={isPlayer}
+                                                isSelected={isSelected}
+                                                onSelect={() => setIsSelected(true)}
                                             />
                                             <AnswertItem
                                                 form={form}
@@ -228,6 +265,9 @@ function QuizPreview({ form, quizList, open, onClose, className, isPlaying }) {
                                                 color="bg-sky-600"
                                                 disabled
                                                 isPlaying={isPlaying}
+                                                isPlayer={isPlayer}
+                                                isSelected={isSelected}
+                                                onSelect={() => setIsSelected(true)}
                                             />
                                             <AnswertItem
                                                 form={form}
@@ -236,6 +276,9 @@ function QuizPreview({ form, quizList, open, onClose, className, isPlaying }) {
                                                 color="bg-yellow-600"
                                                 disabled
                                                 isPlaying={isPlaying}
+                                                isPlayer={isPlayer}
+                                                isSelected={isSelected}
+                                                onSelect={() => setIsSelected(true)}
                                             />
                                             <AnswertItem
                                                 form={form}
@@ -244,7 +287,10 @@ function QuizPreview({ form, quizList, open, onClose, className, isPlaying }) {
                                                 color="bg-green-700"
                                                 disabled
                                                 isPlaying={isPlaying}
-                                            />
+                                                isPlayer={isPlayer}
+                                                isSelected={isSelected}
+                                                onSelect={() => setIsSelected(true)}
+                                            /> */}
                                         </div>
                                     </div>
                                 </div>

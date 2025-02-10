@@ -8,6 +8,7 @@ import React, { forwardRef } from 'react';
 import styles from './Index.module.scss';
 import { ActionIcon, Tooltip } from '@mantine/core';
 import { twMerge } from 'tailwind-merge';
+import { ANSWER_ITEMS } from 'utils/answerItem';
 
 function SlidePreview(
     {
@@ -123,7 +124,7 @@ function SlidePreview(
                                 </div>
                             </div>
                             <div className="grid w-full grow grid-cols-2 gap-1">
-                                {form
+                                {/* {form
                                     .getValues(`questions.${index}.answers`)
                                     .map((answer) => (
                                         <div
@@ -132,7 +133,19 @@ function SlidePreview(
                                                 answer.is_correct && 'selected'
                                             )}
                                         ></div>
-                                    ))}
+                                    ))} */}
+                                {ANSWER_ITEMS[
+                                    form.watch(`questions.${index}.type`)
+                                ].map((item, answerIndex) => (
+                                    <div
+                                        className={twMerge(
+                                            'answer-item',
+                                            form.watch(
+                                                `questions.${index}.answers.${answerIndex}.is_correct`
+                                            ) && 'selected'
+                                        )}
+                                    ></div>
+                                ))}
                             </div>
                         </div>
                         {errorText && (

@@ -173,6 +173,7 @@ function ParticipantPlaying(props) {
                         quizList={sessionInfo?.quiz?.questions}
                         open
                         isPlaying
+                        isPlayer
                         // onClose={() => setOpenPreview(false)}
                     />
                 </div>

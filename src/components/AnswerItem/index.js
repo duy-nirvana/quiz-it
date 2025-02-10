@@ -15,10 +15,14 @@ function AnswertItem({
     index,
     isPlaying,
     isPlayer,
+    isSelected,
+    onSelect = () => {},
 }) {
     const Icon = icon;
     const content = `${name}.text`;
     const isCorrect = `${name}.is_correct`;
+
+    console.log({ isSelected });
 
     return (
         <div
@@ -29,6 +33,7 @@ function AnswertItem({
                 isPlayer &&
                     'cursor-pointer hover:brightness-[80%] active:brightness-[60%]'
             )}
+            onClick={() => !isSelected && onSelect()}
         >
             <Icon
                 className={twMerge(
