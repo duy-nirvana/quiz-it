@@ -73,6 +73,12 @@ function QuizPreview({
     };
 
     console.log({ selectedIndex });
+    const handleSelect = (index) => {
+        if (!isPlayer) return;
+
+        setSelectedIndex(index);
+        
+    };
 
     return (
         <>
@@ -246,7 +252,7 @@ function QuizPreview({
                                                             selectedIndex
                                                         }
                                                         onSelect={() =>
-                                                            setSelectedIndex(
+                                                            handleSelect(
                                                                 answerIndex
                                                             )
                                                         }
