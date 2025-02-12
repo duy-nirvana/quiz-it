@@ -11,6 +11,8 @@ import {
 import AnswertItem from 'components/AnswerItem';
 import InputField from 'components/form-controls/InputField';
 import { useEffect, useMemo, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { socket } from 'socket';
 import { twMerge } from 'tailwind-merge';
 import { ANSWER_ITEMS } from 'utils/answerItem';
 
@@ -37,6 +39,7 @@ function QuizPreview({
     isPlaying,
     isPlayer,
 }) {
+    let { id: hostId } = useParams();
     const [currentQuizIndex, setCurrentQuizIndex] = useState(0);
     const [selectedIndex, setSelectedIndex] = useState(null);
 
@@ -77,8 +80,15 @@ function QuizPreview({
         if (!isPlayer) return;
 
         setSelectedIndex(index);
-        
+        // socket.to(hostId).emit('participant_selected', {
+        //     answerIndex: selectedIndex,
+        // })
+        socket.emit('select_answer', {
+            hostId,
+            answerIndex: selectedIndex,
+        })
     };
+    console.log({hostId})
 
     return (
         <>

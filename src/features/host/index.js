@@ -89,9 +89,11 @@ function HostLiveFeature(props) {
 
     const [opened, { open, close }] = useDisclosure(false);
     const [sessionInfo, setSessionInfo] = useState();
-    const [participants, setParticipants] = useState([]);
     const [countdownToStart, setCountdownToStart] = useState(10);
     const [isStarted, setIsStarted] = useState(false);
+    const [participants, setParticipants] = useState([]);
+    const [participantsWithScore, setParticipantsWithScore] = useState([]);
+    const [submittedTotal, setSubbmitedTotal] = useState(0);
 
     const form = useForm();
 
@@ -142,6 +144,13 @@ function HostLiveFeature(props) {
         //         is_active: true,
         //     }));
         // });
+
+        // write logic player selected here
+        socket.on('participant_selected', (data) => {
+            const { _id, answerIndex } = data || {};
+            console.log('current values: ', form.getValues());
+            console.log('AAAAAAAAAAAAA DATA', data);
+        });
 
         return () => {
             socket.off('new_participant');
