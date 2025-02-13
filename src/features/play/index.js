@@ -20,7 +20,7 @@ import QuizPreview from 'components/QuizPreview';
 function ParticipantPlaying(props) {
     const dispatch = useDispatch();
     const location = useLocation();
-    const { id: host_id } = useParams();
+    const { id: hostId } = useParams();
     const form = useForm({
         defaultValues: {
             avatar: {
@@ -46,6 +46,8 @@ function ParticipantPlaying(props) {
     const [isStarted, setIsStarted] = useState(false);
     // const isStarted = useRef();
     const customAvatarModalRef = useRef();
+    const [selectedIndex, setSelectedIndex] = useState(null);
+    const [participantInfo, setParticipantInfo] = useState(null);
 
     useLayoutEffect(() => {
         getRandomAvatar();
@@ -61,9 +63,11 @@ function ParticipantPlaying(props) {
         }
     }, []);
 
+    console.log({ participantInfo });
+
     useEffect(() => {
         // Emit the join session event when participant arrives
-        // socket.emit('join_session', host_id, 'Duy Tran 123');
+        // socket.emit('join_session', hostId, 'Duy Tran 123');
         socket.connect();
 
         // Listen for session information (like game start)
@@ -71,6 +75,14 @@ function ParticipantPlaying(props) {
         //     console.log({ session });
         //     setSessionInfo(session);
         // });
+
+        socket.on('new_participant', (participant) => {
+            if (participantInfo) return;
+
+            if (participant.socket_id === socket.id) {
+                setParticipantInfo(participant);
+            }
+        });
 
         socket.on('session_error', (msg) => {
             console.log('session error!!!!!!!');
@@ -103,7 +115,7 @@ function ParticipantPlaying(props) {
             socket.off('quiz_info');
             socket.disconnect();
         };
-    }, [host_id]);
+    }, [hostId]);
 
     useEffect(() => {
         if (countdownToStart) {
@@ -144,10 +156,21 @@ function ParticipantPlaying(props) {
         form.setValue('avatar', randomAvatar);
     };
 
+    const handleSelect = (index) => {
+        setSelectedIndex(index);
+
+        socket.emit('select_answer', {
+            hostId,
+            participantSocketId: participantInfo.socket_id,
+            dateTime: new Date().getTime(),
+            answerIndex: index,
+        });
+    };
+
     const handleSubmit = async (values) => {
         const participant = {
             // ...values,
-            hostId: host_id,
+            hostId,
             name: values.name,
             avatar: values.avatar,
         };
@@ -159,9 +182,10 @@ function ParticipantPlaying(props) {
         socket.emit('join_session', participant);
     };
 
-    console.log({ sessionInfo });
-    console.log({ isStarted });
-    console.log('current');
+    // console.log({ sessionInfo });
+    // console.log({ isStarted });
+    // console.log('current');
+    console.log({ selectedIndex });
 
     if (sessionInfo) {
         if (sessionInfo?.is_active || isStarted) {
@@ -175,6 +199,8 @@ function ParticipantPlaying(props) {
                         isPlaying
                         isPlayer
                         // onClose={() => setOpenPreview(false)}
+                        selectedIndex={selectedIndex}
+                        onSelect={handleSelect}
                     />
                 </div>
             );
@@ -226,7 +252,7 @@ function ParticipantPlaying(props) {
                 </p>
                 <div className="rounded-md bg-white px-4 py-2 text-center">
                     <p className="text-xl">GAME PIN:</p>
-                    <p className="text-4xl font-black">{host_id}</p>
+                    <p className="text-4xl font-black">{hostId}</p>
                 </div>
                 <form
                     onSubmit={form.handleSubmit(handleSubmit)}

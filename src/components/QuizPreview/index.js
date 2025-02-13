@@ -10,7 +10,13 @@ import {
 } from '@tabler/icons-react';
 import AnswertItem from 'components/AnswerItem';
 import InputField from 'components/form-controls/InputField';
-import { useEffect, useMemo, useState } from 'react';
+import {
+    forwardRef,
+    useEffect,
+    useImperativeHandle,
+    useMemo,
+    useState,
+} from 'react';
 import { useParams } from 'react-router-dom';
 import { socket } from 'socket';
 import { twMerge } from 'tailwind-merge';
@@ -38,10 +44,12 @@ function QuizPreview({
     className,
     isPlaying,
     isPlayer,
+    selectedIndex,
+    onSelect = () => {},
 }) {
     let { id: hostId } = useParams();
     const [currentQuizIndex, setCurrentQuizIndex] = useState(0);
-    const [selectedIndex, setSelectedIndex] = useState(null);
+    const [dateTime, setDateTime] = useState(new Date().getTime());
 
     const timeLimit = useMemo(() => {
         return (
@@ -52,6 +60,15 @@ function QuizPreview({
     }, [open, currentQuizIndex]);
 
     const [countdownTimeLimit, setCountdownTimeLimit] = useState(timeLimit);
+
+    // useImperativeHandle(
+    //     ref,
+    //     () => ({
+    //         currentQuizIndex,
+    //         dateTime,
+    //     }),
+    //     [currentQuizIndex]
+    // );
 
     useEffect(() => {
         setCountdownTimeLimit(timeLimit);
@@ -70,25 +87,15 @@ function QuizPreview({
         return () => clearInterval(intervalId);
     }, [open, countdownTimeLimit]);
 
+    const handleNavigate = (index) => {
+        setDateTime(new Date().getTime());
+        setCurrentQuizIndex(index);
+    };
+
     const handleReset = () => {
         setCurrentQuizIndex(0);
         setCountdownTimeLimit(Number(form.getValues(`questions.0.time_limit`)));
     };
-
-    console.log({ selectedIndex });
-    const handleSelect = (index) => {
-        if (!isPlayer) return;
-
-        setSelectedIndex(index);
-        // socket.to(hostId).emit('participant_selected', {
-        //     answerIndex: selectedIndex,
-        // })
-        socket.emit('select_answer', {
-            hostId,
-            answerIndex: selectedIndex,
-        })
-    };
-    console.log({hostId})
 
     return (
         <>
@@ -192,7 +199,7 @@ function QuizPreview({
                                                                 0
                                                             }
                                                             onClick={() =>
-                                                                setCurrentQuizIndex(
+                                                                handleNavigate(
                                                                     currentQuizIndex -
                                                                         1
                                                                 )
@@ -214,7 +221,7 @@ function QuizPreview({
                                                                 currentQuizIndex
                                                             }
                                                             onClick={() =>
-                                                                setCurrentQuizIndex(
+                                                                handleNavigate(
                                                                     currentQuizIndex +
                                                                         1
                                                                 )
@@ -262,7 +269,7 @@ function QuizPreview({
                                                             selectedIndex
                                                         }
                                                         onSelect={() =>
-                                                            handleSelect(
+                                                            onSelect(
                                                                 answerIndex
                                                             )
                                                         }

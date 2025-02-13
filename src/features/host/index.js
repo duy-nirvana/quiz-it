@@ -17,7 +17,7 @@ import {
 import { sessionApi } from 'api';
 import QuizPreview from 'components/QuizPreview';
 import { showToast } from 'helpers';
-import { useEffect, useLayoutEffect, useMemo, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import QRCode from 'react-qr-code';
 import { useDispatch, useSelector } from 'react-redux';
@@ -147,9 +147,11 @@ function HostLiveFeature(props) {
 
         // write logic player selected here
         socket.on('participant_selected', (data) => {
-            const { _id, answerIndex } = data || {};
-            console.log('current values: ', form.getValues());
-            console.log('AAAAAAAAAAAAA DATA', data);
+            updateScore(data);
+            // const { participantSocketId, answerIndex } = data;
+
+            // console.log('current values: ', form.getValues());
+            // console.log('AAAAAAAAAAAAA DATA', data);
         });
 
         return () => {
@@ -215,9 +217,19 @@ function HostLiveFeature(props) {
         }
     };
 
+    const updateScore = (data) => {
+        const { participantSocketId, answerIndex, dateTime } = data;
+
+        console.log('----- USER SELECTED: ', data);
+
+        // write logic update score here
+    };
+
     const handleStart = () => {
         socket.emit('start_countdown', id);
     };
+
+    // console.log('quizRef', quizRef?.current);
 
     if (!sessionInfo) {
         return (
