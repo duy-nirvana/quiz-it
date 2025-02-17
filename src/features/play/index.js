@@ -45,9 +45,14 @@ function ParticipantPlaying(props) {
     const [countdownToStart, setCountdownToStart] = useState(0);
     const [isStarted, setIsStarted] = useState(false);
     // const isStarted = useRef();
-    const customAvatarModalRef = useRef();
+    const startDatetime = useRef();
     const [selectedIndex, setSelectedIndex] = useState(null);
     const [participantInfo, setParticipantInfo] = useState(null);
+
+    const [playerCurrentQuizIndex, setPlayerCurrentQuizIndex] = useState(0);
+    const [playerCountdownTimeLimit, setPlayerCountdownTimeLimit] = useState(
+        Number(form.getValues(`questions.${playerCurrentQuizIndex}.time_limit`))
+    );
 
     useLayoutEffect(() => {
         getRandomAvatar();
@@ -107,12 +112,28 @@ function ParticipantPlaying(props) {
             setCountdownToStart(0);
         });
 
+        socket.on('question_changed_index', (data) => {
+            const { dateTime, questionIndex } = data;
+
+            startDatetime.current = dateTime;
+            setPlayerCurrentQuizIndex(questionIndex);
+            setPlayerCountdownTimeLimit(
+                Number(form.getValues(`questions.${questionIndex}.time_limit`))
+            );
+        });
+
+        socket.on('question_countdown', (time) => {
+            setPlayerCountdownTimeLimit(time);
+        });
+
         // Clean up socket connections
         return () => {
             socket.off('session_info');
             socket.off('session_active');
             socket.off('countdown_started');
             socket.off('quiz_info');
+            socket.off('question_changed_index');
+            socket.off('question_countdown');
             socket.disconnect();
         };
     }, [hostId]);
@@ -191,16 +212,16 @@ function ParticipantPlaying(props) {
         if (sessionInfo?.is_active || isStarted) {
             return (
                 <div className="relative z-50 h-screen min-h-0 overflow-hidden bg-indigo-950 p-4">
-                    {/* <QuizPreview /> */}
                     <QuizPreview
                         form={form}
                         quizList={sessionInfo?.quiz?.questions}
                         open
                         isPlaying
                         isPlayer
-                        // onClose={() => setOpenPreview(false)}
                         selectedIndex={selectedIndex}
                         onSelect={handleSelect}
+                        playerCurrentQuizIndex={playerCurrentQuizIndex}
+                        playerCountdownTimeLimit={playerCountdownTimeLimit}
                     />
                 </div>
             );

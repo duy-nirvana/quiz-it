@@ -229,8 +229,6 @@ function HostLiveFeature(props) {
         socket.emit('start_countdown', id);
     };
 
-    // console.log('quizRef', quizRef?.current);
-
     if (!sessionInfo) {
         return (
             <div className="relative h-screen min-h-0 overflow-hidden bg-indigo-950 p-4">
@@ -267,19 +265,16 @@ function HostLiveFeature(props) {
 
         return (
             <div className="relative h-screen min-h-0 overflow-hidden bg-indigo-950 p-4">
-                {/* <QuizPreview /> */}
                 <QuizPreview
                     form={form}
                     quizList={sessionInfo?.quiz?.questions}
                     open={true}
                     isPlaying
-                    // onClose={() => setOpenPreview(false)}
+                    isHost
                 />
             </div>
         );
     }
-
-    console.log({ sessionInfo });
 
     return (
         <div className="relative h-screen min-h-0 overflow-hidden bg-indigo-950 p-4">

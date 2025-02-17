@@ -43,9 +43,12 @@ function QuizPreview({
     onClose,
     className,
     isPlaying,
+    isHost,
     isPlayer,
     selectedIndex,
     onSelect = () => {},
+    playerCurrentQuizIndex,
+    playerCountdownTimeLimit,
 }) {
     let { id: hostId } = useParams();
     const [currentQuizIndex, setCurrentQuizIndex] = useState(0);
@@ -61,25 +64,27 @@ function QuizPreview({
 
     const [countdownTimeLimit, setCountdownTimeLimit] = useState(timeLimit);
 
-    // useImperativeHandle(
-    //     ref,
-    //     () => ({
-    //         currentQuizIndex,
-    //         dateTime,
-    //     }),
-    //     [currentQuizIndex]
-    // );
-
     useEffect(() => {
+        if (isPlayer) return;
+
         setCountdownTimeLimit(timeLimit);
     }, [timeLimit, currentQuizIndex]);
 
     useEffect(() => {
-        if (!open) return;
+        if (!open || isPlayer) return;
+
         const intervalId = setInterval(() => {
             if (countdownTimeLimit > 0) {
+                if (isHost) {
+                    socket.emit('set_countdown_question', {
+                        hostId,
+                        time: countdownTimeLimit - 1,
+                    });
+                }
                 setCountdownTimeLimit(countdownTimeLimit - 1);
             } else {
+                if (isHost) return;
+
                 setCountdownTimeLimit(timeLimit);
             }
         }, 1000);
@@ -87,9 +92,29 @@ function QuizPreview({
         return () => clearInterval(intervalId);
     }, [open, countdownTimeLimit]);
 
+    useEffect(() => {
+        console.log({ playerCountdownTimeLimit });
+        if (playerCountdownTimeLimit >= 0) {
+            setCountdownTimeLimit(playerCountdownTimeLimit);
+        }
+    }, [open, playerCountdownTimeLimit]);
+
+    useEffect(() => {
+        if (isPlayer && playerCurrentQuizIndex) {
+            setCurrentQuizIndex(playerCurrentQuizIndex);
+        }
+    }, [playerCurrentQuizIndex]);
+
     const handleNavigate = (index) => {
-        setDateTime(new Date().getTime());
+        const newDate = new Date().getTime();
+        setDateTime(newDate);
         setCurrentQuizIndex(index);
+
+        socket.emit('navigate_question', {
+            hostId,
+            questionIndex: index,
+            dateTime: newDate,
+        });
     };
 
     const handleReset = () => {
