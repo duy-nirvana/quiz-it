@@ -89,11 +89,13 @@ function HostLiveFeature(props) {
 
     const [opened, { open, close }] = useDisclosure(false);
     const [sessionInfo, setSessionInfo] = useState();
-    const [countdownToStart, setCountdownToStart] = useState(10);
+    const [countdownToStart, setCountdownToStart] = useState(5);
     const [isStarted, setIsStarted] = useState(false);
     const [participants, setParticipants] = useState([]);
+    const [submittedTotal, setSubmittedTotal] = useState(0);
+
     const [participantsWithScore, setParticipantsWithScore] = useState([]);
-    const [submittedTotal, setSubbmitedTotal] = useState(0);
+    let { current: participantsWithScoreRef } = useRef([]);
 
     const form = useForm();
 
@@ -134,7 +136,7 @@ function HostLiveFeature(props) {
         });
 
         socket.on('countdown_started', () => {
-            setCountdownToStart(10);
+            setCountdownToStart(5);
             setIsStarted(true);
         });
 
@@ -159,6 +161,7 @@ function HostLiveFeature(props) {
             socket.off('session_info');
             socket.off('participant_left');
             socket.off('session_active');
+            socket.disconnect();
         };
     }, [id]);
 
@@ -201,6 +204,10 @@ function HostLiveFeature(props) {
     }, [countdownToStart, isStarted]);
 
     useEffect(() => {
+        socket.emit('count_submit', { hostId: id, submittedTotal });
+    }, [submittedTotal]);
+
+    useEffect(() => {
         if (sessionInfo?.quiz) {
             form.reset(sessionInfo.quiz);
         }
@@ -218,9 +225,50 @@ function HostLiveFeature(props) {
     };
 
     const updateScore = (data) => {
-        const { participantSocketId, answerIndex, dateTime } = data;
+        const participant = { ...data };
+        const {
+            participantSocketId: socket_id,
+            score,
+            questionIndex,
+            answerIndex,
+        } = participant;
 
         console.log('----- USER SELECTED: ', data);
+
+        setSubmittedTotal((prev) => prev + 1);
+        // const participantIndex = participantsWithScore.findIndex(
+        //     (participant) => {
+        //         console.log({ participant });
+        //         console.log({ participantSocketId });
+
+        //         return participant?.socket_id === participantSocketId;
+        //     }
+        // );
+
+        // console.log({ participantIndex });
+
+        // if (participantIndex !== -1) {
+        //     participantsWithScore.splice(participantIndex, 1, {
+        //         ...participantsWithScore[participantIndex],
+        //         score:
+        //         participantsWithScore[participantIndex]?.score + score,
+        //     });
+        // } else {
+        // participantsWithScore.push({
+        //     socket_id: participantSocketId,
+        //     score,
+        // });
+        // }
+
+        setParticipantsWithScore((prev) => [
+            ...prev,
+            {
+                socket_id,
+                score,
+                questionIndex,
+                answerIndex,
+            },
+        ]);
 
         // write logic update score here
     };
@@ -228,6 +276,8 @@ function HostLiveFeature(props) {
     const handleStart = () => {
         socket.emit('start_countdown', id);
     };
+
+    console.log({ participantsWithScore });
 
     if (!sessionInfo) {
         return (
@@ -268,6 +318,8 @@ function HostLiveFeature(props) {
                 <QuizPreview
                     form={form}
                     quizList={sessionInfo?.quiz?.questions}
+                    submittedTotal={submittedTotal}
+                    setSubmittedTotal={setSubmittedTotal}
                     open={true}
                     isPlaying
                     isHost

@@ -6,6 +6,7 @@ import { BrowserRouter } from 'react-router-dom';
 
 import './styles/global.scss';
 import '@mantine/notifications/styles.css';
+import '@mantine/charts/styles.css';
 import { setupAxios } from './setupAxios';
 import axios from 'axios';
 import { Provider } from 'react-redux';

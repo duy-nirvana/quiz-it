@@ -1,3 +1,4 @@
+import { BarChart } from '@mantine/charts';
 import { ActionIcon, Button, Divider, Tooltip } from '@mantine/core';
 import {
     IconArrowsMaximize,
@@ -46,13 +47,15 @@ function QuizPreview({
     isHost,
     isPlayer,
     selectedIndex,
+    submittedTotal,
+    setSubmittedTotal,
     onSelect = () => {},
     playerCurrentQuizIndex,
     playerCountdownTimeLimit,
+    showChart = true,
 }) {
     let { id: hostId } = useParams();
     const [currentQuizIndex, setCurrentQuizIndex] = useState(0);
-    const [dateTime, setDateTime] = useState(new Date().getTime());
 
     const timeLimit = useMemo(() => {
         return (
@@ -63,6 +66,13 @@ function QuizPreview({
     }, [open, currentQuizIndex]);
 
     const [countdownTimeLimit, setCountdownTimeLimit] = useState(timeLimit);
+    const disabledSelect = isPlayer && !countdownTimeLimit;
+
+    // useImperativeHandle(() => {
+    //     if (currentQuizIndex === 0) {
+    //         handleNavigate(0);
+    //     }
+    // }, [open]);
 
     useEffect(() => {
         if (isPlayer) return;
@@ -74,6 +84,14 @@ function QuizPreview({
         if (!open || isPlayer) return;
 
         const intervalId = setInterval(() => {
+            if (
+                isHost &&
+                currentQuizIndex === 0 &&
+                countdownTimeLimit === timeLimit
+            ) {
+                handleNavigate(0);
+            }
+
             if (countdownTimeLimit > 0) {
                 if (isHost) {
                     socket.emit('set_countdown_question', {
@@ -93,7 +111,6 @@ function QuizPreview({
     }, [open, countdownTimeLimit]);
 
     useEffect(() => {
-        console.log({ playerCountdownTimeLimit });
         if (playerCountdownTimeLimit >= 0) {
             setCountdownTimeLimit(playerCountdownTimeLimit);
         }
@@ -106,21 +123,26 @@ function QuizPreview({
     }, [playerCurrentQuizIndex]);
 
     const handleNavigate = (index) => {
-        const newDate = new Date().getTime();
-        setDateTime(newDate);
         setCurrentQuizIndex(index);
 
-        socket.emit('navigate_question', {
-            hostId,
-            questionIndex: index,
-            dateTime: newDate,
-        });
+        if (isHost) {
+            const newDate = new Date().getTime();
+
+            setSubmittedTotal(0);
+            socket.emit('navigate_question', {
+                hostId,
+                questionIndex: index,
+                dateTime: newDate,
+            });
+        }
     };
 
     const handleReset = () => {
         setCurrentQuizIndex(0);
         setCountdownTimeLimit(Number(form.getValues(`questions.0.time_limit`)));
     };
+
+    console.log('values: ', form.getValues());
 
     return (
         <>
@@ -154,35 +176,110 @@ function QuizPreview({
                                             />
                                         </div>
                                         <div className="flex flex-col">
-                                            <div className="flex h-full items-center justify-around">
-                                                <div className="flex h-32 w-32 flex-col items-center justify-center rounded-full bg-slate-400/50 p-20">
-                                                    <p className="text-6xl font-bold text-white">
-                                                        {countdownTimeLimit}
-                                                    </p>
-                                                </div>
-                                                <div className="flex h-96 w-1/2 justify-center overflow-hidden rounded-lg bg-white">
-                                                    <img
-                                                        src={getImageURL(
-                                                            quizList[
-                                                                currentQuizIndex
-                                                            ]
-                                                        )}
-                                                        className="object-fit h-full"
+                                            {showChart ? (
+                                                <div className="mb-6 flex justify-center">
+                                                    <BarChart
+                                                        h={350}
+                                                        data={[
+                                                            {
+                                                                answer: ANSWER_ITEMS[
+                                                                    'QUIZ'
+                                                                ][0].icon,
+                                                                Smartphones: 1200,
+                                                            },
+                                                            {
+                                                                answer: 'February',
+                                                                Smartphones: 1900,
+                                                            },
+                                                            {
+                                                                answer: 'March',
+                                                                Smartphones: 400,
+                                                            },
+                                                            {
+                                                                answer: 'April',
+                                                                Smartphones: 1000,
+                                                            },
+                                                            {
+                                                                answer: 'May',
+                                                                Smartphones: 800,
+                                                            },
+                                                            {
+                                                                answer: 'June',
+                                                                Smartphones: 750,
+                                                            },
+                                                        ]}
+                                                        dataKey="answer"
+                                                        withBarValueLabel
+                                                        tooltipAnimationDuration={
+                                                            200
+                                                        }
+                                                        textColor="white"
+                                                        barLabelColor="white"
+                                                        series={[
+                                                            {
+                                                                name: 'Smartphones',
+                                                                color: 'violet.6',
+                                                            },
+                                                        ]}
+                                                        classNames={{
+                                                            root: 'md:!w-3/4 lg:!w-1/2 !text-white',
+                                                            axisLabel:
+                                                                '!text-white',
+                                                            '--chart-text-color':
+                                                                'text-white',
+                                                        }}
+                                                        xAxisProps={{
+                                                            style: {
+                                                                fontSize: 18,
+                                                            },
+                                                        }}
+                                                        valueLabelProps={{
+                                                            style: {
+                                                                fontSize: 18,
+                                                            },
+                                                        }}
                                                     />
                                                 </div>
-                                                <div>
-                                                    <div className="mb-2 flex h-32 w-32 flex-col items-center justify-center rounded-full bg-slate-400/50 p-20">
-                                                        <p className="text-6xl font-bold text-white">
-                                                            {quizList.length}
-                                                        </p>
+                                            ) : (
+                                                <>
+                                                    <div className="flex h-full items-center justify-around">
+                                                        <div className="flex h-32 w-32 flex-col items-center justify-center rounded-full bg-slate-400/50 p-20">
+                                                            <p className="text-6xl font-bold text-white">
+                                                                {
+                                                                    countdownTimeLimit
+                                                                }
+                                                            </p>
+                                                        </div>
+                                                        <div className="flex h-96 w-1/2 justify-center overflow-hidden rounded-lg bg-white">
+                                                            <img
+                                                                src={getImageURL(
+                                                                    quizList[
+                                                                        currentQuizIndex
+                                                                    ]
+                                                                )}
+                                                                className="object-fit h-full"
+                                                            />
+                                                        </div>
+                                                        <div>
+                                                            <div className="mb-2 flex h-32 w-32 flex-col items-center justify-center rounded-full bg-slate-400/50 p-20">
+                                                                <p className="text-6xl font-bold text-white">
+                                                                    {Number.isInteger(
+                                                                        submittedTotal
+                                                                    )
+                                                                        ? submittedTotal
+                                                                        : quizList.length}
+                                                                </p>
+                                                            </div>
+                                                            <div className="flex flex-col items-center justify-center rounded-full bg-slate-400/50 px-6 py-2">
+                                                                <p className="text-lg font-bold text-white">
+                                                                    SUBMITTED
+                                                                </p>
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                    <div className="flex flex-col items-center justify-center rounded-full bg-slate-400/50 px-6 py-2">
-                                                        <p className="text-lg font-bold text-white">
-                                                            SUBMITTED
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                                </>
+                                            )}
+
                                             <div
                                                 className={twMerge(
                                                     'absolute bottom-2 left-1/2 -translate-x-1/2',
@@ -220,8 +317,9 @@ function QuizPreview({
                                                             variant="subtle"
                                                             color="white"
                                                             disabled={
+                                                                isHost ||
                                                                 currentQuizIndex ===
-                                                                0
+                                                                    0
                                                             }
                                                             onClick={() =>
                                                                 handleNavigate(
@@ -299,6 +397,9 @@ function QuizPreview({
                                                             )
                                                         }
                                                         index={answerIndex}
+                                                        isDisabledSelect={
+                                                            disabledSelect
+                                                        }
                                                     />
                                                 )
                                             )}

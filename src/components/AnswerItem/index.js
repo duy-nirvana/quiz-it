@@ -17,6 +17,7 @@ function AnswertItem({
     isPlayer,
     selectedIndex,
     onSelect = () => {},
+    isDisabledSelect = false,
 }) {
     const Icon = icon;
     const content = `${name}.text`;
@@ -35,6 +36,9 @@ function AnswertItem({
                     'cursor-default brightness-100 hover:brightness-100 active:brightness-100',
                 Number.isInteger(selectedIndex) &&
                     selectedIndex !== index &&
+                    'cursor-default brightness-[45%] hover:brightness-[45%] active:brightness-[45%]',
+                isDisabledSelect &&
+                    !Number.isInteger(selectedIndex) &&
                     'cursor-default brightness-[45%] hover:brightness-[45%] active:brightness-[45%]'
             )}
         >
@@ -42,7 +46,9 @@ function AnswertItem({
                 <div
                     className="absolute bottom-0 left-0 right-0 top-0 z-[100]"
                     onClick={() =>
-                        !Number.isInteger(selectedIndex) && onSelect()
+                        !isDisabledSelect &&
+                        !Number.isInteger(selectedIndex) &&
+                        onSelect()
                     }
                 ></div>
             )}

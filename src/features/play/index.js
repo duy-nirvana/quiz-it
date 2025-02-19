@@ -50,9 +50,13 @@ function ParticipantPlaying(props) {
     const [participantInfo, setParticipantInfo] = useState(null);
 
     const [playerCurrentQuizIndex, setPlayerCurrentQuizIndex] = useState(0);
-    const [playerCountdownTimeLimit, setPlayerCountdownTimeLimit] = useState(
-        Number(form.getValues(`questions.${playerCurrentQuizIndex}.time_limit`))
+    const timeLimit = Number(
+        form.getValues(`questions.${playerCurrentQuizIndex}.time_limit`)
     );
+    const [playerCountdownTimeLimit, setPlayerCountdownTimeLimit] =
+        useState(timeLimit);
+
+    const [submittedTotal, setSubbmitedTotal] = useState(0);
 
     useLayoutEffect(() => {
         getRandomAvatar();
@@ -67,8 +71,6 @@ function ParticipantPlaying(props) {
             }
         }
     }, []);
-
-    console.log({ participantInfo });
 
     useEffect(() => {
         // Emit the join session event when participant arrives
@@ -90,16 +92,14 @@ function ParticipantPlaying(props) {
         });
 
         socket.on('session_error', (msg) => {
-            console.log('session error!!!!!!!');
             showToast({ type: 'error', message: msg });
         });
 
         socket.on('countdown_started', () => {
-            setCountdownToStart(10);
+            setCountdownToStart(5);
         });
 
         socket.on('quiz_info', (res) => {
-            console.log({ res });
             setSessionInfo(res);
             // form.setValue('quiz', res?.quiz);
             form.reset({ ...form.getValues(), ...res?.quiz });
@@ -116,10 +116,16 @@ function ParticipantPlaying(props) {
             const { dateTime, questionIndex } = data;
 
             startDatetime.current = dateTime;
+
+            setSelectedIndex(null);
             setPlayerCurrentQuizIndex(questionIndex);
             setPlayerCountdownTimeLimit(
                 Number(form.getValues(`questions.${questionIndex}.time_limit`))
             );
+        });
+
+        socket.on('total_submitted', (total) => {
+            setSubbmitedTotal(total);
         });
 
         socket.on('question_countdown', (time) => {
@@ -134,6 +140,7 @@ function ParticipantPlaying(props) {
             socket.off('quiz_info');
             socket.off('question_changed_index');
             socket.off('question_countdown');
+            socket.off('total_submitted');
             socket.disconnect();
         };
     }, [hostId]);
@@ -178,13 +185,23 @@ function ParticipantPlaying(props) {
     };
 
     const handleSelect = (index) => {
+        const dateSelected = new Date().getTime();
+        let score = 0;
+
         setSelectedIndex(index);
+
+        if (dateSelected > startDatetime.current) {
+            score = timeLimit - (dateSelected - startDatetime.current) / 1000;
+        } else {
+            score = timeLimit;
+        }
 
         socket.emit('select_answer', {
             hostId,
             participantSocketId: participantInfo.socket_id,
-            dateTime: new Date().getTime(),
-            answerIndex: index,
+            score,
+            questionIndex: playerCurrentQuizIndex,
+            answerIndex: index
         });
     };
 
@@ -203,11 +220,6 @@ function ParticipantPlaying(props) {
         socket.emit('join_session', participant);
     };
 
-    // console.log({ sessionInfo });
-    // console.log({ isStarted });
-    // console.log('current');
-    console.log({ selectedIndex });
-
     if (sessionInfo) {
         if (sessionInfo?.is_active || isStarted) {
             return (
@@ -222,6 +234,7 @@ function ParticipantPlaying(props) {
                         onSelect={handleSelect}
                         playerCurrentQuizIndex={playerCurrentQuizIndex}
                         playerCountdownTimeLimit={playerCountdownTimeLimit}
+                        submittedTotal={submittedTotal}
                     />
                 </div>
             );
