@@ -182,30 +182,22 @@ function QuizPreview({
                                                         h={350}
                                                         data={[
                                                             {
-                                                                answer: ANSWER_ITEMS[
-                                                                    'QUIZ'
-                                                                ][0].icon,
+                                                                // answer: ANSWER_ITEMS[
+                                                                //     'QUIZ'
+                                                                // ][0].icon,
                                                                 Smartphones: 1200,
                                                             },
                                                             {
-                                                                answer: 'February',
+                                                                // answer: 'February',
                                                                 Smartphones: 1900,
                                                             },
                                                             {
-                                                                answer: 'March',
+                                                                // answer: 'March',
                                                                 Smartphones: 400,
                                                             },
                                                             {
-                                                                answer: 'April',
+                                                                // answer: 'April',
                                                                 Smartphones: 1000,
-                                                            },
-                                                            {
-                                                                answer: 'May',
-                                                                Smartphones: 800,
-                                                            },
-                                                            {
-                                                                answer: 'June',
-                                                                Smartphones: 750,
                                                             },
                                                         ]}
                                                         dataKey="answer"
@@ -238,6 +230,8 @@ function QuizPreview({
                                                                 fontSize: 18,
                                                             },
                                                         }}
+                                                        withYAxis={false}
+                                                        withXAxis={false}
                                                     />
                                                 </div>
                                             ) : (
