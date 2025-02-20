@@ -2,6 +2,7 @@ import { BarChart } from '@mantine/charts';
 import { ActionIcon, Button, Divider, Tooltip } from '@mantine/core';
 import {
     IconArrowsMaximize,
+    IconBulb,
     IconChevronLeft,
     IconChevronRight,
     IconSquareFilled,
@@ -37,6 +38,17 @@ const getImageURL = (question) => {
     return url;
 };
 
+const CustomXAxisTick = (props) => {
+    const { x, y, payload } = props;
+    return (
+        <g transform={`translate(${x},${y})`}>
+            <foreignObject width="50" height="24" x={-20} y={0} color="white">
+                {ANSWER_ITEMS['QUIZ'][payload.value].iconjsx}
+            </foreignObject>
+        </g>
+    );
+};
+
 function QuizPreview({
     form,
     quizList,
@@ -53,6 +65,7 @@ function QuizPreview({
     playerCurrentQuizIndex,
     playerCountdownTimeLimit,
     showChart = true,
+    participantsWithScore = [],
 }) {
     let { id: hostId } = useParams();
     const [currentQuizIndex, setCurrentQuizIndex] = useState(0);
@@ -67,12 +80,8 @@ function QuizPreview({
 
     const [countdownTimeLimit, setCountdownTimeLimit] = useState(timeLimit);
     const disabledSelect = isPlayer && !countdownTimeLimit;
-
-    // useImperativeHandle(() => {
-    //     if (currentQuizIndex === 0) {
-    //         handleNavigate(0);
-    //     }
-    // }, [open]);
+    const [completedQuestion, setCompletedQuestion] = useState([]);
+    const [showResult, setShowResult] = useState(false);
 
     useEffect(() => {
         if (isPlayer) return;
@@ -84,6 +93,8 @@ function QuizPreview({
         if (!open || isPlayer) return;
 
         const intervalId = setInterval(() => {
+            if (isHost && completedQuestion.includes(currentQuizIndex)) return;
+
             if (
                 isHost &&
                 currentQuizIndex === 0 &&
@@ -101,7 +112,10 @@ function QuizPreview({
                 }
                 setCountdownTimeLimit(countdownTimeLimit - 1);
             } else {
-                if (isHost) return;
+                if (isHost) {
+                    setCompletedQuestion((prev) => [...prev, currentQuizIndex]);
+                    return;
+                }
 
                 setCountdownTimeLimit(timeLimit);
             }
@@ -142,7 +156,7 @@ function QuizPreview({
         setCountdownTimeLimit(Number(form.getValues(`questions.0.time_limit`)));
     };
 
-    console.log('values: ', form.getValues());
+    console.log({ completedQuestion });
 
     return (
         <>
@@ -157,6 +171,11 @@ function QuizPreview({
                                         className
                                     )}
                                 >
+                                    {/* <div className="absolute right-2 top-2 z-10">
+                                        <Button variant='default' leftSection={<IconBulb className='w-5 h-5 min-w-5' />}  className='text-white'>
+                                            Show answers
+                                        </Button>
+                                    </div> */}
                                     <div
                                         className={twMerge(
                                             'flex h-full w-full flex-1 flex-col justify-between'
@@ -176,54 +195,56 @@ function QuizPreview({
                                             />
                                         </div>
                                         <div className="flex flex-col">
-                                            {showChart ? (
+                                            {false ? (
                                                 <div className="mb-6 flex justify-center">
                                                     <BarChart
                                                         h={350}
-                                                        data={[
-                                                            {
-                                                                // answer: ANSWER_ITEMS[
-                                                                //     'QUIZ'
-                                                                // ][0].icon,
-                                                                Smartphones: 1200,
-                                                            },
-                                                            {
-                                                                // answer: 'February',
-                                                                Smartphones: 1900,
-                                                            },
-                                                            {
-                                                                // answer: 'March',
-                                                                Smartphones: 400,
-                                                            },
-                                                            {
-                                                                // answer: 'April',
-                                                                Smartphones: 1000,
-                                                            },
-                                                        ]}
-                                                        dataKey="answer"
                                                         withBarValueLabel
                                                         tooltipAnimationDuration={
                                                             200
                                                         }
                                                         textColor="white"
                                                         barLabelColor="white"
+                                                        data={ANSWER_ITEMS[
+                                                            'QUIZ'
+                                                        ].map(
+                                                            (item, index) => ({
+                                                                index,
+                                                                value: participantsWithScore.filter(
+                                                                    (
+                                                                        participant
+                                                                    ) =>
+                                                                        participant.questionIndex ===
+                                                                            currentQuizIndex &&
+                                                                        participant.answerIndex ===
+                                                                            index
+                                                                )?.length,
+                                                                color: form.getValues(
+                                                                    `questions.${currentQuizIndex}.answers.${index}.is_correct`
+                                                                )
+                                                                    ? item.rgbaColor
+                                                                    : item.rgbaColor.replace(
+                                                                          '1)',
+                                                                          '0.3)'
+                                                                      ),
+                                                            })
+                                                        )}
+                                                        dataKey="index"
                                                         series={[
                                                             {
-                                                                name: 'Smartphones',
-                                                                color: 'violet.6',
+                                                                name: 'value',
                                                             },
                                                         ]}
                                                         classNames={{
-                                                            root: 'md:!w-3/4 lg:!w-1/2 !text-white',
-                                                            axisLabel:
-                                                                '!text-white',
-                                                            '--chart-text-color':
-                                                                'text-white',
+                                                            root: 'md:!w-3/4 lg:!w-1/2',
                                                         }}
                                                         xAxisProps={{
                                                             style: {
                                                                 fontSize: 18,
                                                             },
+                                                            tick: (
+                                                                <CustomXAxisTick />
+                                                            ),
                                                         }}
                                                         valueLabelProps={{
                                                             style: {
@@ -231,7 +252,7 @@ function QuizPreview({
                                                             },
                                                         }}
                                                         withYAxis={false}
-                                                        withXAxis={false}
+                                                        withTooltip={false}
                                                     />
                                                 </div>
                                             ) : (
@@ -244,16 +265,87 @@ function QuizPreview({
                                                                 }
                                                             </p>
                                                         </div>
-                                                        <div className="flex h-96 w-1/2 justify-center overflow-hidden rounded-lg bg-white">
-                                                            <img
-                                                                src={getImageURL(
-                                                                    quizList[
-                                                                        currentQuizIndex
-                                                                    ]
-                                                                )}
-                                                                className="object-fit h-full"
-                                                            />
-                                                        </div>
+                                                        {showResult ? (
+                                                            <div className="mb-6 flex w-1/2 justify-center">
+                                                                <BarChart
+                                                                    h={350}
+                                                                    withBarValueLabel
+                                                                    tooltipAnimationDuration={
+                                                                        200
+                                                                    }
+                                                                    textColor="white"
+                                                                    barLabelColor="white"
+                                                                    data={ANSWER_ITEMS[
+                                                                        'QUIZ'
+                                                                    ].map(
+                                                                        (
+                                                                            item,
+                                                                            index
+                                                                        ) => ({
+                                                                            index,
+                                                                            value: participantsWithScore.filter(
+                                                                                (
+                                                                                    participant
+                                                                                ) =>
+                                                                                    participant.questionIndex ===
+                                                                                        currentQuizIndex &&
+                                                                                    participant.answerIndex ===
+                                                                                        index
+                                                                            )
+                                                                                ?.length,
+                                                                            color: form.getValues(
+                                                                                `questions.${currentQuizIndex}.answers.${index}.is_correct`
+                                                                            )
+                                                                                ? item.rgbaColor
+                                                                                : item.rgbaColor.replace(
+                                                                                      '1)',
+                                                                                      '0.3)'
+                                                                                  ),
+                                                                        })
+                                                                    )}
+                                                                    dataKey="index"
+                                                                    series={[
+                                                                        {
+                                                                            name: 'value',
+                                                                        },
+                                                                    ]}
+                                                                    classNames={{
+                                                                        root: '!w-full',
+                                                                    }}
+                                                                    xAxisProps={{
+                                                                        style: {
+                                                                            fontSize: 18,
+                                                                        },
+                                                                        tick: (
+                                                                            <CustomXAxisTick />
+                                                                        ),
+                                                                    }}
+                                                                    valueLabelProps={{
+                                                                        style: {
+                                                                            fontSize: 18,
+                                                                        },
+                                                                    }}
+                                                                    withYAxis={
+                                                                        false
+                                                                    }
+                                                                    withTooltip={
+                                                                        false
+                                                                    }
+                                                                />
+                                                            </div>
+                                                        ) : (
+                                                            <div className="flex h-96 w-1/2 justify-center overflow-hidden rounded-lg bg-white">
+                                                                <img
+                                                                    src={getImageURL(
+                                                                        quizList[
+                                                                            currentQuizIndex
+                                                                        ]
+                                                                    )}
+                                                                    className="object-fit h-full"
+                                                                />
+                                                            </div>
+                                                        )}
+
                                                         <div>
                                                             <div className="mb-2 flex h-32 w-32 flex-col items-center justify-center rounded-full bg-slate-400/50 p-20">
                                                                 <p className="text-6xl font-bold text-white">
@@ -307,6 +399,25 @@ function QuizPreview({
                                                         </>
                                                     )}
                                                     <div className="flex items-center gap-x-2">
+                                                        <Tooltip
+                                                            label="Show result"
+                                                            withArrow
+                                                            position="left"
+                                                        >
+                                                            <ActionIcon
+                                                                variant="subtle"
+                                                                color="white"
+                                                                onClick={() => setShowResult(!showResult)}
+                                                            >
+                                                                <IconBulb />
+                                                            </ActionIcon>
+                                                        </Tooltip>
+                                                        <Divider
+                                                            orientation="vertical"
+                                                            color="black"
+                                                            size="sm"
+                                                            className="opacity-30"
+                                                        />
                                                         <ActionIcon
                                                             variant="subtle"
                                                             color="white"
@@ -381,6 +492,7 @@ function QuizPreview({
                                                         color={item.color}
                                                         disabled
                                                         isPlaying={isPlaying}
+                                                        isHost={isHost}
                                                         isPlayer={isPlayer}
                                                         selectedIndex={
                                                             selectedIndex

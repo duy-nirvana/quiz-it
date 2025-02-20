@@ -14,6 +14,7 @@ function AnswertItem({
     classNames,
     index,
     isPlaying,
+    isHost,
     isPlayer,
     selectedIndex,
     onSelect = () => {},
@@ -39,6 +40,12 @@ function AnswertItem({
                     'cursor-default brightness-[45%] hover:brightness-[45%] active:brightness-[45%]',
                 isDisabledSelect &&
                     !Number.isInteger(selectedIndex) &&
+                    'cursor-default brightness-[45%] hover:brightness-[45%] active:brightness-[45%]',
+                isHost &&
+                    form.getValues(isCorrect) &&
+                    'cursor-default brightness-100 hover:brightness-100 active:brightness-100',
+                isHost &&
+                    !form.getValues(isCorrect) &&
                     'cursor-default brightness-[45%] hover:brightness-[45%] active:brightness-[45%]'
             )}
         >

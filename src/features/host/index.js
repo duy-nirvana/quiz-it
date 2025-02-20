@@ -323,6 +323,7 @@ function HostLiveFeature(props) {
                     open={true}
                     isPlaying
                     isHost
+                    participantsWithScore={participantsWithScore}
                 />
             </div>
         );
