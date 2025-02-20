@@ -19,6 +19,7 @@ function AnswertItem({
     selectedIndex,
     onSelect = () => {},
     isDisabledSelect = false,
+    showResult,
 }) {
     const Icon = icon;
     const content = `${name}.text`;
@@ -42,9 +43,11 @@ function AnswertItem({
                     !Number.isInteger(selectedIndex) &&
                     'cursor-default brightness-[45%] hover:brightness-[45%] active:brightness-[45%]',
                 isHost &&
+                    showResult &&
                     form.getValues(isCorrect) &&
                     'cursor-default brightness-100 hover:brightness-100 active:brightness-100',
                 isHost &&
+                    showResult &&
                     !form.getValues(isCorrect) &&
                     'cursor-default brightness-[45%] hover:brightness-[45%] active:brightness-[45%]'
             )}

@@ -506,6 +506,7 @@ function QuizPreview({
                                                         isDisabledSelect={
                                                             disabledSelect
                                                         }
+                                                        showResult={showResult}
                                                     />
                                                 )
                                             )}
