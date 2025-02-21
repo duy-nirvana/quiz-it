@@ -17,6 +17,7 @@ import {
     useEffect,
     useImperativeHandle,
     useMemo,
+    useRef,
     useState,
 } from 'react';
 import { useParams } from 'react-router-dom';
@@ -65,6 +66,7 @@ function QuizPreview({
     playerCurrentQuizIndex,
     playerCountdownTimeLimit,
     showChart = true,
+    participants = [],
     participantsWithScore = [],
 }) {
     let { id: hostId } = useParams();
@@ -81,6 +83,7 @@ function QuizPreview({
     const [countdownTimeLimit, setCountdownTimeLimit] = useState(timeLimit);
     const disabledSelect = isPlayer && !countdownTimeLimit;
     const [completedQuestion, setCompletedQuestion] = useState([]);
+    const completedQuestionsRef = useRef([]);
     const [showResult, setShowResult] = useState(false);
 
     useEffect(() => {
@@ -92,9 +95,14 @@ function QuizPreview({
     useEffect(() => {
         if (!open || isPlayer) return;
 
-        const intervalId = setInterval(() => {
-            if (isHost && completedQuestion.includes(currentQuizIndex)) return;
+        // if (
+        //     submittedTotal === participants.length &&
+        //     !completedQuestionsRef.current.includes(currentQuizIndex)
+        // ) {
+        //     completedQuestionsRef.current.push(currentQuizIndex);
+        // }
 
+        const intervalId = setInterval(() => {
             if (
                 isHost &&
                 currentQuizIndex === 0 &&
@@ -113,7 +121,16 @@ function QuizPreview({
                 setCountdownTimeLimit(countdownTimeLimit - 1);
             } else {
                 if (isHost) {
-                    setCompletedQuestion((prev) => [...prev, currentQuizIndex]);
+                    if (
+                        !completedQuestionsRef.current.includes(
+                            currentQuizIndex
+                        )
+                    ) {
+                        setShowResult(true);
+                        completedQuestionsRef.current.push(currentQuizIndex);
+                    }
+
+
                     return;
                 }
 
@@ -156,7 +173,7 @@ function QuizPreview({
         setCountdownTimeLimit(Number(form.getValues(`questions.0.time_limit`)));
     };
 
-    console.log({ completedQuestion });
+    console.log({ completedQuestionsRef });
 
     return (
         <>
@@ -407,7 +424,11 @@ function QuizPreview({
                                                             <ActionIcon
                                                                 variant="subtle"
                                                                 color="white"
-                                                                onClick={() => setShowResult(!showResult)}
+                                                                onClick={() =>
+                                                                    setShowResult(
+                                                                        !showResult
+                                                                    )
+                                                                }
                                                             >
                                                                 <IconBulb />
                                                             </ActionIcon>
@@ -448,12 +469,17 @@ function QuizPreview({
                                                                     1 ===
                                                                 currentQuizIndex
                                                             }
-                                                            onClick={() =>
+                                                            onClick={() => {
+                                                                if (isHost) {
+                                                                    setShowResult(
+                                                                        false
+                                                                    );
+                                                                }
                                                                 handleNavigate(
                                                                     currentQuizIndex +
                                                                         1
-                                                                )
-                                                            }
+                                                                );
+                                                            }}
                                                         >
                                                             <IconChevronRight />
                                                         </ActionIcon>

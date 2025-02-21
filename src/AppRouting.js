@@ -1,3 +1,4 @@
+// import ResultFeature from 'features/result';
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
 
@@ -9,6 +10,7 @@ const QuizFeature = React.lazy(() => import('./features/quiz'));
 const ProfileFeature = React.lazy(() => import('./features/profile'));
 const HostLiveFeature = React.lazy(() => import('./features/host'));
 const ParticipantPlayingFeature = React.lazy(() => import('./features/play'));
+const ResultFeature = React.lazy(() => import('./features/result'));
 
 function AppRouting(props) {
     return (
@@ -16,6 +18,7 @@ function AppRouting(props) {
             <Route path="/" element={<MainLayout />}>
                 <Route path="/" element={<Home />} />
                 <Route path="profile/*" element={<ProfileFeature />} />
+                <Route path="result/:id" element={<ResultFeature />} />
             </Route>
             <Route path="auth/*" element={<Auth />} />
             <Route path="quiz/*" element={<QuizFeature />} />

@@ -47,15 +47,6 @@ function Home(props) {
         }
     };
 
-    console.log({ bigSmile });
-    console.log(
-        createAvatar(bigSmile, {
-            skinColor: ['8c5a2b', '643d19', 'a47539'],
-            hairColor: ['00000'],
-            hair: ['mohawk']
-        }).toDataUri()
-    );
-
     return (
         <div className="flex flex-grow flex-col justify-center">
             <div className="flex -translate-y-1/4 flex-col items-center justify-center gap-6">
