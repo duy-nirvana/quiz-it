@@ -5,6 +5,7 @@ import {
     IconBulb,
     IconChevronLeft,
     IconChevronRight,
+    IconPhoto,
     IconSquareFilled,
     IconSquareRotatedFilled,
     IconTriangleFilled,
@@ -130,7 +131,6 @@ function QuizPreview({
                         completedQuestionsRef.current.push(currentQuizIndex);
                     }
 
-
                     return;
                 }
 
@@ -168,12 +168,25 @@ function QuizPreview({
         }
     };
 
+    const handleFinishQuiz = () => {
+        let correctAnswers = {};
+
+        form.getValues('questions').forEach((question, index) => {
+            correctAnswers[index] = question.answers
+                .map((ans, index) => (ans.is_correct ? index : null))
+                .filter((ans) => Number.isInteger(ans));
+        });
+
+        console.log(correctAnswers);
+    };
+
     const handleReset = () => {
         setCurrentQuizIndex(0);
         setCountdownTimeLimit(Number(form.getValues(`questions.0.time_limit`)));
     };
 
-    console.log({ completedQuestionsRef });
+    console.log({ participantsWithScore });
+    console.log('values: ', form.getValues());
 
     return (
         <>
@@ -417,7 +430,11 @@ function QuizPreview({
                                                     )}
                                                     <div className="flex items-center gap-x-2">
                                                         <Tooltip
-                                                            label="Show result"
+                                                            label={
+                                                                showResult
+                                                                    ? 'Show media'
+                                                                    : 'Show result'
+                                                            }
                                                             withArrow
                                                             position="left"
                                                         >
@@ -430,7 +447,11 @@ function QuizPreview({
                                                                     )
                                                                 }
                                                             >
-                                                                <IconBulb />
+                                                                {showResult ? (
+                                                                    <IconPhoto />
+                                                                ) : (
+                                                                    <IconBulb />
+                                                                )}
                                                             </ActionIcon>
                                                         </Tooltip>
                                                         <Divider
@@ -484,6 +505,18 @@ function QuizPreview({
                                                             <IconChevronRight />
                                                         </ActionIcon>
                                                     </div>
+                                                    {isHost &&
+                                                        quizList.length - 1 ===
+                                                            currentQuizIndex && (
+                                                            <Button
+                                                                color="orange"
+                                                                onClick={
+                                                                    handleFinishQuiz
+                                                                }
+                                                            >
+                                                                Finish
+                                                            </Button>
+                                                        )}
                                                     <Divider
                                                         orientation="vertical"
                                                         color="black"

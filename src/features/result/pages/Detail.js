@@ -1,3 +1,4 @@
+import { Table } from '@mantine/core';
 import React from 'react';
 import { getParticipantAvatar } from 'utils/avatar';
 
@@ -256,37 +257,56 @@ const fakeList = [
 
 function Detail(props) {
     return (
-        <div className="flex flex-1 flex-col items-center">
-            <div className="flex w-full max-w-[1200px] flex-1 flex-col md:w-3/4">
+        <div className="flex max-h-[calc(100vh-92px)] flex-1 flex-col items-center overflow-hidden">
+            <div className="flex h-full w-full max-w-[1200px] flex-1 flex-col overflow-y-hidden md:w-3/4">
                 <p className="mb-4 text-center text-4xl font-bold text-white">
                     {'{QUIZ TITLE}'}
                 </p>
-                <div className="flex flex-1 flex-col gap-4 md:flex-row">
-                    <div className="left-section flex h-fit basis-1/2 justify-center gap-8 rounded-lg bg-slate-700/50 p-4">
+                <div className="flex min-h-0 flex-1 flex-col gap-4 md:flex-row">
+                    <div className="left-section flex h-fit basis-1/2 justify-center gap-8 rounded-lg bg-slate-700/50 p-4 pb-0">
+                        <div className="relative mt-10 flex flex-col items-center gap-1">
+                            <img
+                                src={getParticipantAvatar({
+                                    // ...participant.avatar,
+                                    size: 90,
+                                    backgroundColor: ['transparent'],
+                                })}
+                            />
+                            <div className="flex h-full flex-col items-center rounded-t-lg bg-slate-500 p-2 md:pb-6">
+                                <img
+                                    src="/icon/silver-medal.svg"
+                                    className="bottom-0 w-12"
+                                />
+                                <p className="text-xl font-semibold text-white">
+                                    Duy Tran
+                                </p>
+                                <p className="text-md font-light italic text-white">
+                                    <span className="">score:</span> 100
+                                </p>
+                            </div>
+                        </div>
                         <div className="relative flex flex-col items-center gap-1">
                             <img
-                                src="/icon/gold-medal.svg"
-                                className="bottom-0 w-12"
-                            />
-                            <img
                                 src={getParticipantAvatar({
                                     // ...participant.avatar,
                                     size: 90,
                                     backgroundColor: ['transparent'],
                                 })}
                             />
-                            <p className="text-xl font-semibold text-white">
-                                Duy Tran
-                            </p>
-                            <p className="text-md font-light italic text-white">
-                                <span className="">score:</span> 100
-                            </p>
+                            <div className="flex h-full flex-col items-center rounded-t-lg bg-slate-500 p-2 md:pb-6">
+                                <img
+                                    src="/icon/gold-medal.svg"
+                                    className="bottom-0 w-12"
+                                />
+                                <p className="text-xl font-semibold text-white">
+                                    Duy Tran
+                                </p>
+                                <p className="text-md font-light italic text-white">
+                                    <span className="">score:</span> 100
+                                </p>
+                            </div>
                         </div>
-                        <div className="relative flex flex-col items-center gap-1 md:mt-16">
-                            <img
-                                src="/icon/silver-medal.svg"
-                                className="bottom-0 w-12"
-                            />
+                        <div className="relative mt-20 flex flex-col items-center gap-1">
                             <img
                                 src={getParticipantAvatar({
                                     // ...participant.avatar,
@@ -294,35 +314,51 @@ function Detail(props) {
                                     backgroundColor: ['transparent'],
                                 })}
                             />
-                            <p className="text-xl font-semibold text-white">
-                                Duy Tran 2
-                            </p>
-                        </div>
-                        <div className="relative flex flex-col items-center gap-1 md:mt-32">
-                            <img
-                                src="/icon/bronze-medal.svg"
-                                className="bottom-0 w-12"
-                            />
-                            <img
-                                src={getParticipantAvatar({
-                                    // ...participant.avatar,
-                                    size: 90,
-                                    backgroundColor: ['transparent'],
-                                })}
-                            />
-                            <p className="text-xl font-semibold text-white">
-                                Duy Tran 3
-                            </p>
+                            <div className="flex h-full flex-col items-center rounded-t-lg bg-slate-500 p-2 md:pb-6">
+                                <img
+                                    src="/icon/bronze-medal.svg"
+                                    className="bottom-0 w-12"
+                                />
+                                <p className="text-xl font-semibold text-white">
+                                    Duy Tran
+                                </p>
+                                <p className="text-md font-light italic text-white">
+                                    <span className="">score:</span> 100
+                                </p>
+                            </div>
                         </div>
                     </div>
-                    <div className="right-section min-h-0 flex-auto basis-1/2 rounded-lg bg-slate-700/50 p-4">
-                        <div className="max-h-full overflow-y-auto">
-                            {fakeList.map((participant) => (
-                                <div className="mb-2 bg-pink-200 last:mb-0">
-                                    {participant.name}
-                                </div>
-                            ))}
-                        </div>
+                    <div className="right-section max-h-fit flex-auto basis-1/2 overflow-y-auto rounded-lg bg-slate-700/50">
+                        <table className="w-full text-white">
+                            <thead>
+                                <tr className="text-xl font-bold">
+                                    <th className="sticky top-0 w-[5%] rounded-l-md bg-slate-500 px-5 py-4 text-left">
+                                        Rank
+                                    </th>
+                                    <th className="sticky top-0 w-[65%] bg-slate-500 px-5 py-4 text-white">
+                                        Name
+                                    </th>
+                                    <th className="sticky top-0 w-[30%] rounded-r-md bg-slate-500 px-5 py-4 text-right text-white">
+                                        Score
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {fakeList.map((participant, index) => (
+                                    <tr className="border-b border-b-slate-700 text-lg last:border-none">
+                                        <td className="px-5 py-3">
+                                            {participant.id}
+                                        </td>
+                                        <td className="px-5 py-3 text-center">
+                                            {participant.name}
+                                        </td>
+                                        <td className="px-5 py-3 text-right">
+                                            {participant.scrore}
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
