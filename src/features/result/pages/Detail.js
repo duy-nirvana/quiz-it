@@ -1,5 +1,7 @@
 import { Table } from '@mantine/core';
-import React from 'react';
+import { resultApi } from 'api';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useLocation, useParams } from 'react-router-dom';
 import { getParticipantAvatar } from 'utils/avatar';
 
 const fakeList = [
@@ -256,79 +258,141 @@ const fakeList = [
 ];
 
 function Detail(props) {
+    const { id: hostId } = useParams();
+    const location = useLocation();
+    console.log({ location });
+    const [detail, setDetail] = useState();
+    const participants = useMemo(() => {
+        return Object.values(
+            detail?.scored_participants?.reduce((acc, cur) => {
+                if (acc[cur.socket_id]) {
+                    acc[cur.socket_id] = {
+                        ...acc[cur.socket_id],
+                        score: acc[cur.socket_id].score + cur.score,
+                    };
+
+                    return acc;
+                } else {
+                    acc[cur.socket_id] = {
+                        id: cur.socket_id,
+                        avatar: cur.avatar || null,
+                        name: cur.name || '',
+                        user: cur.user || null,
+                        score: cur.score || 0,
+                    };
+
+                    return acc;
+                }
+            }, {}) || {}
+        ).sort((a, b) => b.score - a.score);
+    }, [detail]);
+
+    useEffect(() => {
+        if (location.state) {
+            setDetail(location.state);
+        } else {
+            getDetail();
+        }
+    }, [hostId]);
+
+    const getDetail = async () => {
+        try {
+            const { data, success } = await resultApi.getDetail(hostId);
+
+            if (success) {
+                setDetail(data);
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    console.log({ participants });
+    console.log({ detail });
+    // console.log('values participants: ', Object.values(participants || {}));
+
     return (
         <div className="flex max-h-[calc(100vh-92px)] flex-1 flex-col items-center overflow-hidden">
-            <div className="flex h-full w-full max-w-[1200px] flex-1 flex-col overflow-y-hidden md:w-3/4">
+            <div className="flex h-full w-full max-w-[1000px] flex-1 flex-col overflow-y-hidden lg:w-3/4">
                 <p className="mb-4 text-center text-4xl font-bold text-white">
-                    {'{QUIZ TITLE}'}
+                    {detail?.title ?? ''}
                 </p>
-                <div className="flex min-h-0 flex-1 flex-col gap-4 md:flex-row">
+                <div className="flex min-h-0 flex-1 flex-col gap-4 ">
                     <div className="left-section flex h-fit basis-1/2 justify-center gap-8 rounded-lg bg-slate-700/50 p-4 pb-0">
-                        <div className="relative mt-10 flex flex-col items-center gap-1">
-                            <img
-                                src={getParticipantAvatar({
-                                    // ...participant.avatar,
-                                    size: 90,
-                                    backgroundColor: ['transparent'],
-                                })}
-                            />
-                            <div className="flex h-full flex-col items-center rounded-t-lg bg-slate-500 p-2 md:pb-6">
+                        {participants.length >= 2 && (
+                            <div className="relative mt-10 flex flex-col items-center gap-1">
                                 <img
-                                    src="/icon/silver-medal.svg"
-                                    className="bottom-0 w-12"
+                                    src={getParticipantAvatar({
+                                        ...participants[1].avatar,
+                                        size: 90,
+                                        backgroundColor: ['transparent'],
+                                    })}
                                 />
-                                <p className="text-xl font-semibold text-white">
-                                    Duy Tran
-                                </p>
-                                <p className="text-md font-light italic text-white">
-                                    <span className="">score:</span> 100
-                                </p>
+                                <div className="flex h-full flex-col items-center rounded-t-lg bg-slate-500 p-2 md:pb-6">
+                                    <img
+                                        src="/icon/silver-medal.svg"
+                                        className="bottom-0 w-12"
+                                    />
+                                    <p className="text-xl font-semibold text-white">
+                                        {participants[1].name}
+                                    </p>
+                                    <p className="text-md font-light italic text-white">
+                                        <span className="">score:</span>{' '}
+                                        {participants[1].score.toFixed(2)}
+                                    </p>
+                                </div>
                             </div>
-                        </div>
-                        <div className="relative flex flex-col items-center gap-1">
-                            <img
-                                src={getParticipantAvatar({
-                                    // ...participant.avatar,
-                                    size: 90,
-                                    backgroundColor: ['transparent'],
-                                })}
-                            />
-                            <div className="flex h-full flex-col items-center rounded-t-lg bg-slate-500 p-2 md:pb-6">
+                        )}
+                        {participants.length >= 1 && (
+                            <div className="relative flex flex-col items-center gap-1">
                                 <img
-                                    src="/icon/gold-medal.svg"
-                                    className="bottom-0 w-12"
+                                    src={getParticipantAvatar({
+                                        ...participants[0].avatar,
+                                        size: 90,
+                                        backgroundColor: ['transparent'],
+                                    })}
                                 />
-                                <p className="text-xl font-semibold text-white">
-                                    Duy Tran
-                                </p>
-                                <p className="text-md font-light italic text-white">
-                                    <span className="">score:</span> 100
-                                </p>
+                                <div className="flex h-full flex-col items-center rounded-t-lg bg-slate-500 p-2 md:pb-6">
+                                    <img
+                                        src="/icon/gold-medal.svg"
+                                        className="bottom-0 w-12"
+                                    />
+                                    <p className="text-xl font-semibold text-white">
+                                        {participants[0].name}
+                                    </p>
+                                    <p className="text-md font-light italic text-white">
+                                        <span className="">score:</span>{' '}
+                                        {participants[0].score.toFixed(2)}
+                                    </p>
+                                </div>
                             </div>
-                        </div>
-                        <div className="relative mt-20 flex flex-col items-center gap-1">
-                            <img
-                                src={getParticipantAvatar({
-                                    // ...participant.avatar,
-                                    size: 90,
-                                    backgroundColor: ['transparent'],
-                                })}
-                            />
-                            <div className="flex h-full flex-col items-center rounded-t-lg bg-slate-500 p-2 md:pb-6">
+                        )}
+                        {participants.length >= 3 && (
+                            <div className="relative mt-20 flex flex-col items-center gap-1">
                                 <img
-                                    src="/icon/bronze-medal.svg"
-                                    className="bottom-0 w-12"
+                                    src={getParticipantAvatar({
+                                        ...participants[2].avatar,
+                                        size: 90,
+                                        backgroundColor: ['transparent'],
+                                    })}
                                 />
-                                <p className="text-xl font-semibold text-white">
-                                    Duy Tran
-                                </p>
-                                <p className="text-md font-light italic text-white">
-                                    <span className="">score:</span> 100
-                                </p>
+                                <div className="flex h-full flex-col items-center rounded-t-lg bg-slate-500 p-2 md:pb-6">
+                                    <img
+                                        src="/icon/bronze-medal.svg"
+                                        className="bottom-0 w-12"
+                                    />
+                                    <p className="text-xl font-semibold text-white">
+                                        {participants[2].name}
+                                    </p>
+                                    <p className="text-md font-light italic text-white">
+                                        <span className="">score:</span>{' '}
+                                        {participants[2].score.toFixed(2)}
+                                    </p>
+                                </div>
                             </div>
-                        </div>
+                        )}
                     </div>
-                    <div className="right-section max-h-fit flex-auto basis-1/2 overflow-y-auto rounded-lg bg-slate-700/50">
+                    <div className="right-section relative max-h-fit flex-auto basis-1/2 overflow-y-auto rounded-lg bg-slate-700/50">
                         <table className="w-full text-white">
                             <thead>
                                 <tr className="text-xl font-bold">
@@ -343,21 +407,53 @@ function Detail(props) {
                                     </th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                {fakeList.map((participant, index) => (
-                                    <tr className="border-b border-b-slate-700 text-lg last:border-none">
-                                        <td className="px-5 py-3">
-                                            {participant.id}
-                                        </td>
-                                        <td className="px-5 py-3 text-center">
-                                            {participant.name}
-                                        </td>
-                                        <td className="px-5 py-3 text-right">
-                                            {participant.scrore}
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
+                            {participants.length > 3 ? (
+                                <tbody>
+                                    {participants
+                                        .slice(3, participants.length)
+                                        .map((participant, index) => {
+                                            let startRank = 4;
+                                            return (
+                                                <tr className="border-b border-b-slate-700 text-lg last:border-none">
+                                                    <td className="px-5 py-3">
+                                                        {startRank + index}
+                                                    </td>
+                                                    <td className="px-5 py-3 text-center">
+                                                        <div className="flex items-center justify-center gap-2">
+                                                            <img
+                                                                src={getParticipantAvatar(
+                                                                    {
+                                                                        ...participants[
+                                                                            startRank +
+                                                                                index -
+                                                                                1
+                                                                        ]
+                                                                            .avatar,
+                                                                        size: 60,
+                                                                        backgroundColor:
+                                                                            [
+                                                                                'transparent',
+                                                                            ],
+                                                                    }
+                                                                )}
+                                                            />
+                                                            <p>
+                                                                {
+                                                                    participant.name
+                                                                }
+                                                            </p>
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-5 py-3 text-right">
+                                                        {participant.score}
+                                                    </td>
+                                                </tr>
+                                            );
+                                        })}
+                                </tbody>
+                            ) : (
+                                <p>No data</p>
+                            )}
                         </table>
                     </div>
                 </div>

@@ -196,12 +196,16 @@ function ParticipantPlaying(props) {
             score = timeLimit;
         }
 
+        console.log({ participantInfo });
         socket.emit('select_answer', {
             hostId,
             participantSocketId: participantInfo.socket_id,
+            name: participantInfo?.name,
+            user: participantInfo?.user || null,
+            avatar: participantInfo?.avatar,
             score,
             questionIndex: playerCurrentQuizIndex,
-            answerIndex: index
+            answerIndex: index,
         });
     };
 

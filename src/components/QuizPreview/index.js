@@ -11,8 +11,10 @@ import {
     IconTriangleFilled,
     IconX,
 } from '@tabler/icons-react';
+import { resultApi } from 'api';
 import AnswertItem from 'components/AnswerItem';
 import InputField from 'components/form-controls/InputField';
+import { showToast } from 'helpers';
 import {
     forwardRef,
     useEffect,
@@ -21,7 +23,7 @@ import {
     useRef,
     useState,
 } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { socket } from 'socket';
 import { twMerge } from 'tailwind-merge';
 import { ANSWER_ITEMS } from 'utils/answerItem';
@@ -69,8 +71,11 @@ function QuizPreview({
     showChart = true,
     participants = [],
     participantsWithScore = [],
+    sessionInfo,
+    participantsMapping,
 }) {
     let { id: hostId } = useParams();
+    const navigate = useNavigate();
     const [currentQuizIndex, setCurrentQuizIndex] = useState(0);
 
     const timeLimit = useMemo(() => {
@@ -86,6 +91,7 @@ function QuizPreview({
     const [completedQuestion, setCompletedQuestion] = useState([]);
     const completedQuestionsRef = useRef([]);
     const [showResult, setShowResult] = useState(false);
+    const [finishLoading, setFinishLoading] = useState(false);
 
     useEffect(() => {
         if (isPlayer) return;
@@ -168,25 +174,78 @@ function QuizPreview({
         }
     };
 
-    const handleFinishQuiz = () => {
-        let correctAnswers = {};
+    const handleFinishQuiz = async () => {
+        try {
+            setFinishLoading(true);
+            let correctAnswers = {};
 
-        form.getValues('questions').forEach((question, index) => {
-            correctAnswers[index] = question.answers
-                .map((ans, index) => (ans.is_correct ? index : null))
-                .filter((ans) => Number.isInteger(ans));
-        });
+            form.getValues('questions').forEach((question, index) => {
+                correctAnswers[index] = question.answers
+                    .map((ans, index) => (ans.is_correct ? index : null))
+                    .filter((ans) => Number.isInteger(ans));
+            });
 
-        console.log(correctAnswers);
+            console.log(correctAnswers);
+            console.log({ participantsWithScore });
+            const calculatedScoreParticipants = participantsWithScore.map(
+                (participant) => {
+                    if (
+                        correctAnswers[participant.questionIndex].includes(
+                            participant.answerIndex
+                        )
+                    ) {
+                        return {
+                            ...participant,
+                            avatar: participantsMapping[participant.socket_id]
+                                .avatar,
+                            user: participantsMapping[participant.socket_id]
+                                .user,
+                            correct_answers:
+                                correctAnswers[participant.questionIndex],
+                        };
+                    } else {
+                        return {
+                            ...participant,
+                            avatar: participantsMapping[participant.socket_id]
+                                .avatar,
+                            user: participantsMapping[participant.socket_id]
+                                .user,
+                            score: 0,
+                            correct_answers:
+                                correctAnswers[participant.questionIndex],
+                        };
+                    }
+                }
+            );
+
+            const payload = {
+                session_id: sessionInfo?._id,
+                host_id: sessionInfo?.host_id,
+                title: sessionInfo?.quiz?.title,
+                scored_participants: calculatedScoreParticipants,
+            };
+
+            console.log({ payload });
+            console.log({ calculatedScoreParticipants });
+            console.log('values: ', form.getValues());
+
+            const { data, success } = await resultApi.create(payload);
+            if (success) {
+                navigate(`/result/${sessionInfo?.host_id}`, { state: data });
+            }
+            console.log({ data });
+        } catch (error) {
+            console.error(error);
+            showToast({ type: 'error', message: 'Fail to finish quiz!' });
+        } finally {
+            setFinishLoading(false);
+        }
     };
 
     const handleReset = () => {
         setCurrentQuizIndex(0);
         setCountdownTimeLimit(Number(form.getValues(`questions.0.time_limit`)));
     };
-
-    console.log({ participantsWithScore });
-    console.log('values: ', form.getValues());
 
     return (
         <>
@@ -512,6 +571,12 @@ function QuizPreview({
                                                                 color="orange"
                                                                 onClick={
                                                                     handleFinishQuiz
+                                                                }
+                                                                disabled={
+                                                                    finishLoading
+                                                                }
+                                                                loading={
+                                                                    finishLoading
                                                                 }
                                                             >
                                                                 Finish

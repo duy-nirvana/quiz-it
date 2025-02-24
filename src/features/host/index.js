@@ -97,6 +97,16 @@ function HostLiveFeature(props) {
     const [participantsWithScore, setParticipantsWithScore] = useState([]);
     let { current: participantsWithScoreRef } = useRef([]);
 
+    const participantsMapping = useMemo(() => {
+        return participants.reduce((acc, cur) => {
+            acc[cur.socket_id] = {
+                ...cur,
+            };
+
+            return acc;
+        }, []);
+    }, [participants.length]);
+
     const form = useForm();
 
     useEffect(() => {
@@ -231,53 +241,32 @@ function HostLiveFeature(props) {
             score,
             questionIndex,
             answerIndex,
+            name,
+            user,
         } = participant;
 
         console.log('----- USER SELECTED: ', data);
 
         setSubmittedTotal((prev) => prev + 1);
-        // const participantIndex = participantsWithScore.findIndex(
-        //     (participant) => {
-        //         console.log({ participant });
-        //         console.log({ participantSocketId });
-
-        //         return participant?.socket_id === participantSocketId;
-        //     }
-        // );
-
-        // console.log({ participantIndex });
-
-        // if (participantIndex !== -1) {
-        //     participantsWithScore.splice(participantIndex, 1, {
-        //         ...participantsWithScore[participantIndex],
-        //         score:
-        //         participantsWithScore[participantIndex]?.score + score,
-        //     });
-        // } else {
-        // participantsWithScore.push({
-        //     socket_id: participantSocketId,
-        //     score,
-        // });
-        // }
 
         setParticipantsWithScore((prev) => [
             ...prev,
             {
                 socket_id,
                 score,
+                name,
+                user,
                 questionIndex,
                 answerIndex,
             },
         ]);
-
-        // write logic update score here
     };
 
     const handleStart = () => {
         socket.emit('start_countdown', id);
     };
 
-    console.log({ participantsWithScore });
+    console.log({ sessionInfo });
 
     if (!sessionInfo) {
         return (
@@ -325,6 +314,8 @@ function HostLiveFeature(props) {
                     isHost
                     participants={participants}
                     participantsWithScore={participantsWithScore}
+                    sessionInfo={sessionInfo}
+                    participantsMapping={participantsMapping}
                 />
             </div>
         );
