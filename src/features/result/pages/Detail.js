@@ -320,7 +320,7 @@ function Detail(props) {
                 <div className="flex min-h-0 flex-1 flex-col gap-4 ">
                     <div className="left-section flex h-fit basis-1/2 justify-center gap-8 rounded-lg bg-slate-700/50 p-4 pb-0">
                         {participants.length >= 2 && (
-                            <div className="relative mt-10 flex flex-col items-center gap-1">
+                            <div className="relative mt-6 flex flex-col items-center gap-1">
                                 <img
                                     src={getParticipantAvatar({
                                         ...participants[1].avatar,
@@ -368,7 +368,7 @@ function Detail(props) {
                             </div>
                         )}
                         {participants.length >= 3 && (
-                            <div className="relative mt-20 flex flex-col items-center gap-1">
+                            <div className="relative mt-12 flex flex-col items-center gap-1">
                                 <img
                                     src={getParticipantAvatar({
                                         ...participants[2].avatar,
