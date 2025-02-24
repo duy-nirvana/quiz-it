@@ -1,4 +1,4 @@
-import { Table } from '@mantine/core';
+import { Loader, Table } from '@mantine/core';
 import { resultApi } from 'api';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
@@ -260,8 +260,10 @@ const fakeList = [
 function Detail(props) {
     const { id: hostId } = useParams();
     const location = useLocation();
-    console.log({ location });
+
     const [detail, setDetail] = useState();
+    const [loading, setLoading] = useState(false);
+
     const participants = useMemo(() => {
         return Object.values(
             detail?.scored_participants?.reduce((acc, cur) => {
@@ -297,6 +299,7 @@ function Detail(props) {
 
     const getDetail = async () => {
         try {
+            setLoading(true);
             const { data, success } = await resultApi.getDetail(hostId);
 
             if (success) {
@@ -304,6 +307,8 @@ function Detail(props) {
             }
         } catch (error) {
             console.error(error);
+        } finally {
+            setLoading(false)
         }
     };
 
@@ -311,13 +316,20 @@ function Detail(props) {
     console.log({ detail });
     // console.log('values participants: ', Object.values(participants || {}));
 
+    if (loading)
+        return (
+            <div className="flex flex-col max-h-[calc(100vh-92px)] items-center justify-center flex-1">
+                <Loader size={40} color="white" />
+            </div>
+        );
+
     return (
         <div className="flex max-h-[calc(100vh-92px)] flex-1 flex-col items-center overflow-hidden">
             <div className="flex h-full w-full max-w-[1000px] flex-1 flex-col overflow-y-hidden lg:w-3/4">
                 <p className="mb-4 text-center text-4xl font-bold text-white">
                     {detail?.title ?? ''}
                 </p>
-                <div className="flex min-h-0 flex-1 flex-col gap-4 ">
+                <div className="flex min-h-0 flex-1 flex-col gap-4">
                     <div className="left-section flex h-fit basis-1/2 justify-center gap-8 rounded-lg bg-slate-700/50 p-4 pb-0">
                         {participants.length >= 2 && (
                             <div className="relative mt-6 flex flex-col items-center gap-1">
@@ -452,7 +464,9 @@ function Detail(props) {
                                         })}
                                 </tbody>
                             ) : (
-                                <p>No data</p>
+                                <div className="flex items-center justify-center py-4">
+                                    <p>No data</p>
+                                </div>
                             )}
                         </table>
                     </div>
