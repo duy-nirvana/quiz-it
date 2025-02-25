@@ -314,6 +314,7 @@ function Detail(props) {
 
     console.log({ participants });
     console.log({ detail });
+    console.log({ location });
     // console.log('values participants: ', Object.values(participants || {}));
 
     if (loading)

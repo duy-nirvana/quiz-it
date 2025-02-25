@@ -63,11 +63,11 @@ function Edit(props) {
     const [activeQuestionIndex, setActiveQuestionIndex] = useState(0);
     const [collapsed, setCollapsed] = useState(false);
     const [openPreview, setOpenPreview] = useState(false);
-    const { profile } = useSelector((state) => state.personal);
     const [initialValues, setInitialValues] = useState(null);
-
     const itemRefs = useRef([]);
     const uploadRef = useRef();
+
+    const { profile } = useSelector((state) => state.personal);
 
     const form = useForm({
         defaultValues: {

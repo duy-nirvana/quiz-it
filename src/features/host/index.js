@@ -21,7 +21,7 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import QRCode from 'react-qr-code';
 import { useDispatch, useSelector } from 'react-redux';
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { socket } from 'socket';
 import { fetchPersonal } from 'store/personal/personalThunk';
 import { twMerge } from 'tailwind-merge';
@@ -83,6 +83,7 @@ function HostLiveFeature(props) {
     let { id } = useParams();
     const location = useLocation();
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const { profile } = useSelector((state) => state.personal);
     const { access_token } = useSelector((state) => state.auth);
@@ -279,6 +280,10 @@ function HostLiveFeature(props) {
                 </div>
             </div>
         );
+    }
+
+    if (sessionInfo?.is_finished) {
+        navigate(`/result/${id}`);
     }
 
     if (isStarted) {

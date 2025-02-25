@@ -8,7 +8,7 @@ import { showToast } from 'helpers';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { socket } from 'socket';
 import { fetchPersonal } from 'store/personal/personalThunk';
 import { twMerge } from 'tailwind-merge';
@@ -19,7 +19,7 @@ import QuizPreview from 'components/QuizPreview';
 
 function ParticipantPlaying(props) {
     const dispatch = useDispatch();
-    const location = useLocation();
+    const navigate = useNavigate();
     const { id: hostId } = useParams();
     const form = useForm({
         defaultValues: {
@@ -132,6 +132,10 @@ function ParticipantPlaying(props) {
             setPlayerCountdownTimeLimit(time);
         });
 
+        socket.on('game_ended', () => {
+            navigate(`/result/${hostId}`);
+        });
+
         // Clean up socket connections
         return () => {
             socket.off('session_info');
@@ -141,6 +145,7 @@ function ParticipantPlaying(props) {
             socket.off('question_changed_index');
             socket.off('question_countdown');
             socket.off('total_submitted');
+            socket.off('game_ended');
             socket.disconnect();
         };
     }, [hostId]);
@@ -223,6 +228,10 @@ function ParticipantPlaying(props) {
 
         socket.emit('join_session', participant);
     };
+
+    if (sessionInfo?.is_finished) {
+        navigate(`/result/${hostId}`);
+    }
 
     if (sessionInfo) {
         if (sessionInfo?.is_active || isStarted) {

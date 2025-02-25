@@ -11,7 +11,7 @@ import {
     IconTriangleFilled,
     IconX,
 } from '@tabler/icons-react';
-import { resultApi } from 'api';
+import { resultApi, sessionApi } from 'api';
 import AnswertItem from 'components/AnswerItem';
 import InputField from 'components/form-controls/InputField';
 import { showToast } from 'helpers';
@@ -225,12 +225,14 @@ function QuizPreview({
                 scored_participants: calculatedScoreParticipants,
             };
 
-            console.log({ payload });
-            console.log({ calculatedScoreParticipants });
-            console.log('values: ', form.getValues());
-
             const { data, success } = await resultApi.create(payload);
+            
             if (success) {
+                socket.emit('end_game', sessionInfo?.host_id);
+                // const {success: successFinishSession} = await sessionApi.finish(sessionInfo?._id);
+                // if (successFinishSession) {
+                // }
+
                 navigate(`/result/${sessionInfo?.host_id}`, { state: data });
             }
             console.log({ data });

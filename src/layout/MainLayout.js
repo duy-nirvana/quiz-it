@@ -77,7 +77,11 @@ function MainLayout({ children }) {
                                 variant="filled"
                                 color="teal"
                                 size="md"
-                                onClick={() => navigate('/quiz')}
+                                onClick={() =>
+                                    auth.access_token
+                                        ? navigate('/quiz')
+                                        : navigate('/auth/login')
+                                }
                             >
                                 Create
                             </Button>
