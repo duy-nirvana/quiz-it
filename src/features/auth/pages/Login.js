@@ -1,17 +1,14 @@
-import { Anchor, Badge, Button, Checkbox, Input } from '@mantine/core';
-import { IconLockPassword, IconUser } from '@tabler/icons-react';
-import InputField from 'components/form-controls/InputField';
-import React from 'react';
-import { Controller, useForm } from 'react-hook-form';
-import { Link, useNavigate } from 'react-router-dom';
-import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { Anchor, Badge, Button } from '@mantine/core';
+import { IconLockPassword, IconUser } from '@tabler/icons-react';
 import CheckboxField from 'components/form-controls/CheckboxField';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchLogin } from 'store/auth/authThunk';
-import { notifications } from '@mantine/notifications';
+import InputField from 'components/form-controls/InputField';
 import { showToast } from 'helpers';
-import { fetchPersonal } from 'store/personal/personalThunk';
+import { useForm } from 'react-hook-form';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
+import { fetchLogin } from 'store/auth/authThunk';
+import * as yup from 'yup';
 
 function Login(props) {
     const navigate = useNavigate();
@@ -19,6 +16,9 @@ function Login(props) {
     const auth = useSelector((state) => state.auth);
 
     const form = useForm({
+        defaultValues: {
+            is_remember_me: false,
+        },
         resolver: yupResolver(
             yup.object({
                 email: yup.string().nullable().required('Please enter email'),
@@ -28,10 +28,7 @@ function Login(props) {
 
     const handleSubmit = async (values) => {
         try {
-            const { email, password } = values;
-            const resultAction = await dispatch(
-                fetchLogin({ email, password })
-            );
+            const resultAction = await dispatch(fetchLogin(values));
 
             if (fetchLogin.fulfilled.match(resultAction)) {
                 showToast({
@@ -42,6 +39,7 @@ function Login(props) {
             }
         } catch (error) {
             console.error(error);
+            showToast({ type: 'error', message: 'Fail to login!' });
         }
     };
 
@@ -85,7 +83,7 @@ function Login(props) {
                                 />
                                 <CheckboxField
                                     form={form}
-                                    name="has_remember_password"
+                                    name="is_remember_me"
                                     label="Remember me"
                                     size="xs"
                                     classNames={{
