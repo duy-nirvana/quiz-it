@@ -1,5 +1,6 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Anchor, Badge, Button } from '@mantine/core';
+import { useGoogleLogin } from '@react-oauth/google';
 import { IconLockPassword, IconUser } from '@tabler/icons-react';
 import CheckboxField from 'components/form-controls/CheckboxField';
 import InputField from 'components/form-controls/InputField';
@@ -7,7 +8,7 @@ import { showToast } from 'helpers';
 import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
-import { fetchLogin } from 'store/auth/authThunk';
+import { fetchGoogleLogin, fetchLogin } from 'store/auth/authThunk';
 import * as yup from 'yup';
 
 function Login(props) {
@@ -35,6 +36,7 @@ function Login(props) {
                     type: 'success',
                     title: 'Login successfully',
                 });
+
                 navigate('/');
             }
         } catch (error) {
@@ -42,6 +44,29 @@ function Login(props) {
             showToast({ type: 'error', message: 'Fail to login!' });
         }
     };
+
+    const handleGoogleLogin = useGoogleLogin({
+        onSuccess: async (tokenReponse) => {
+            try {
+                const { access_token } = tokenReponse;
+                console.log({ access_token });
+                const resultAction = await dispatch(
+                    fetchGoogleLogin({ access_token })
+                );
+
+                if (fetchGoogleLogin.fulfilled.match(resultAction)) {
+                    showToast({
+                        type: 'success',
+                        title: 'Login successfully',
+                    });
+                    navigate('/');
+                }
+            } catch (error) {
+                console.error(error);
+                showToast({ type: 'error', message: 'Fail to login!' });
+            }
+        },
+    });
 
     return (
         <div className="flex h-screen min-h-fit flex-col gap-4 bg-indigo-950 p-2">
@@ -140,11 +165,21 @@ function Login(props) {
                                     }
                                     justify="center"
                                     fullWidth
+                                    onClick={handleGoogleLogin}
                                 >
                                     <p className="text-slate-700">
                                         Sign in with Google
                                     </p>
                                 </Button>
+                                {/* <GoogleLogin
+                                    onSuccess={(credentialResponse) => {
+                                        console.log(credentialResponse);
+                                    }}
+                                    onError={() => {
+                                        console.log('Login Failed');
+                                    }}
+                                    className="w-full"
+                                /> */}
                             </div>
                         </div>
                     </form>

@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { fetchLogin } from './authThunk';
+import { fetchGoogleLogin, fetchLogin, fetchLoginGoogle } from './authThunk';
 import { deleteCookie, getCookie, setCookie } from 'utils';
 
 const authSlice = createSlice({
@@ -27,6 +27,20 @@ const authSlice = createSlice({
                 setCookie('access_token', access_token, { path: '/' });
             })
             .addCase(fetchLogin.rejected, (state, action) => {
+                state.loadingLogin = 'idle';
+            });
+        builder
+            .addCase(fetchGoogleLogin.pending, (state, action) => {
+                state.loadingLogin = 'loading';
+            })
+            .addCase(fetchGoogleLogin.fulfilled, (state, action) => {
+                const { access_token } = action.payload;
+                state.loadingLogin = 'idle';
+                state.access_token = access_token;
+
+                setCookie('access_token', access_token, { path: '/' });
+            })
+            .addCase(fetchGoogleLogin.rejected, (state, action) => {
                 state.loadingLogin = 'idle';
             });
     },

@@ -12,3 +12,15 @@ export const fetchLogin = createAsyncThunk(
         }
     }
 );
+
+export const fetchGoogleLogin = createAsyncThunk(
+    'auth/fetchGoogleLogin',
+    async (payload, thunkAPI) => {
+        try {
+            const { data } = await authApi.googleLogin(payload);
+            return data;
+        } catch (error) {
+            thunkAPI.rejectWithValue(error);
+        }
+    }
+);

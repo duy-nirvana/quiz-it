@@ -109,7 +109,7 @@ function MainLayout({ children }) {
                                                 <IconChevronDown className="h-4 w-4" />
                                             }
                                         >
-                                            Hi, {personal.profile?.username}
+                                            Hi, {personal.profile?.email}
                                         </Button>
                                     </Menu.Target>
                                     <Menu.Dropdown>

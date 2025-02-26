@@ -171,14 +171,16 @@ function Edit(props) {
             values.questions.forEach((question, index) => {
                 if (question.thumbnail) return;
 
-                const formData = new FormData();
-                const file = question.tempImage;
-                formData.append('image', file);
-                formData.append('type', 'image');
-                formData.append('title', `title-${index}`);
-                formData.append('description', `description-${index}`);
+                if (question.tempImage) {
+                    const formData = new FormData();
+                    const file = question.tempImage;
+                    formData.append('image', file);
+                    formData.append('type', 'image');
+                    formData.append('title', `title-${index}`);
+                    formData.append('description', `description-${index}`);
 
-                promiseFiles.push(imgurApi.upload(formData));
+                    promiseFiles.push(imgurApi.upload(formData));
+                }
             });
 
             const imageUploadedList = await Promise.all(promiseFiles);

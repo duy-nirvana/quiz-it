@@ -10,6 +10,7 @@ import { ErrorBoundary } from 'react-error-boundary';
 import './App.css';
 import AppRouting from './AppRouting';
 import { showToast } from 'helpers';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 const theme = createTheme({
     fontFamily: 'Lexend, sans-serif',
@@ -44,18 +45,20 @@ function App() {
                 console.error(error);
             }}
         >
-            <MantineProvider theme={theme}>
-                <Notifications />
-                <div className="App">
-                    <Suspense
-                        fallback={
-                            <div className="h-screen place-content-center bg-transparent"></div>
-                        }
-                    >
-                        <AppRouting />
-                    </Suspense>
-                </div>
-            </MantineProvider>
+            <GoogleOAuthProvider clientId="194777922953-uadea2kppn0bnc47hl2hm0e8h0slbjg1.apps.googleusercontent.com">
+                <MantineProvider theme={theme}>
+                    <Notifications />
+                    <div className="App">
+                        <Suspense
+                            fallback={
+                                <div className="h-screen place-content-center bg-transparent"></div>
+                            }
+                        >
+                            <AppRouting />
+                        </Suspense>
+                    </div>
+                </MantineProvider>
+            </GoogleOAuthProvider>
         </ErrorBoundary>
     );
 }
