@@ -156,8 +156,20 @@ function List(props) {
                 />
                 <div className="mb-3">
                     <div className="relative mb-3 flex flex-col gap-3">
+                        {loadingList && (
+                            <LoadingOverlay
+                                visible={loadingList}
+                                zIndex={1000}
+                                overlayProps={{
+                                    radius: 'sm',
+                                    blur: 2,
+                                    backgroundOpacity: 0.2,
+                                }}
+                                loaderProps={{ color: 'orange', size: 32 }}
+                            />
+                        )}
                         {!quizzes.length ? (
-                            <div className="flex items-center justify-center">
+                            <div className="flex h-96 items-center justify-center">
                                 <p className="my-2 text-center text-xl text-white">
                                     Nothing found
                                 </p>
