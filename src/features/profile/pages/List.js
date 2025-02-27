@@ -111,12 +111,13 @@ function List(props) {
     console.log({ total });
 
     return (
-        <div className="flex flex-1 flex-col items-center">
+        <div className="relative top-0 flex flex-1 flex-col items-center">
             <div className="w-full max-w-[1000px] lg:basis-full">
                 <Input
                     placeholder="Search"
                     size="lg"
                     leftSection={<IconSearch />}
+                    className="sticky top-[60px] z-50 overflow-hidden shadow-2xl md:shadow-none"
                 />
                 <SegmentedControl
                     value={tabValue}
@@ -152,7 +153,7 @@ function List(props) {
                             value: 'me',
                         },
                     ]}
-                    className="my-2"
+                    className="my-2 sticky top-[110px] z-50"
                 />
                 <div className="mb-3">
                     <div className="relative mb-3 flex flex-col gap-3">
