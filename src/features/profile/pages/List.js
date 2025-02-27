@@ -1,10 +1,22 @@
-import React, { useEffect, useState } from 'react';
-import { ActionIcon, Avatar, Badge, Button, Input } from '@mantine/core';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
+    ActionIcon,
+    Avatar,
+    Badge,
+    Button,
+    Center,
+    Input,
+    Pagination,
+    SegmentedControl,
+} from '@mantine/core';
+import {
+    IconBrandSafari,
     IconDotsVertical,
     IconLock,
     IconPencil,
     IconSearch,
+    IconUser,
+    IconUserFilled,
     IconWorld,
 } from '@tabler/icons-react';
 import { quizApi } from 'api';
@@ -21,22 +33,32 @@ function List(props) {
     const { profile } = useSelector((state) => state.personal);
     const [loading, setLoading] = useState(false);
     const [currentHostQuiz, setCurrentHostQuiz] = useState();
+    const [tabValue, setTabValue] = useState('me');
+
+    const [total, setTotal] = useState(0);
+    const [page, setPage] = useState(1);
+    const [limit, setLimit] = useState(1);
 
     useEffect(() => {
-        if (profile && !quizzes.length) {
-            const getQuizzes = async () => {
-                const { data, success } = await quizApi.getAll({
-                    created_by: profile._id,
-                });
-
-                if (success) {
-                    setQuizzes(data);
-                }
+        if (profile) {
+            let queryPagination = {
+                page,
+                limit,
             };
 
-            getQuizzes();
+            if (tabValue === 'me') {
+                queryPagination['created_by'] = profile._id;
+            }
+
+            if (tabValue === 'explore') {
+                // only get public quiz || exclude current user quiz
+                queryPagination['is_private'] = false;
+                queryPagination['excluded_id'] = profile._id;
+            }
+
+            getQuizzes(queryPagination);
         }
-    }, [profile]);
+    }, [profile, limit, page, tabValue]);
 
     const handleHostLive = async (quiz) => {
         try {
@@ -61,15 +83,67 @@ function List(props) {
         }
     };
 
+    const handleChangeTab = async (value) => {
+        setPage(1);
+        setTabValue(value);
+    };
+
+    const getQuizzes = async (query) => {
+        const { data, total, success } = await quizApi.getAll(query);
+
+        if (success) {
+            setTotal(total);
+            setQuizzes(data);
+        }
+    };
+
+    console.log({ total });
+
     return (
-        <div className="grid grid-cols-1 lg:grid-cols-4">
-            <div className="lg:col-span-2 lg:col-start-2">
+        <div className="flex flex-col items-center">
+            <div className="w-full max-w-[1000px] lg:basis-full">
                 <Input
                     placeholder="Search"
                     size="lg"
                     leftSection={<IconSearch />}
                 />
-                <div className="my-3 flex flex-col gap-4">
+                <SegmentedControl
+                    value={tabValue}
+                    onChange={handleChangeTab}
+                    color="blue"
+                    variant="gradient"
+                    fullWidth
+                    size="sm"
+                    data={[
+                        {
+                            label: (
+                                <Center style={{ gap: 5 }}>
+                                    <IconBrandSafari
+                                        size={22}
+                                        className="font-bold"
+                                    />
+                                    <span className="font-semibold">
+                                        EXPLORE
+                                    </span>
+                                </Center>
+                            ),
+                            value: 'explore',
+                        },
+                        {
+                            label: (
+                                <Center style={{ gap: 5 }}>
+                                    <IconUser size={22} />
+                                    <span className="font-semibold">
+                                        MY QUIZ
+                                    </span>
+                                </Center>
+                            ),
+                            value: 'me',
+                        },
+                    ]}
+                    className="my-2"
+                />
+                <div className="mb-3 flex flex-col gap-4">
                     {quizzes.map((quiz) => (
                         <div
                             key={quiz.id}
@@ -83,7 +157,7 @@ function List(props) {
                                         )?.thumbnail ||
                                         'https://placehold.co/300x200/EEE/31343C'
                                     }
-                                    className="h-full w-full object-cover object-top"
+                                    className="h-full w-full rounded-md object-cover object-top"
                                 />
                                 <Badge
                                     className="absolute bottom-2 right-3 border border-slate-400"
@@ -118,21 +192,27 @@ function List(props) {
                                                 Public
                                             </Badge>
                                         )}
-                                        <ActionIcon
-                                            variant="subtle"
-                                            color="black"
-                                            onClick={() =>
-                                                navigate(`/quiz/${quiz.id}`)
-                                            }
-                                        >
-                                            <IconPencil className="text-slate-900" />
-                                        </ActionIcon>
-                                        <ActionIcon
-                                            variant="subtle"
-                                            color="black"
-                                        >
-                                            <IconDotsVertical className="text-slate-900" />
-                                        </ActionIcon>
+                                        {quiz.created_by === profile?._id && (
+                                            <>
+                                                <ActionIcon
+                                                    variant="subtle"
+                                                    color="black"
+                                                    onClick={() =>
+                                                        navigate(
+                                                            `/quiz/${quiz.id}`
+                                                        )
+                                                    }
+                                                >
+                                                    <IconPencil className="text-slate-900" />
+                                                </ActionIcon>
+                                                <ActionIcon
+                                                    variant="subtle"
+                                                    color="black"
+                                                >
+                                                    <IconDotsVertical className="text-slate-900" />
+                                                </ActionIcon>
+                                            </>
+                                        )}
                                     </div>
                                 </div>
                                 <div className="flex items-center justify-between">
@@ -165,6 +245,13 @@ function List(props) {
                             </div>
                         </div>
                     ))}
+                    <div className="flex justify-end">
+                        <Pagination
+                            value={page}
+                            total={Math.ceil(total / limit)}
+                            onChange={setPage}
+                        />
+                    </div>
                 </div>
             </div>
         </div>
