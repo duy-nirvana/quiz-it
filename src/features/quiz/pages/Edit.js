@@ -1,8 +1,17 @@
-import { Badge, Button, Divider, Input, Select, Tooltip } from '@mantine/core';
+import {
+    Badge,
+    Button,
+    Divider,
+    Input,
+    Popover,
+    Select,
+    Tooltip,
+} from '@mantine/core';
 import {
     IconChevronLeft,
     IconChevronRight,
     IconEye,
+    IconHistory,
     IconPlus,
     IconSquareFilled,
     IconSquareRotatedFilled,
@@ -64,6 +73,7 @@ function Edit({ disabled: disabledQuiz = false }) {
     const [collapsed, setCollapsed] = useState(false);
     const [openPreview, setOpenPreview] = useState(false);
     const [initialValues, setInitialValues] = useState(null);
+    const [openedResetPopover, setOpenedResetPopover] = useState(false);
     const itemRefs = useRef([]);
     const uploadRef = useRef();
 
@@ -266,15 +276,60 @@ function Edit({ disabled: disabledQuiz = false }) {
                             showErrorText={false}
                         />
                     </div>
-                    <div className="flex gap-4">
-                        <Button
-                            size="md"
-                            leftSection={<IconEye className="h-5 w-5" />}
-                            color="cyan"
-                            onClick={() => setOpenPreview(true)}
-                        >
-                            Preview
-                        </Button>
+                    <div className="flex gap-3">
+                        <div className="flex gap-2">
+                            <Popover
+                                width={250}
+                                position="left"
+                                withArrow
+                                shadow="md"
+                                opened={openedResetPopover}
+                                onClick={() =>
+                                    setOpenedResetPopover(!openedResetPopover)
+                                }
+                            >
+                                <Popover.Target>
+                                    <Button
+                                        size="md"
+                                        leftSection={
+                                            <IconHistory className="h-5 w-5" />
+                                        }
+                                        color="red"
+                                        variant="outline"
+                                    >
+                                        Reset
+                                    </Button>
+                                </Popover.Target>
+                                <Popover.Dropdown>
+                                    <div className="flex flex-col gap-2 text-center">
+                                        <p>
+                                            It's will clear everything you
+                                            changed
+                                        </p>
+                                        <Button
+                                            fullWidth
+                                            color="red"
+                                            onClick={() => {
+                                                form.reset(initialValues);
+                                                setActiveQuestionIndex(0);
+                                                setOpenedResetPopover(false);
+                                            }}
+                                        >
+                                            OK
+                                        </Button>
+                                    </div>
+                                </Popover.Dropdown>
+                            </Popover>
+
+                            <Button
+                                size="md"
+                                leftSection={<IconEye className="h-5 w-5" />}
+                                color="cyan"
+                                onClick={() => setOpenPreview(true)}
+                            >
+                                Preview
+                            </Button>
+                        </div>
                         <Divider
                             orientation="vertical"
                             color="gray"
