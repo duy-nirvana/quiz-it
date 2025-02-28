@@ -1,18 +1,21 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
     ActionIcon,
     Avatar,
     Badge,
     Button,
     Center,
+    CloseButton,
     Input,
     LoadingOverlay,
     Pagination,
     SegmentedControl,
+    Tooltip,
 } from '@mantine/core';
 import {
     IconBrandSafari,
     IconDotsVertical,
+    IconEye,
     IconLock,
     IconPencil,
     IconSearch,
@@ -22,44 +25,50 @@ import {
 } from '@tabler/icons-react';
 import { quizApi } from 'api';
 import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import HostLiveModal from '../components/HostLiveModal';
 import { useForm } from 'react-hook-form';
 import { sessionApi } from 'api/sessionApi';
 import { showToast } from 'helpers';
+import InputField from 'components/form-controls/InputField';
+import { twMerge } from 'tailwind-merge';
 
 function List(props) {
     const navigate = useNavigate();
+    const location = useLocation();
+    const [searchParams, setSearchParams] = useSearchParams();
+
     const [quizzes, setQuizzes] = useState([]);
     const { profile } = useSelector((state) => state.personal);
     const [currentHostQuiz, setCurrentHostQuiz] = useState();
-    const [tabValue, setTabValue] = useState('me');
+    const [tabValue, setTabValue] = useState(searchParams.get('type') || 'me');
 
     const [loadingList, setLoadingList] = useState(false);
     const [loading, setLoading] = useState(false);
 
     const [total, setTotal] = useState(0);
-    const [page, setPage] = useState(1);
-    const [limit, setLimit] = useState(10);
+    const [page, setPage] = useState(parseInt(searchParams.get('page')) || 1);
+    const [limit, setLimit] = useState(
+        parseInt(searchParams.get('limit')) || 10
+    );
+
+    const form = useForm({
+        defaultValues: {
+            search: searchParams.get('search') || '',
+        },
+    });
 
     useEffect(() => {
         if (profile) {
-            let queryPagination = {
-                page,
-                limit,
-            };
-
-            if (tabValue === 'me') {
-                queryPagination['created_by'] = profile._id;
+            if (location?.state?.quizzes?.length) {
+                setQuizzes(location.state.quizzes);
+                navigate(location.pathname + location.search, {
+                    replace: true,
+                });
+                return;
             }
 
-            if (tabValue === 'explore') {
-                // only get public quiz || exclude current user quiz
-                queryPagination['is_private'] = false;
-                queryPagination['excluded_id'] = profile._id;
-            }
-
-            getQuizzes(queryPagination);
+            getQuizzes({ search: form.getValues('search') });
         }
     }, [profile, limit, page, tabValue]);
 
@@ -73,7 +82,7 @@ function List(props) {
                 quiz_id: quiz.id,
                 host_user: profile._id,
             });
-            console.log({ data });
+
             if (data.host_id) {
                 navigate(`/host/${data.host_id}`, { state: data });
             }
@@ -91,11 +100,42 @@ function List(props) {
         setTabValue(value);
     };
 
-    const getQuizzes = async (query) => {
+    const handleSearch = async (e) => {
+        let query = {};
+        const search = e.target.value || '';
+
+        if (search) {
+            query['search'] = search;
+        }
+
+        getQuizzes(query);
+    };
+
+    const getQuizzes = async (query = {}) => {
         try {
             setLoadingList(true);
 
-            const { data, total, success } = await quizApi.getAll(query);
+            let queryPagination = {
+                page,
+                limit,
+            };
+
+            setSearchParams({ page, ...query, type: tabValue });
+
+            if (tabValue === 'me') {
+                queryPagination['created_by'] = profile._id;
+            }
+
+            if (tabValue === 'explore') {
+                // only get public quiz || exclude current user quiz
+                queryPagination['is_private'] = false;
+                queryPagination['excluded_id'] = profile._id;
+            }
+
+            const { data, total, success } = await quizApi.getAll({
+                ...queryPagination,
+                ...query,
+            });
 
             if (success) {
                 setTotal(total);
@@ -108,16 +148,48 @@ function List(props) {
         }
     };
 
-    console.log({ total });
+    const goToDetail = (quiz, quizzList) => {
+        navigate(`/quiz/${quiz.id}`, {
+            state: {
+                from: location.pathname + location.search,
+                quizzes: quizzList,
+            },
+        });
+    };
 
     return (
         <div className="relative top-0 flex flex-1 flex-col items-center">
             <div className="w-full max-w-[1000px] lg:basis-full">
-                <Input
+                {/* <Input
                     placeholder="Search"
                     size="lg"
                     leftSection={<IconSearch />}
                     className="sticky top-[60px] z-50 overflow-hidden shadow-2xl md:shadow-none"
+                /> */}
+                <InputField
+                    form={form}
+                    name="search"
+                    placeholder="Search"
+                    size="lg"
+                    leftSection={<IconSearch />}
+                    className="sticky top-[60px] z-10 shadow-2xl md:shadow-none"
+                    debounceTime={500}
+                    onChange={handleSearch}
+                    rightSection={
+                        <CloseButton
+                            onClick={() => {
+                                form.setValue('search', '');
+                                form.setFocus('search');
+                                setPage(1);
+                                getQuizzes();
+                            }}
+                            aria-label="Clear input"
+                            className={twMerge(
+                                'pointer-events-auto',
+                                !form.watch('search') && 'hidden'
+                            )}
+                        />
+                    }
                 />
                 <SegmentedControl
                     value={tabValue}
@@ -153,7 +225,7 @@ function List(props) {
                             value: 'me',
                         },
                     ]}
-                    className="my-2 sticky top-[110px] z-50"
+                    className="sticky top-[110px] z-50 my-2"
                 />
                 <div className="mb-3">
                     <div className="relative mb-3 flex flex-col gap-3">
@@ -177,7 +249,7 @@ function List(props) {
                             </div>
                         ) : (
                             <>
-                                {quizzes.map((quiz) => (
+                                {quizzes.map((quiz, index, quizzList) => (
                                     <div
                                         key={quiz.id}
                                         className="flex h-32 min-h-32 gap-1 rounded bg-white px-3 py-2"
@@ -227,14 +299,15 @@ function List(props) {
                                                         </Badge>
                                                     )}
                                                     {quiz.created_by ===
-                                                        profile?._id && (
+                                                    profile?._id ? (
                                                         <>
                                                             <ActionIcon
                                                                 variant="subtle"
                                                                 color="black"
                                                                 onClick={() =>
-                                                                    navigate(
-                                                                        `/quiz/${quiz.id}`
+                                                                    goToDetail(
+                                                                        quiz,
+                                                                        quizzList
                                                                     )
                                                                 }
                                                             >
@@ -245,6 +318,21 @@ function List(props) {
                                                                 color="black"
                                                             >
                                                                 <IconDotsVertical className="text-slate-900" />
+                                                            </ActionIcon>
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <ActionIcon
+                                                                variant="subtle"
+                                                                color="black"
+                                                                onClick={() =>
+                                                                    goToDetail(
+                                                                        quiz,
+                                                                        quizzList
+                                                                    )
+                                                                }
+                                                            >
+                                                                <IconEye className="text-slate-900" />
                                                             </ActionIcon>
                                                         </>
                                                     )}
@@ -280,9 +368,15 @@ function List(props) {
                                                     >
                                                         Host live
                                                     </Button>
-                                                    <Button className="min-w-fit">
-                                                        Play solo
-                                                    </Button>
+                                                    {/* feature incomplete */}
+                                                    {/* <Tooltip position='right' label='not maintain feature'>
+                                                        <Button
+                                                            className="min-w-fit"
+                                                            disabled
+                                                        >
+                                                            Play solo
+                                                        </Button>
+                                                    </Tooltip> */}
                                                 </div>
                                             </div>
                                         </div>
@@ -297,6 +391,7 @@ function List(props) {
                             value={page}
                             total={Math.ceil(total / limit)}
                             onChange={setPage}
+                            color="orange"
                         />
                     </div>
                 </div>

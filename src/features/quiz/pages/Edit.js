@@ -1,4 +1,4 @@
-import { Badge, Button, Divider, Input, Select } from '@mantine/core';
+import { Badge, Button, Divider, Input, Select, Tooltip } from '@mantine/core';
 import {
     IconChevronLeft,
     IconChevronRight,
@@ -10,7 +10,7 @@ import {
     IconTriangleFilled,
 } from '@tabler/icons-react';
 import AnswertItem from 'components/AnswerItem';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { twMerge } from 'tailwind-merge';
@@ -54,7 +54,7 @@ const initialQuestion = {
     answer_type: 'SINGLE',
 };
 
-function Edit(props) {
+function Edit({ disabled: disabledQuiz = false }) {
     const navigate = useNavigate();
     const location = useLocation();
     const params = useParams();
@@ -68,6 +68,12 @@ function Edit(props) {
     const uploadRef = useRef();
 
     const { profile } = useSelector((state) => state.personal);
+
+    const disabled = id
+        ? initialValues?.created_by !== profile?._id || disabledQuiz
+        : false;
+
+    console.log({ initialValues });
 
     const form = useForm({
         defaultValues: {
@@ -275,15 +281,40 @@ function Edit(props) {
                             size="sm"
                         />
                         <div className="flex gap-2">
-                            <Button size="md" variant="default">
-                                Exit
-                            </Button>
                             <Button
                                 size="md"
-                                onClick={form.handleSubmit(handleSubmit)}
+                                variant="default"
+                                onClick={() => {
+                                    let state = {};
+
+                                    if (location?.state?.quizzes?.length) {
+                                        state['quizzes'] =
+                                            location.state.quizzes;
+                                    }
+
+                                    if (location?.state?.from) {
+                                        navigate(location?.state?.from, {
+                                            state,
+                                        });
+                                    } else {
+                                        navigate('/');
+                                    }
+                                }}
                             >
-                                Save
+                                Exit
                             </Button>
+                            <Tooltip
+                                disabled={!disabled}
+                                label="Only creator can save this quiz"
+                            >
+                                <Button
+                                    size="md"
+                                    onClick={form.handleSubmit(handleSubmit)}
+                                    disabled={disabled}
+                                >
+                                    Save
+                                </Button>
+                            </Tooltip>
                         </div>
                     </div>
                 </div>
