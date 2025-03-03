@@ -6,7 +6,7 @@ export const generateTimeOptions = (gap = 5, max = 60) => {
     for (let i = 1; i <= max / gap; i++) {
         options.push({
             value: `${gap * i}`,
-            label: `${gap * i}s`,
+            label: `${gap * i} seconds`,
         })
     }
 

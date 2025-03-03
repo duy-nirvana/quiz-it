@@ -22,6 +22,7 @@ function SlidePreview(
         disabled,
         onDuplicate,
         onDelete,
+        isMobile
     },
     ref
 ) {
@@ -95,7 +96,7 @@ function SlidePreview(
                     </Tooltip>
                 </div>
                 <div className="min-w-40 flex-grow">
-                    <p className="text-sm font-semibold">{title}</p>
+                    <p className="text-sm font-semibold">{index + 1}/ {title}</p>
                     <div className="relative">
                         <div
                             className={twMerge(

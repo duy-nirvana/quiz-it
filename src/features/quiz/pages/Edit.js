@@ -1,4 +1,5 @@
 import {
+    ActionIcon,
     Badge,
     Button,
     Divider,
@@ -39,6 +40,8 @@ import { ANSWER_ITEMS } from 'utils/answerItem';
 import { QUESTION_TYPE } from 'constants';
 import QuizDetail from '../components/QuizDetail';
 import QuizSetting from '../components/QuizSetting';
+import Header from '../components/Header';
+import { useViewportSize } from '@mantine/hooks';
 
 const timeLimitOptions = generateTimeOptions(10, 120);
 console.log({ timeLimitOptions });
@@ -74,12 +77,15 @@ function Edit({ disabled: disabledQuiz = false }) {
     const location = useLocation();
     const params = useParams();
     const dispatch = useDispatch();
+    const { width } = useViewportSize();
+    const isMobile = width < 768;
+
     const { id } = params;
     const [activeQuestionIndex, setActiveQuestionIndex] = useState(0);
     const [collapsed, setCollapsed] = useState(false);
     const [openPreview, setOpenPreview] = useState(false);
     const [initialValues, setInitialValues] = useState(null);
-    const [openedResetPopover, setOpenedResetPopover] = useState(false);
+
     const itemRefs = useRef([]);
     const uploadRef = useRef();
 
@@ -244,139 +250,28 @@ function Edit({ disabled: disabledQuiz = false }) {
         }
     };
 
-    console.log('watch: ', form.watch('questions'));
+    console.log({ isMobile });
 
     return (
         <div className="relative h-screen min-h-0 overflow-hidden bg-indigo-950">
             <div className="flex h-full flex-col">
-                <div className="flex justify-between p-2">
-                    <div className="flex items-center gap-4">
-                        <Badge
-                            radius="sm"
-                            variant="gradient"
-                            gradient={{ from: 'cyan', to: 'violet', deg: 130 }}
-                            className="h-fit cursor-pointer px-3 py-2 text-2xl"
-                            onClick={() => navigate('/')}
-                        >
-                            <p className="font-bold">QUIZ IT</p>
-                        </Badge>
-
-                        <InputField
-                            form={form}
-                            name="title"
-                            size="md"
-                            placeholder="Enter title"
-                            className="w-96 font-bold"
-                            showErrorText={false}
-                        />
-                    </div>
-                    <div className="flex gap-3">
-                        <div className="flex gap-2">
-                            <Popover
-                                width={250}
-                                position="left"
-                                withArrow
-                                shadow="md"
-                                opened={openedResetPopover}
-                                onClick={() =>
-                                    setOpenedResetPopover(!openedResetPopover)
-                                }
-                            >
-                                <Popover.Target>
-                                    <Button
-                                        size="md"
-                                        leftSection={
-                                            <IconHistory className="h-5 w-5" />
-                                        }
-                                        color="red"
-                                        variant="outline"
-                                    >
-                                        Reset
-                                    </Button>
-                                </Popover.Target>
-                                <Popover.Dropdown>
-                                    <div className="flex flex-col gap-2 text-center">
-                                        <p>
-                                            It's will clear everything you
-                                            changed
-                                        </p>
-                                        <Button
-                                            fullWidth
-                                            color="red"
-                                            onClick={() => {
-                                                form.reset(initialValues);
-                                                setActiveQuestionIndex(0);
-                                                setOpenedResetPopover(false);
-                                            }}
-                                        >
-                                            OK
-                                        </Button>
-                                    </div>
-                                </Popover.Dropdown>
-                            </Popover>
-
-                            <Button
-                                size="md"
-                                leftSection={<IconEye className="h-5 w-5" />}
-                                color="cyan"
-                                onClick={() => setOpenPreview(true)}
-                            >
-                                Preview
-                            </Button>
-                        </div>
-                        <Divider
-                            orientation="vertical"
-                            color="gray"
-                            size="sm"
-                        />
-                        <div className="flex gap-2">
-                            <Button
-                                size="md"
-                                variant="default"
-                                onClick={() => {
-                                    let state = {};
-
-                                    if (location?.state?.quizzes?.length) {
-                                        state['quizzes'] =
-                                            location.state.quizzes;
-                                    }
-
-                                    if (location?.state?.from) {
-                                        navigate(location?.state?.from, {
-                                            state,
-                                        });
-                                    } else {
-                                        navigate('/');
-                                    }
-                                }}
-                            >
-                                Exit
-                            </Button>
-                            <Tooltip
-                                disabled={!disabled}
-                                label="Only creator can save this quiz"
-                            >
-                                <Button
-                                    size="md"
-                                    onClick={form.handleSubmit(handleSubmit)}
-                                    disabled={disabled}
-                                >
-                                    Save
-                                </Button>
-                            </Tooltip>
-                        </div>
-                    </div>
-                </div>
+                <Header
+                    form={form}
+                    initialValues={initialValues}
+                    disabled={disabled}
+                    onSubmit={handleSubmit}
+                    isMobile={isMobile}
+                />
 
                 <div
                     className={twMerge(
-                        'flex h-screen gap-2 overflow-x-hidden px-2 pb-2 transition-all duration-300',
+                        'flex h-screen flex-col gap-2 overflow-x-hidden px-2 pb-2 transition-all duration-300 md:flex-row',
                         collapsed && 'pr-0'
                     )}
                 >
                     {/* COL 1 */}
-                    <div className="flex min-w-56 basis-56 flex-col overflow-hidden rounded-lg bg-slate-300">
-                        <div className="w-full overflow-y-auto">
+                    <div className="order-3 flex min-w-56 basis-44 flex-row overflow-hidden rounded-lg bg-slate-300 md:order-1 md:basis-56 md:flex-col">
+                        <div className="flex w-full flex-row overflow-x-auto overflow-y-hidden md:flex-col md:overflow-y-auto">
                             {fields.map((question, index, questions) => (
                                 <SlidePreview
                                     title={
@@ -396,28 +291,43 @@ function Edit({ disabled: disabledQuiz = false }) {
                                     onDuplicate={handleDuplicate}
                                     onDelete={handleDelete}
                                     ref={(el) => (itemRefs.current[index] = el)} // Assign ref for each item
+                                    isMobile={isMobile}
                                 />
                             ))}
                         </div>
-                        <div className="bg-slate-300 py-4 text-center">
-                            <Button
-                                size="md"
-                                leftSection={
-                                    <IconPlus className="h-4 w-4 min-w-4" />
-                                }
-                                onClick={() => {
-                                    append(initialQuestion);
-                                    setActiveQuestionIndex(fields.length);
-                                }}
-                            >
-                                Add question
-                            </Button>
+                        <div className="self-center bg-slate-300 py-4 text-center">
+                            {isMobile ? (
+                                <ActionIcon
+                                    variant="outline"
+                                    size="lg"
+                                    onClick={() => {
+                                        append(initialQuestion);
+                                        setActiveQuestionIndex(fields.length);
+                                    }}
+                                    className='mx-2'
+                                >
+                                    <IconPlus />
+                                </ActionIcon>
+                            ) : (
+                                <Button
+                                    size={'md'}
+                                    leftSection={
+                                        <IconPlus className="h-4 w-4 min-w-4" />
+                                    }
+                                    onClick={() => {
+                                        append(initialQuestion);
+                                        setActiveQuestionIndex(fields.length);
+                                    }}
+                                >
+                                    Add question
+                                </Button>
+                            )}
                         </div>
                     </div>
                     {/* COL 2 */}
                     <div
                         className={twMerge(
-                            'flex h-full flex-grow flex-col justify-between gap-16 overflow-y-scroll rounded-lg bg-slate-400 px-6 py-10'
+                            'order-1 flex h-full flex-grow flex-col justify-between gap-16 overflow-y-scroll rounded-lg bg-slate-400 px-6 py-10'
                         )}
                     >
                         {fields.map((question, index, questions) => {
@@ -437,7 +347,7 @@ function Edit({ disabled: disabledQuiz = false }) {
                     <div
                         id="col-3"
                         className={twMerge(
-                            'relative flex h-full w-[25vw] min-w-96 max-w-96 flex-col justify-between gap-2 rounded-lg bg-slate-300 px-3 py-4 transition-all',
+                            'relative order-2 hidden h-full w-[25vw] min-w-96 max-w-96 flex-col justify-between gap-2 rounded-lg bg-slate-300 px-3 py-4 transition-all md:flex',
                             collapsed && 'w-0 min-w-0 translate-x-full p-0'
                         )}
                     >
