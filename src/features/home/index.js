@@ -1,5 +1,5 @@
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Button, Input } from '@mantine/core';
+import { Button } from '@mantine/core';
 import { sessionApi } from 'api';
 import InputField from 'components/form-controls/InputField';
 import { showToast } from 'helpers';
@@ -7,9 +7,6 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import * as yup from 'yup';
-import { bigSmile } from '@dicebear/collection';
-import * as style from '@dicebear/big-smile';
-import { createAvatar } from '@dicebear/core';
 
 function Home(props) {
     const navigate = useNavigate();
@@ -50,7 +47,7 @@ function Home(props) {
     return (
         <div className="flex flex-grow flex-col justify-center">
             <div className="flex -translate-y-1/4 flex-col items-center justify-center gap-6">
-                <p className="text-center text-8xl font-black text-white">
+                <p className="text-center text-5xl md:text-7xl lg:text-8xl font-black text-white">
                     QUIZ IT
                 </p>
                 <div className="flex w-6 min-w-fit flex-col rounded-xl bg-indigo-800 p-6 text-center">

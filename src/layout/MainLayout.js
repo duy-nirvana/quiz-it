@@ -4,23 +4,21 @@ import {
     Burger,
     Button,
     Group,
-    Menu,
-    UnstyledButton,
-    rem,
+    Menu
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import {
     IconChevronDown,
     IconLogout2,
+    IconPlus,
     IconUserCircle,
 } from '@tabler/icons-react';
-import React, { useEffect, useLayoutEffect } from 'react';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { clearAuthData } from 'store/auth/authSlice';
 import { clearPersonalData } from 'store/personal/personalSlice';
 import { fetchPersonal } from 'store/personal/personalThunk';
-import { getCookie } from 'utils';
 
 function MainLayout({ children }) {
     const dispatch = useDispatch();
@@ -57,6 +55,7 @@ function MainLayout({ children }) {
                         onClick={toggle}
                         hiddenFrom="sm"
                         size="sm"
+                        color="white"
                     />
                     <Group justify="space-between" style={{ flex: 1 }}>
                         <Badge
@@ -69,10 +68,6 @@ function MainLayout({ children }) {
                             <p className="font-bold">QUIZ IT</p>
                         </Badge>
                         <Group ml="xl" gap={0} visibleFrom="sm">
-                            {/* <UnstyledButton>Home1</UnstyledButton>
-                            <UnstyledButton>Blog</UnstyledButton>
-                            <UnstyledButton>Contacts</UnstyledButton>
-                            <UnstyledButton>Support</UnstyledButton> */}
                             <Button
                                 variant="filled"
                                 color="teal"
@@ -138,12 +133,81 @@ function MainLayout({ children }) {
                 </Group>
             </AppShell.Header>
 
-            {/* <AppShell.Navbar py="md" px={4}>
-                <UnstyledButton>Home</UnstyledButton>
-                <UnstyledButton>Blog</UnstyledButton>
-                <UnstyledButton>Contacts</UnstyledButton>
-                <UnstyledButton>Support</UnstyledButton>
-            </AppShell.Navbar> */}
+            <AppShell.Navbar
+                py="md"
+                px={4}
+                className="bg-slate-900/95"
+                withBorder={false}
+            >
+                <Group className="px-4">
+                    {auth.access_token && (
+                        <p className="text-lg font-bold text-white">
+                            Hi, {personal.profile?.email}
+                        </p>
+                    )}
+                    <Button
+                        variant="filled"
+                        color="orange"
+                        size="md"
+                        onClick={() => {
+                            auth.access_token
+                                ? navigate('/quiz')
+                                : navigate('/auth/login');
+                            toggle();
+                        }}
+                        fullWidth
+                        leftSection={<IconPlus className="h-5 w-5" />}
+                    >
+                        Create
+                    </Button>
+                    {!auth.access_token && (
+                        <Button
+                            color="green"
+                            size="md"
+                            onClick={() => {
+                                navigate('/auth/login');
+                                toggle();
+                            }}
+                            fullWidth
+                        >
+                            Login
+                        </Button>
+                    )}
+
+                    {auth.access_token && (
+                        <>
+                            <Button
+                                size="md"
+                                onClick={() => {
+                                    navigate('/profile');
+                                    toggle();
+                                }}
+                                fullWidth
+                                leftSection={
+                                    <IconUserCircle className="h-5 w-5" />
+                                }
+                            >
+                                My profile
+                            </Button>
+                            <Button
+                                variant="outline"
+                                color="red"
+                                size="md"
+                                onClick={() => {
+                                    handleLogout();
+                                    toggle();
+                                }}
+                                fullWidth
+                                leftSection={
+                                    <IconLogout2 className="h-5 w-5" />
+                                }
+                            >
+                                Logout
+                            </Button>
+                        </>
+                    )}
+                </Group>
+            </AppShell.Navbar>
 
             <AppShell.Main className="flex flex-1 flex-col bg-indigo-950">
                 <Outlet />

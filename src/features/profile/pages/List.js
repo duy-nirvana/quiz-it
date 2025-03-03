@@ -1,4 +1,3 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
     ActionIcon,
     Avatar,
@@ -6,31 +5,29 @@ import {
     Button,
     Center,
     CloseButton,
-    Input,
     LoadingOverlay,
     Pagination,
-    SegmentedControl,
-    Tooltip,
+    SegmentedControl
 } from '@mantine/core';
 import {
     IconBrandSafari,
-    IconDotsVertical,
+    IconCalendarTime,
     IconEye,
     IconLock,
     IconPencil,
     IconSearch,
     IconUser,
-    IconUserFilled,
-    IconWorld,
+    IconWorld
 } from '@tabler/icons-react';
 import { quizApi } from 'api';
+import { sessionApi } from 'api/sessionApi';
+import InputField from 'components/form-controls/InputField';
+import { format } from 'date-fns';
+import { showToast } from 'helpers';
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { useSelector } from 'react-redux';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
-import HostLiveModal from '../components/HostLiveModal';
-import { useForm } from 'react-hook-form';
-import { sessionApi } from 'api/sessionApi';
-import { showToast } from 'helpers';
-import InputField from 'components/form-controls/InputField';
 import { twMerge } from 'tailwind-merge';
 
 function List(props) {
@@ -160,12 +157,6 @@ function List(props) {
     return (
         <div className="relative top-0 flex flex-1 flex-col items-center">
             <div className="w-full max-w-[1000px] lg:basis-full">
-                {/* <Input
-                    placeholder="Search"
-                    size="lg"
-                    leftSection={<IconSearch />}
-                    className="sticky top-[60px] z-50 overflow-hidden shadow-2xl md:shadow-none"
-                /> */}
                 <InputField
                     form={form}
                     name="search"
@@ -252,9 +243,9 @@ function List(props) {
                                 {quizzes.map((quiz, index, quizzList) => (
                                     <div
                                         key={quiz.id}
-                                        className="flex h-32 min-h-32 gap-1 rounded bg-white px-3 py-2"
+                                        className="flex h-fit min-h-32 flex-col gap-1 rounded bg-white px-3 py-2 md:h-32 md:flex-row"
                                     >
-                                        <div className="relative w-44 flex-shrink-0">
+                                        <div className="relative w-full flex-shrink-0 rounded-md bg-slate-300 md:w-44">
                                             <img
                                                 src={
                                                     quiz.questions.find(
@@ -262,7 +253,7 @@ function List(props) {
                                                     )?.thumbnail ||
                                                     'https://placehold.co/300x200/EEE/31343C'
                                                 }
-                                                className="h-full w-full rounded-md object-cover object-top"
+                                                className="object-fit h-full max-h-44 w-full rounded-md object-top sm:object-scale-down md:object-cover"
                                             />
                                             <Badge
                                                 className="absolute bottom-2 right-3 border border-slate-400"
@@ -273,69 +264,71 @@ function List(props) {
                                                 Questions
                                             </Badge>
                                         </div>
-                                        <div className="flex flex-grow flex-col justify-between">
-                                            <div className="flex justify-between">
+                                        <div className="flex flex-grow flex-col justify-between gap-2">
+                                            <div className="flex flex-col justify-between gap-1 md:flex-row">
                                                 <p className="text-bold text-xl">
                                                     {quiz?.title ?? 'Title'}
                                                 </p>
-                                                <div className="flex items-center gap-1">
-                                                    {quiz?.is_private ? (
-                                                        <Badge
-                                                            color="red"
-                                                            leftSection={
-                                                                <IconLock className="h-4 w-4" />
-                                                            }
-                                                        >
-                                                            Private
-                                                        </Badge>
-                                                    ) : (
-                                                        <Badge
-                                                            color="teal"
-                                                            leftSection={
-                                                                <IconWorld className="h-4 w-4" />
-                                                            }
-                                                        >
-                                                            Public
-                                                        </Badge>
-                                                    )}
-                                                    {quiz.created_by ===
-                                                    profile?._id ? (
-                                                        <>
-                                                            <ActionIcon
-                                                                variant="subtle"
-                                                                color="black"
-                                                                onClick={() =>
-                                                                    goToDetail(
-                                                                        quiz,
-                                                                        quizzList
-                                                                    )
+                                                <div className="flex items-center justify-between gap-2">
+                                                    <div className='flex gap-1 items-center'>
+                                                        <IconCalendarTime className="h-4 w-4" />
+                                                        <p className='italic text-sm'>{format(quiz.createdAt, 'dd/MM/yyyy')}</p>
+                                                    </div>
+                                                    <div className="flex items-center gap-1">
+                                                        {quiz?.is_private ? (
+                                                            <Badge
+                                                                color="red"
+                                                                leftSection={
+                                                                    <IconLock className="h-4 w-4" />
                                                                 }
                                                             >
-                                                                <IconPencil className="text-slate-900" />
-                                                            </ActionIcon>
-                                                            <ActionIcon
-                                                                variant="subtle"
-                                                                color="black"
-                                                            >
-                                                                <IconDotsVertical className="text-slate-900" />
-                                                            </ActionIcon>
-                                                        </>
-                                                    ) : (
-                                                        <>
-                                                            <ActionIcon
-                                                                variant="subtle"
-                                                                color="black"
-                                                                onClick={() =>
-                                                                    goToDetail(
-                                                                        quiz,
-                                                                        quizzList
-                                                                    )
+                                                                Private
+                                                            </Badge>
+                                                        ) : (
+                                                            <Badge
+                                                                color="teal"
+                                                                leftSection={
+                                                                    <IconWorld className="h-4 w-4" />
                                                                 }
                                                             >
-                                                                <IconEye className="text-slate-900" />
-                                                            </ActionIcon>
-                                                        </>
-                                                    )}
+                                                                Public
+                                                            </Badge>
+                                                        )}
+                                                        <div>
+                                                            {quiz.created_by ===
+                                                            profile?._id ? (
+                                                                <>
+                                                                    <ActionIcon
+                                                                        variant="subtle"
+                                                                        color="black"
+                                                                        onClick={() =>
+                                                                            goToDetail(
+                                                                                quiz,
+                                                                                quizzList
+                                                                            )
+                                                                        }
+                                                                    >
+                                                                        <IconPencil className="text-slate-900" />
+                                                                    </ActionIcon>
+                                                                </>
+                                                            ) : (
+                                                                <>
+                                                                    <ActionIcon
+                                                                        variant="subtle"
+                                                                        color="black"
+                                                                        onClick={() =>
+                                                                            goToDetail(
+                                                                                quiz,
+                                                                                quizzList
+                                                                            )
+                                                                        }
+                                                                    >
+                                                                        <IconEye className="text-slate-900" />
+                                                                    </ActionIcon>
+                                                                </>
+                                                            )}
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div className="flex items-center justify-between">
