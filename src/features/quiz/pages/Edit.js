@@ -250,17 +250,16 @@ function Edit({ disabled: disabledQuiz = false }) {
         }
     };
 
-    console.log({ isMobile });
-
     return (
         <div className="relative h-screen min-h-0 overflow-hidden bg-indigo-950">
             <div className="flex h-full flex-col">
                 <Header
                     form={form}
+                    isMobile={isMobile}
                     initialValues={initialValues}
                     disabled={disabled}
                     onSubmit={handleSubmit}
-                    isMobile={isMobile}
+                    setActiveQuestionIndex={setActiveQuestionIndex}
                 />
 
                 <div
@@ -304,7 +303,7 @@ function Edit({ disabled: disabledQuiz = false }) {
                                         append(initialQuestion);
                                         setActiveQuestionIndex(fields.length);
                                     }}
-                                    className='mx-2'
+                                    className="mx-2"
                                 >
                                     <IconPlus />
                                 </ActionIcon>
