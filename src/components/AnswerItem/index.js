@@ -5,6 +5,21 @@ import styles from './AnswerItem.module.scss';
 import { Radio } from '@mantine/core';
 import CheckboxField from 'components/form-controls/CheckboxField';
 
+const answerItemStyle = ({
+    form,
+    isHost,
+    isPlayer,
+    index,
+    selectedIndex,
+    showResult,
+    isDisabledSelect,
+    isCorrect,
+}) => {
+    const activeClasses = 'cursor-default brightness-100 hover:brightness-100 active:brightness-100';
+    const disabledClasses = 'cursor-default brightness-[45%] hover:brightness-[45%] active:brightness-[45%]'
+
+};
+
 function AnswertItem({
     form,
     name,
@@ -108,13 +123,11 @@ function AnswertItem({
                     }}
                     showErrorText={false}
                     onChange={() => {
-                        const path = `${name.split('.').slice(0, -1).join('.')}`;
                         if (
                             form
                                 .watch(`questions.${index}.answers`)
                                 .some((ans) => ans.is_correct)
                         ) {
-                            // form.clearErrors(path);
                             form.clearErrors(
                                 `questions.${index}.is_answer_seleted`
                             );

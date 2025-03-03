@@ -31,11 +31,17 @@ import QuizPreview from 'components/QuizPreview';
 import { useDispatch, useSelector } from 'react-redux';
 import { imgurApi } from 'api/imgurApi';
 import { fetchPersonal } from 'store/personal/personalThunk';
-import { showToast } from 'helpers';
+import { generateTimeOptions, showToast } from 'helpers';
 import { formatQuestions, formatQuiz } from 'helpers/quiz';
 import { quizSchema } from '../schemas';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { ANSWER_ITEMS } from 'utils/answerItem';
+import { QUESTION_TYPE } from 'constants';
+import QuizDetail from '../components/QuizDetail';
+import QuizSetting from '../components/QuizSetting';
+
+const timeLimitOptions = generateTimeOptions(10, 120);
+console.log({ timeLimitOptions });
 
 const initialQuestion = {
     text: '',
@@ -58,7 +64,7 @@ const initialQuestion = {
         },
     ],
     type: 'QUIZ',
-    time_limit: 5,
+    time_limit: 60,
     point_type: 'STANDARD',
     answer_type: 'SINGLE',
 };
@@ -201,20 +207,6 @@ function Edit({ disabled: disabledQuiz = false }) {
 
             const imageUploadedList = await Promise.all(promiseFiles);
 
-            // const newQuestions = values.questions.map((question, index) => {
-            //     delete question._id;
-            //     delete question.tempImage;
-            //     delete question.thumbnail;
-
-            //     const questionImg = imageUploadedList.find(
-            //         (image) => image.data.title.split('-')[1] == index
-            //     );
-            //     return {
-            //         ...question,
-            //         thumbnail: questionImg.data.link,
-            //         time_limit: Number(question.time_limit),
-            //     };
-            // });
             if (imageUploadedList.length) {
                 newQuestions = formatQuestions(
                     values.questions,
@@ -251,6 +243,8 @@ function Edit({ disabled: disabledQuiz = false }) {
             });
         }
     };
+
+    console.log('watch: ', form.watch('questions'));
 
     return (
         <div className="relative h-screen min-h-0 overflow-hidden bg-indigo-950">
@@ -385,6 +379,13 @@ function Edit({ disabled: disabledQuiz = false }) {
                         <div className="w-full overflow-y-auto">
                             {fields.map((question, index, questions) => (
                                 <SlidePreview
+                                    title={
+                                        QUESTION_TYPE[
+                                            form.getValues(
+                                                `questions.${index}.type`
+                                            )
+                                        ].label
+                                    }
                                     key={question._id}
                                     form={form}
                                     className={'p-2 pr-4'}
@@ -422,83 +423,12 @@ function Edit({ disabled: disabledQuiz = false }) {
                         {fields.map((question, index, questions) => {
                             if (index === activeQuestionIndex) {
                                 return (
-                                    <>
-                                        <InputField
-                                            form={form}
-                                            name={`questions.${index}.text`}
-                                            placeholder="Your question"
-                                            size="lg"
-                                            className="font-semibold"
-                                            classNames={{
-                                                input: 'h-16 text-center',
-                                            }}
-                                            showErrorText={false}
-                                        />
-                                        <div className="flex justify-center">
-                                            <div
-                                                className="group relative flex max-h-80 min-h-72 w-1/3 justify-center overflow-hidden rounded-lg bg-white"
-                                                onClick={() =>
-                                                    uploadRef.current.click()
-                                                }
-                                            >
-                                                <div className="aspect-">
-                                                    <img
-                                                        src={getImageURL(
-                                                            question
-                                                        )}
-                                                        className="object-fit h-full w-full"
-                                                    />
-                                                    <div className="absolute bottom-0 left-0 right-0 top-0 flex cursor-pointer items-center justify-center opacity-0 transition-all group-hover:bg-gray-500/40 group-hover:opacity-100">
-                                                        <p
-                                                            className="text-xl font-bold text-white"
-                                                            style={{
-                                                                textShadow:
-                                                                    '1px 1px 2px black',
-                                                            }}
-                                                        >
-                                                            Upload image
-                                                        </p>
-                                                    </div>
-                                                    <input
-                                                        type="file"
-                                                        ref={uploadRef}
-                                                        onChange={(e) => {
-                                                            if (
-                                                                e.target
-                                                                    .files[0]
-                                                            ) {
-                                                                update(index, {
-                                                                    ...form.getValues(
-                                                                        `questions.${index}`
-                                                                    ),
-                                                                    tempImage:
-                                                                        e.target
-                                                                            .files[0],
-                                                                });
-                                                            }
-                                                        }}
-                                                        className="hidden"
-                                                    />
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="grid grid-cols-2 gap-4">
-                                            {ANSWER_ITEMS[
-                                                form.watch(
-                                                    `questions.${index}.type`
-                                                )
-                                            ].map((item, answerIndex) => (
-                                                <AnswertItem
-                                                    key={answerIndex}
-                                                    form={form}
-                                                    name={`questions.${index}.answers.${answerIndex}`}
-                                                    icon={item.icon}
-                                                    color={item.color}
-                                                    index={index}
-                                                />
-                                            ))}
-                                        </div>
-                                    </>
+                                    <QuizDetail
+                                        form={form}
+                                        question={question}
+                                        index={index}
+                                        uploadRef={uploadRef}
+                                    />
                                 );
                             }
                         })}
@@ -526,118 +456,15 @@ function Edit({ disabled: disabledQuiz = false }) {
                         {fields.map((question, index, questions) => {
                             if (index === activeQuestionIndex) {
                                 return (
-                                    <>
-                                        <div className="flex grow flex-col gap-y-4 overflow-y-auto">
-                                            <SelectField
-                                                form={form}
-                                                name={`questions.${index}.type`}
-                                                label={<p>Question type</p>}
-                                                placeholder="Pick value"
-                                                data={[
-                                                    {
-                                                        value: 'QUIZ',
-                                                        label: 'Quiz',
-                                                    },
-                                                    {
-                                                        value: 'TRUE_OR_FALSE',
-                                                        label: 'True or False',
-                                                    },
-                                                ]}
-                                            />
-                                            <SelectField
-                                                form={form}
-                                                name={`questions.${index}.time_limit`}
-                                                label={<p>Time limit</p>}
-                                                placeholder="Pick value"
-                                                data={[
-                                                    {
-                                                        value: '5',
-                                                        label: '5s',
-                                                    },
-                                                    {
-                                                        value: '10',
-                                                        label: '10s',
-                                                    },
-                                                    {
-                                                        value: '15',
-                                                        label: '15s',
-                                                    },
-                                                    {
-                                                        value: '20',
-                                                        label: '20s',
-                                                    },
-                                                ]}
-                                            />
-                                            <SelectField
-                                                form={form}
-                                                name={`questions.${index}.point_type`}
-                                                label={<p>Point</p>}
-                                                placeholder="Pick value"
-                                                data={[
-                                                    {
-                                                        value: 'STANDARD',
-                                                        label: 'Standard',
-                                                    },
-                                                    {
-                                                        value: 'DOUBLE',
-                                                        label: 'Double point',
-                                                    },
-                                                    {
-                                                        value: 'NO',
-                                                        label: 'No point',
-                                                    },
-                                                ]}
-                                            />
-                                            <SelectField
-                                                form={form}
-                                                name={`questions.${index}.answer_type`}
-                                                label={<p>Answers options</p>}
-                                                placeholder="Pick value"
-                                                data={[
-                                                    {
-                                                        value: 'SINGLE',
-                                                        label: 'Single select',
-                                                    },
-                                                    {
-                                                        value: 'MULTI',
-                                                        label: 'Multi select',
-                                                    },
-                                                ]}
-                                            />
-                                        </div>
-                                        <div
-                                            className={twMerge(
-                                                'flex justify-center gap-3 bg-slate-300 py-4',
-                                                collapsed && 'hidden'
-                                            )}
-                                        >
-                                            <Button
-                                                size="md"
-                                                variant="light"
-                                                color="red"
-                                                leftSection={
-                                                    <IconTrash className="h-4 w-4" />
-                                                }
-                                                onClick={() =>
-                                                    handleDelete(index)
-                                                }
-                                                disabled={fields.length === 1}
-                                            >
-                                                Delete
-                                            </Button>
-                                            <Button
-                                                size="md"
-                                                leftSection={
-                                                    <IconPlus className="h-4 w-4 min-w-4" />
-                                                }
-                                                onClick={() =>
-                                                    handleDuplicate(index)
-                                                }
-                                            >
-                                                Duplicate
-                                            </Button>
-                                        </div>
-                                    </>
+                                    <QuizSetting
+                                        form={form}
+                                        fields={fields}
+                                        index={index}
+                                        timeLimitOptions={timeLimitOptions}
+                                        onDelete={handleDelete}
+                                        onDuplicate={handleDuplicate}
+                                        collapsed={collapsed}
+                                    />
                                 );
                             }
                         })}
