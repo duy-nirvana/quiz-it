@@ -3,6 +3,7 @@ import {
     IconTrash,
     IconPhoto,
     IconAlertCircleFilled,
+    IconSettings,
 } from '@tabler/icons-react';
 import React, { forwardRef } from 'react';
 import styles from './Index.module.scss';
@@ -22,7 +23,8 @@ function SlidePreview(
         disabled,
         onDuplicate,
         onDelete,
-        isMobile
+        isMobile,
+        onOpenSetting
     },
     ref
 ) {
@@ -50,6 +52,20 @@ function SlidePreview(
                         isActive && 'opacity-100'
                     )}
                 >
+                    <ActionIcon
+                        variant="subtle"
+                        aria-label="copy-icon"
+                        radius="xl"
+                        color="gray"
+                        className="icon mb-1 md:hidden"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onOpenSetting(index);
+                        }}
+                        disabled={disabled}
+                    >
+                        <IconSettings className="h-5 w-5" />
+                    </ActionIcon>
                     <Tooltip
                         label="Duplicate"
                         withArrow
@@ -96,7 +112,9 @@ function SlidePreview(
                     </Tooltip>
                 </div>
                 <div className="min-w-40 flex-grow">
-                    <p className="text-sm font-semibold">{index + 1}/ {title}</p>
+                    <p className="text-sm font-semibold">
+                        {index + 1}/ {title}
+                    </p>
                     <div className="relative">
                         <div
                             className={twMerge(

@@ -4,6 +4,7 @@ import {
     Button,
     Divider,
     Input,
+    Modal,
     Popover,
     Select,
     Tooltip,
@@ -44,7 +45,6 @@ import Header from '../components/Header';
 import { useViewportSize } from '@mantine/hooks';
 
 const timeLimitOptions = generateTimeOptions(10, 120);
-console.log({ timeLimitOptions });
 
 const initialQuestion = {
     text: '',
@@ -85,6 +85,8 @@ function Edit({ disabled: disabledQuiz = false }) {
     const [collapsed, setCollapsed] = useState(false);
     const [openPreview, setOpenPreview] = useState(false);
     const [initialValues, setInitialValues] = useState(null);
+    const [indexQuizSetting, setIndexQuizSetting] = useState(0);
+    const [openQuizSetting, setOpenQuizSetting] = useState(false);
 
     const itemRefs = useRef([]);
     const uploadRef = useRef();
@@ -94,8 +96,6 @@ function Edit({ disabled: disabledQuiz = false }) {
     const disabled = id
         ? initialValues?.created_by !== profile?._id || disabledQuiz
         : false;
-
-    console.log({ initialValues });
 
     const form = useForm({
         defaultValues: {
@@ -146,6 +146,12 @@ function Edit({ disabled: disabledQuiz = false }) {
             });
         }
     }, [activeQuestionIndex]);
+
+    useEffect(() => {
+        if (!isMobile) {
+            setOpenQuizSetting(false);
+        }
+    }, [isMobile])
 
     const getDetailQuiz = async () => {
         try {
@@ -260,6 +266,7 @@ function Edit({ disabled: disabledQuiz = false }) {
                     disabled={disabled}
                     onSubmit={handleSubmit}
                     setActiveQuestionIndex={setActiveQuestionIndex}
+                    setOpenPreview={setOpenPreview}
                 />
 
                 <div
@@ -273,6 +280,7 @@ function Edit({ disabled: disabledQuiz = false }) {
                         <div className="flex w-full flex-row overflow-x-auto overflow-y-hidden md:flex-col md:overflow-y-auto">
                             {fields.map((question, index, questions) => (
                                 <SlidePreview
+                                    ref={(el) => (itemRefs.current[index] = el)}
                                     title={
                                         QUESTION_TYPE[
                                             form.getValues(
@@ -289,8 +297,11 @@ function Edit({ disabled: disabledQuiz = false }) {
                                     questions={questions}
                                     onDuplicate={handleDuplicate}
                                     onDelete={handleDelete}
-                                    ref={(el) => (itemRefs.current[index] = el)} // Assign ref for each item
                                     isMobile={isMobile}
+                                    onOpenSetting={(index) => {
+                                        setOpenQuizSetting(true);
+                                        setIndexQuizSetting(index);
+                                    }}
                                 />
                             ))}
                         </div>
@@ -326,7 +337,7 @@ function Edit({ disabled: disabledQuiz = false }) {
                     {/* COL 2 */}
                     <div
                         className={twMerge(
-                            'order-1 flex h-full flex-grow flex-col justify-between gap-16 overflow-y-scroll rounded-lg bg-slate-400 px-6 py-10'
+                            'order-1 flex h-full flex-grow flex-col justify-between gap-8 overflow-y-scroll rounded-lg bg-slate-400 px-6 py-10 md:gap-16'
                         )}
                     >
                         {fields.map((question, index, questions) => {
@@ -365,15 +376,49 @@ function Edit({ disabled: disabledQuiz = false }) {
                         {fields.map((question, index, questions) => {
                             if (index === activeQuestionIndex) {
                                 return (
-                                    <QuizSetting
-                                        form={form}
-                                        fields={fields}
-                                        index={index}
-                                        timeLimitOptions={timeLimitOptions}
-                                        onDelete={handleDelete}
-                                        onDuplicate={handleDuplicate}
-                                        collapsed={collapsed}
-                                    />
+                                    <>
+                                        <div className="flex grow flex-col gap-y-4 overflow-y-auto">
+                                            <QuizSetting
+                                                form={form}
+                                                index={index}
+                                                timeLimitOptions={
+                                                    timeLimitOptions
+                                                }
+                                            />
+                                        </div>
+                                        <div
+                                            className={twMerge(
+                                                'flex justify-center gap-3 bg-slate-300 py-4',
+                                                collapsed && 'hidden'
+                                            )}
+                                        >
+                                            <Button
+                                                size="md"
+                                                variant="light"
+                                                color="red"
+                                                leftSection={
+                                                    <IconTrash className="h-4 w-4" />
+                                                }
+                                                onClick={() =>
+                                                    handleDelete(index)
+                                                }
+                                                disabled={fields.length === 1}
+                                            >
+                                                Delete
+                                            </Button>
+                                            <Button
+                                                size="md"
+                                                leftSection={
+                                                    <IconPlus className="h-4 w-4 min-w-4" />
+                                                }
+                                                onClick={() =>
+                                                    handleDelete(index)
+                                                }
+                                            >
+                                                Duplicate
+                                            </Button>
+                                        </div>
+                                    </>
                                 );
                             }
                         })}
@@ -386,6 +431,19 @@ function Edit({ disabled: disabledQuiz = false }) {
                 open={openPreview}
                 onClose={() => setOpenPreview(false)}
             />
+            <Modal
+                opened={openQuizSetting}
+                onClose={() => setOpenQuizSetting(false)}
+                centered
+            >
+                <div className="flex flex-col gap-4">
+                    <QuizSetting
+                        form={form}
+                        index={indexQuizSetting}
+                        timeLimitOptions={timeLimitOptions}
+                    />
+                </div>
+            </Modal>
         </div>
     );
 }

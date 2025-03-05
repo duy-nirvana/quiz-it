@@ -33,7 +33,7 @@ function QuizDetail({ form, question, index, uploadRef }) {
             />
             <div className="flex justify-center">
                 <div
-                    className="group relative flex max-h-80 min-h-72 w-1/3 justify-center overflow-hidden rounded-lg bg-white"
+                    className="group relative flex max-h-80 min-h-72 w-full max-w-[700px] justify-center overflow-hidden rounded-lg bg-white lg:w-1/2"
                     onClick={() => uploadRef.current.click()}
                 >
                     <div>
@@ -67,7 +67,7 @@ function QuizDetail({ form, question, index, uploadRef }) {
                     </div>
                 </div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 {ANSWER_ITEMS[form.watch(`questions.${index}.type`)].map(
                     (item, answerIndex) => (
                         <AnswertItem

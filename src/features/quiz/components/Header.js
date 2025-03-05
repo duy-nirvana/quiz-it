@@ -11,7 +11,7 @@ import InputField from 'components/form-controls/InputField';
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-function Header({ form, initialValues, disabled, onSubmit, isMobile, setActiveQuestionIndex }) {
+function Header({ form, initialValues, disabled, onSubmit, isMobile, setActiveQuestionIndex, setOpenPreview }) {
     const navigate = useNavigate();
     const location = useLocation();
 
