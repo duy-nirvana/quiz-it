@@ -45,7 +45,9 @@ function App() {
                 console.error(error);
             }}
         >
-            <GoogleOAuthProvider clientId="194777922953-uadea2kppn0bnc47hl2hm0e8h0slbjg1.apps.googleusercontent.com">
+            <GoogleOAuthProvider
+                clientId={`${REACT_APP_GOOGLE_CLIENT_ID}.apps.googleusercontent.com`}
+            >
                 <MantineProvider theme={theme}>
                     <Notifications />
                     <div className="App">
