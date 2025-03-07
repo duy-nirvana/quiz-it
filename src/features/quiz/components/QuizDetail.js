@@ -17,7 +17,7 @@ const getImageURL = (question) => {
     return url;
 };
 
-function QuizDetail({ form, question, index, uploadRef }) {
+function QuizDetail({ form, question, index, uploadRef, update }) {
     return (
         <>
             <InputField

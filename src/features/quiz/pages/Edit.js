@@ -151,7 +151,7 @@ function Edit({ disabled: disabledQuiz = false }) {
         if (!isMobile) {
             setOpenQuizSetting(false);
         }
-    }, [isMobile])
+    }, [isMobile]);
 
     const getDetailQuiz = async () => {
         try {
@@ -271,13 +271,13 @@ function Edit({ disabled: disabledQuiz = false }) {
 
                 <div
                     className={twMerge(
-                        'flex h-screen flex-col gap-2 overflow-x-hidden px-2 pb-2 transition-all duration-300 md:flex-row',
+                        'flex h-screen flex-col gap-2 overflow-x-hidden px-2 pb-2 transition-all duration-300 lg:flex-row',
                         collapsed && 'pr-0'
                     )}
                 >
                     {/* COL 1 */}
-                    <div className="order-3 flex min-w-56 basis-44 flex-row overflow-hidden rounded-lg bg-slate-300 md:order-1 md:basis-56 md:flex-col">
-                        <div className="flex w-full flex-row overflow-x-auto overflow-y-hidden md:flex-col md:overflow-y-auto">
+                    <div className="order-3 flex min-w-56 basis-44 flex-row overflow-hidden rounded-lg bg-slate-300 lg:order-1 lg:basis-56 lg:flex-col">
+                        <div className="flex w-full flex-row overflow-x-auto overflow-y-hidden lg:flex-col lg:overflow-y-auto">
                             {fields.map((question, index, questions) => (
                                 <SlidePreview
                                     ref={(el) => (itemRefs.current[index] = el)}
@@ -305,7 +305,7 @@ function Edit({ disabled: disabledQuiz = false }) {
                                 />
                             ))}
                         </div>
-                        <div className="self-center bg-slate-300 py-4 text-center">
+                        <div className="self-center bg-slate-300 px-2 py-4 text-center">
                             {isMobile ? (
                                 <ActionIcon
                                     variant="outline"
@@ -337,7 +337,7 @@ function Edit({ disabled: disabledQuiz = false }) {
                     {/* COL 2 */}
                     <div
                         className={twMerge(
-                            'order-1 flex h-full flex-grow flex-col justify-between gap-8 overflow-y-scroll rounded-lg bg-slate-400 px-6 py-10 md:gap-16'
+                            'order-1 flex h-full flex-grow flex-col justify-between gap-8 overflow-y-scroll rounded-lg bg-slate-400 px-6 py-10 lg:gap-16'
                         )}
                     >
                         {fields.map((question, index, questions) => {
@@ -348,6 +348,7 @@ function Edit({ disabled: disabledQuiz = false }) {
                                         question={question}
                                         index={index}
                                         uploadRef={uploadRef}
+                                        update={update}
                                     />
                                 );
                             }
@@ -357,7 +358,7 @@ function Edit({ disabled: disabledQuiz = false }) {
                     <div
                         id="col-3"
                         className={twMerge(
-                            'relative order-2 hidden h-full w-[25vw] min-w-96 max-w-96 flex-col justify-between gap-2 rounded-lg bg-slate-300 px-3 py-4 transition-all md:flex',
+                            'relative order-2 hidden h-full w-[25vw] min-w-96 max-w-96 flex-col justify-between gap-2 rounded-lg bg-slate-300 px-3 py-4 transition-all lg:flex',
                             collapsed && 'w-0 min-w-0 translate-x-full p-0'
                         )}
                     >

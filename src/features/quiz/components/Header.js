@@ -11,7 +11,15 @@ import InputField from 'components/form-controls/InputField';
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-function Header({ form, initialValues, disabled, onSubmit, isMobile, setActiveQuestionIndex, setOpenPreview }) {
+function Header({
+    form,
+    initialValues,
+    disabled,
+    onSubmit,
+    isMobile,
+    setActiveQuestionIndex,
+    setOpenPreview,
+}) {
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -119,15 +127,9 @@ function Header({ form, initialValues, disabled, onSubmit, isMobile, setActiveQu
                         size={isMobile ? 'xs' : 'md'}
                         variant="default"
                         onClick={() => {
-                            let state = {};
-
-                            if (location?.state?.quizzes?.length) {
-                                state['quizzes'] = location.state.quizzes;
-                            }
-
                             if (location?.state?.from) {
                                 navigate(location?.state?.from, {
-                                    state,
+                                    state: location.state || {},
                                 });
                             } else {
                                 navigate('/');

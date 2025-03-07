@@ -7,7 +7,7 @@ import {
     CloseButton,
     LoadingOverlay,
     Pagination,
-    SegmentedControl
+    SegmentedControl,
 } from '@mantine/core';
 import {
     IconBrandSafari,
@@ -17,7 +17,7 @@ import {
     IconPencil,
     IconSearch,
     IconUser,
-    IconWorld
+    IconWorld,
 } from '@tabler/icons-react';
 import { quizApi } from 'api';
 import { sessionApi } from 'api/sessionApi';
@@ -59,6 +59,7 @@ function List(props) {
         if (profile) {
             if (location?.state?.quizzes?.length) {
                 setQuizzes(location.state.quizzes);
+                setTotal(location.state.total || 0);
                 navigate(location.pathname + location.search, {
                     replace: true,
                 });
@@ -150,6 +151,7 @@ function List(props) {
             state: {
                 from: location.pathname + location.search,
                 quizzes: quizzList,
+                total,
             },
         });
     };
@@ -270,9 +272,14 @@ function List(props) {
                                                     {quiz?.title ?? 'Title'}
                                                 </p>
                                                 <div className="flex items-center justify-between gap-2">
-                                                    <div className='flex gap-1 items-center'>
+                                                    <div className="flex items-center gap-1">
                                                         <IconCalendarTime className="h-4 w-4" />
-                                                        <p className='italic text-sm'>{format(quiz.createdAt, 'dd/MM/yyyy')}</p>
+                                                        <p className="text-sm italic">
+                                                            {format(
+                                                                quiz.createdAt,
+                                                                'dd/MM/yyyy'
+                                                            )}
+                                                        </p>
                                                     </div>
                                                     <div className="flex items-center gap-1">
                                                         {quiz?.is_private ? (

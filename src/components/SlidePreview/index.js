@@ -24,7 +24,7 @@ function SlidePreview(
         onDuplicate,
         onDelete,
         isMobile,
-        onOpenSetting
+        onOpenSetting,
     },
     ref
 ) {
@@ -57,7 +57,7 @@ function SlidePreview(
                         aria-label="copy-icon"
                         radius="xl"
                         color="gray"
-                        className="icon mb-1 md:hidden"
+                        className="icon mb-1 lg:hidden"
                         onClick={(e) => {
                             e.stopPropagation();
                             onOpenSetting(index);
@@ -111,7 +111,7 @@ function SlidePreview(
                         </ActionIcon>
                     </Tooltip>
                 </div>
-                <div className="min-w-40 flex-grow">
+                <div className="min-w-40 max-w-40 flex-grow lg:w-full">
                     <p className="text-sm font-semibold">
                         {index + 1}/ {title}
                     </p>
@@ -128,7 +128,11 @@ function SlidePreview(
                             <p className="max-w-full truncate text-sm">
                                 {form
                                     .watch(`questions.${index}.text`)
-                                    ?.trim() || 'Question'}
+                                    ?.trim() || (
+                                    <span className="text-xs italic text-slate-400 font-semibold">
+                                        Question
+                                    </span>
+                                )}
                             </p>
                             <div className="relative flex w-full items-center justify-center">
                                 <div className="absolute left-0 flex h-6 w-6 min-w-6 items-center justify-center rounded-full border-2 border-slate-200 font-semibold">

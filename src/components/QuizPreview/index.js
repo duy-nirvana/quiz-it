@@ -226,7 +226,7 @@ function QuizPreview({
             };
 
             const { data, success } = await resultApi.create(payload);
-            
+
             if (success) {
                 socket.emit('end_game', sessionInfo?.host_id);
                 // const {success: successFinishSession} = await sessionApi.finish(sessionInfo?._id);
@@ -258,7 +258,7 @@ function QuizPreview({
                             return (
                                 <div
                                     className={twMerge(
-                                        'absolute left-0 top-0 z-50 h-screen w-screen bg-indigo-950 px-6 py-10',
+                                        'absolute left-0 top-0 z-50 h-screen w-screen bg-indigo-950 px-4 py-5 sm:px-6 sm:py-10',
                                         className
                                     )}
                                 >
@@ -278,7 +278,7 @@ function QuizPreview({
                                                 form={form}
                                                 name={`questions.${currentQuizIndex}.text`}
                                                 size="lg"
-                                                className="w-3/4 font-semibold"
+                                                className="hidden w-3/4 font-semibold sm:block"
                                                 classNames={{
                                                     input: 'h-16 text-center disabled:opacity-100 disabled:text-black',
                                                 }}
@@ -348,9 +348,9 @@ function QuizPreview({
                                                 </div>
                                             ) : (
                                                 <>
-                                                    <div className="flex h-full items-center justify-around">
-                                                        <div className="flex h-32 w-32 flex-col items-center justify-center rounded-full bg-slate-400/50 p-20">
-                                                            <p className="text-6xl font-bold text-white">
+                                                    <div className="hidden h-full items-center justify-around gap-2 sm:flex">
+                                                        <div className="flex h-24 w-24 flex-col items-center justify-center rounded-full bg-slate-400/50 sm:p-10 lg:h-32 lg:w-32 lg:p-20">
+                                                            <p className="text-4xl font-bold text-white lg:text-6xl">
                                                                 {
                                                                     countdownTimeLimit
                                                                 }
@@ -425,21 +425,21 @@ function QuizPreview({
                                                                 />
                                                             </div>
                                                         ) : (
-                                                            <div className="flex h-96 w-1/2 justify-center overflow-hidden rounded-lg bg-white">
+                                                            <div className="flex h-96 w-1/2 justify-center overflow-hidden rounded-lg bg-white lg:w-1/3">
                                                                 <img
                                                                     src={getImageURL(
                                                                         quizList[
                                                                             currentQuizIndex
                                                                         ]
                                                                     )}
-                                                                    className="object-fit h-full"
+                                                                    className="object-fit h-full grow"
                                                                 />
                                                             </div>
                                                         )}
 
-                                                        <div>
-                                                            <div className="mb-2 flex h-32 w-32 flex-col items-center justify-center rounded-full bg-slate-400/50 p-20">
-                                                                <p className="text-6xl font-bold text-white">
+                                                        <div className="flex flex-col items-center">
+                                                            <div className="mb-2 flex h-24 w-24 flex-col items-center justify-center rounded-full bg-slate-400/50 sm:p-10 lg:h-32 lg:w-32 lg:p-20">
+                                                                <p className="text-4xl font-bold text-white lg:text-6xl">
                                                                     {Number.isInteger(
                                                                         submittedTotal
                                                                     )
@@ -447,8 +447,8 @@ function QuizPreview({
                                                                         : quizList.length}
                                                                 </p>
                                                             </div>
-                                                            <div className="flex flex-col items-center justify-center rounded-full bg-slate-400/50 px-6 py-2">
-                                                                <p className="text-lg font-bold text-white">
+                                                            <div className="flex flex-col items-center justify-center rounded-full bg-slate-400/50 sm:p-2 lg:px-6 lg:py-2">
+                                                                <p className="text-sm font-bold text-white lg:text-lg">
                                                                     SUBMITTED
                                                                 </p>
                                                             </div>
@@ -459,13 +459,13 @@ function QuizPreview({
 
                                             <div
                                                 className={twMerge(
-                                                    'absolute bottom-2 left-1/2 -translate-x-1/2',
+                                                    'absolute bottom-2 left-1/2 flex w-full min-w-fit -translate-x-1/2 flex-nowrap justify-center px-4',
                                                     isPlaying &&
                                                         'translate-y static left-0 my-2 translate-x-0 self-center',
                                                     isPlayer && 'hidden'
                                                 )}
                                             >
-                                                <div className="flex gap-x-2 rounded-md bg-gray-600/50 px-3 py-2 hover:bg-gray-500/90">
+                                                <div className="flex flex-wrap gap-x-2 rounded-md bg-gray-600/50 px-3 py-2 hover:bg-gray-500/90">
                                                     {!isPlaying && (
                                                         <>
                                                             <Button
@@ -607,7 +607,7 @@ function QuizPreview({
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="grid w-full grid-cols-2 gap-4">
+                                        <div className="grid h-full w-full grid-cols-2 gap-3 sm:h-fit lg:gap-4">
                                             {ANSWER_ITEMS['QUIZ'].map(
                                                 (item, answerIndex) => (
                                                     <AnswertItem
