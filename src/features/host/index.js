@@ -345,7 +345,7 @@ function HostLiveFeature(props) {
                     ) : (
                         <>
                             {participants.map((participant) => (
-                                <div className="flex items-center gap-2 rounded-md bg-white p-1.5">
+                                <div className="relative flex cursor-pointer items-center gap-2 rounded-md bg-white p-1.5 after:absolute after:w-0 after:transition-all after:duration-500 after:ease-out hover:bg-gray-200 hover:after:left-0 hover:after:h-1 hover:after:w-full hover:after:bg-gray-900 hover:cursor-remove">
                                     <img
                                         src={getParticipantAvatar({
                                             size: 70,

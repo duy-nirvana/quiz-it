@@ -342,6 +342,7 @@ function ParticipantPlaying(props) {
                             input: '!text-center font-bold',
                         }}
                         showErrorText={false}
+                        maxLength={20}
                     />
                     <Button
                         variant="filled"

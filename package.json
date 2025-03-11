@@ -18,6 +18,7 @@
         "@testing-library/user-event": "^13.5.0",
         "axios": "^1.7.7",
         "date-fns": "^4.1.0",
+        "env-cmd": "^10.1.0",
         "react": "^18.3.1",
         "react-dom": "^18.3.1",
         "react-error-boundary": "^4.1.2",
@@ -36,6 +37,7 @@
     },
     "scripts": {
         "start": "react-scripts start",
+        "start:dev": "env-cmd -f .env.dev react-scripts start",
         "build": "react-scripts build",
         "test": "react-scripts test",
         "eject": "react-scripts eject"

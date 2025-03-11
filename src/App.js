@@ -46,7 +46,7 @@ function App() {
             }}
         >
             <GoogleOAuthProvider
-                clientId={`${REACT_APP_GOOGLE_CLIENT_ID}.apps.googleusercontent.com`}
+                clientId={`${process.env.REACT_APP_GOOGLE_CLIENT_ID}.apps.googleusercontent.com`}
             >
                 <MantineProvider theme={theme}>
                     <Notifications />
