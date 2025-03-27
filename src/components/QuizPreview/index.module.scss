@@ -1,0 +1,5 @@
+.input {
+    &:disabled {
+        @apply text-black opacity-100;
+    }
+}

@@ -1,0 +1,39 @@
+.mantine-Notification {
+    &-root {
+        padding-top: 18px;
+        padding-bottom: 18px;
+        background-color: var(
+            --notification-color,
+            var(--mantine-primary-color-filled)
+        );
+
+        &::before {
+            background-color: var(--mantine-color-white);
+        }
+    }
+
+    &-title,
+    &-description {
+        color: var(--mantine-color-white);
+    }
+
+    &-title {
+        @apply text-base;
+    }
+
+    &-closeButton {
+        color: var(--mantine-color-white);
+
+        &:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+    }
+}
+
+// Action Icon
+.mantine-ActionIcon-root {
+    &:disabled,
+    &[data-disabled] {
+        @apply cursor-default border-none bg-transparent opacity-80;
+    }
+}

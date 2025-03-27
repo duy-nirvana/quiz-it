@@ -1,0 +1,49 @@
+@layer base {
+    body {
+        margin: 0;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        letter-spacing: -0.24px;
+    }
+
+    code {
+        font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+            monospace;
+    }
+
+    p,
+    div {
+        letter-spacing: -0.24px;
+        line-height: 24px;
+    }
+
+    input::-webkit-contacts-auto-fill-button {
+        visibility: hidden;
+        display: none !important;
+        pointer-events: none;
+        position: absolute;
+        right: 0;
+    }
+
+    /* Scroll bar stylings */
+    ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+    }
+
+    /* Track */
+    ::-webkit-scrollbar-track {
+        background: var(--lightestgrey);
+    }
+
+    /* Handle */
+    ::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 5px;
+    }
+
+    /* Handle on hover */
+    ::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
+}

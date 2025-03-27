@@ -1,0 +1,28 @@
+.SlidePreviewWrapper {
+    :global {
+        .slide-container {
+            @apply flex cursor-pointer gap-1 hover:duration-100;
+
+            &-active {
+                @apply bg-sky-100 hover:bg-sky-100;
+            }
+
+            .answer-item {
+                @apply relative h-1.5 border border-slate-300;
+
+                &.selected {
+                    &::after {
+                        content: '';
+                        @apply absolute right-0.5 top-1/2 h-2 w-2 translate-y-[-50%] rounded-full bg-green-600;
+                    }
+                }
+            }
+        }
+
+        .icon {
+            &[data-disabled] {
+                @apply bg-transparent;
+            }
+        }
+    }
+}

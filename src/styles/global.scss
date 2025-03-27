@@ -1,0 +1,13 @@
+@layer tailwind {
+    @tailwind base;
+}
+@tailwind components;
+@tailwind utilities;
+
+/* Base Styled  */
+@import 'custom/base/base.scss';
+
+/* Component Styled */
+
+/* Libs Styled */
+@import 'custom/libs/mantine.scss';
