@@ -2,6 +2,7 @@
 
 ## 🎮 About the Project
 
+![Quiz-It Banner](https://i.imgur.com/g0yszj9.png)
 ![Quiz-It Banner](https://i.imgur.com/IBV0hwa.png)
 
 QuizIT is an engaging, real-time quiz application inspired by Kahoot, built with React. It allows users to participate in interactive quizzes, track their scores, and enjoy a gamified learning experience.
