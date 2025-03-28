@@ -7,52 +7,64 @@ QuizIT is an engaging, real-time quiz application inspired by Kahoot, built with
 ## ✨ Features
 
 ### User Experience
-- Real-time quiz participation
-- Instant score tracking
-- Leaderboard display
-- Responsive design for mobile and desktop
+
+-   Real-time quiz participation
+-   Instant score tracking
+-   Leaderboard display
+-   Responsive design for mobile and desktop
 
 ### Technical Highlights
-- Built with Create React App
-- State management with React Hooks
-- Responsive UI design
-- SocketIO integration for real-time gameplay
-- Secure authentication
+
+-   Built with Create React App
+-   State management with React Hooks
+-   Responsive UI design
+-   SocketIO integration for real-time gameplay
+-   Secure authentication
 
 ## 🛠 Tech Stack
-- React.js
-- React Router
-- SocketIO
-- Tailwind CSS
-- Authentication middleware
+
+-   React.js
+-   React Router
+-   React Hook Form
+-   SocketIO
+-   Tailwind CSS
+-   Authentication middleware
 
 ## 🚀 Getting Started
 
 ### Prerequisites
-- Node.js (v16.0.0 or later)
-- npm (v8.0.0 or later)
+
+-   Node.js (v16.0.0 or later)
+-   npm (v8.0.0 or later)
 
 ### Installation Steps
 
 1. Clone the repository
+
 ```bash
-git clone https://github.com/yourusername/quizmaster.git
-cd quizmaster
+git clone https://github.com/duy-nirvana/quiz-it.git
+cd quiz-it
 ```
 
 2. Install dependencies
+
 ```bash
 npm install
 ```
 
 3. Set up environment variables
-Create a `.env` file in the root directory with:
+   Create a `.env` file in the root directory with:
+
 ```
-REACT_APP_API_URL=https://your-backend-api.com
-REACT_APP_WEBSOCKET_URL=wss://your-websocket-endpoint
+REACT_APP_API_URL="<QUIZ_IT_API_URL>/api/"
+REACT_APP_IMGUR_API_URL="https://api.imgur.com/3/"
+REACT_APP_IMGUR_CLIENT_ID="YOUR_IMGUR_CLIENT_ID"
+REACT_APP_SOCKET_URL="<QUIZ_IT_API_URL>"
+REACT_APP_GOOGLE_CLIENT_ID="YOUR_GOOGLE_CLIENT_ID"
 ```
 
 4. Start the development server
+
 ```bash
 npm start
 ```
@@ -60,25 +72,17 @@ npm start
 5. Open [http://localhost:3000](http://localhost:3000) to view in browser
 
 ## 🔗 Backend API
-[View Backend Repository](https://github.com/yourusername/quizmaster-api)
+
+[View Backend Repository](https://github.com/duy-nirvana/quiz-it-api)
 
 ### API Features
-- User authentication
-- Quiz management
-- Real-time scoring
-- Category management
 
-## 🤝 Contributing
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-## 📄 License
-Distributed under the MIT License. See `LICENSE` for more information.
+-   User authentication
+-   Quiz management
+-   Real-time scoring
 
 ## 📞 Contact
-Your Name - youremail@example.com
 
-Project Link: [https://github.com/yourusername/quizmaster](https://github.com/yourusername/quizmaster)
+DuyTK - trankhanhduy8599@gmail.com
+
+Project Link: [https://github.com/duy-nirvana/quiz-it](https://github.com/duy-nirvana/quiz-it)
